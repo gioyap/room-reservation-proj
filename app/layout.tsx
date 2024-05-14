@@ -6,24 +6,24 @@ import { Mulish } from "next/font/google";
 const mulish = Mulish({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Solve It Out",
-  description: "Next Authentication",
+	title: "Calendar Reservation",
+	description: "Next Authentication",
 };
 
 export default function RootLayout({
-  children,
+	children,
 }: {
-  children: React.ReactNode;
+	children: React.ReactNode;
 }) {
-  return (
-    <html lang="en">
-      <body
-        suppressContentEditableWarning
-        suppressHydrationWarning
-        className={mulish.className}
-      >
-        <AuthProvider>{children}</AuthProvider>
-      </body>
-    </html>
-  );
+	return (
+		<html lang="en">
+			<body
+				suppressContentEditableWarning
+				suppressHydrationWarning
+				className={mulish.className}
+			>
+				<AuthProvider>{children}</AuthProvider>
+			</body>
+		</html>
+	);
 }
