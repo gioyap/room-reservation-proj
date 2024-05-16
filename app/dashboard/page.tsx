@@ -60,13 +60,49 @@ const Dashboard = () => {
 		}));
 	};
 
-	const handleContinue = () => {
-		if (startDate) {
-			// Handle continue action here, e.g., saving the reservation
-			console.log("Reservation Details:", { title, duration, startDate });
-		} else {
-			console.log("Please select a date");
+	const handleContinue = async (e: React.FormEvent<HTMLFormElement>) => {
+		e.preventDefault();
+
+		// Ensure all form fields are filled properly
+		if (!title || !startDate || !duration.hours) {
+			console.log("Please fill out all required fields.");
+			return;
 		}
+
+		// Construct the reservation data object
+		const reservationData = {
+			title,
+			startDate,
+			duration: {
+				hours: Number(duration.hours),
+				minutes: Number(duration.minutes) || 0, // Default to 0 if minutes are not specified
+			},
+		};
+
+		try {
+			// Send reservation data to backend route for saving to MongoDB
+			const response = await fetch("/api/reservationDB", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(reservationData),
+			});
+
+			if (response.ok) {
+				console.log("Reservation saved successfully!");
+				// Handle success scenario
+			} else {
+				console.error("Failed to save reservation:", response.statusText);
+				// Handle error scenario
+			}
+		} catch (error) {
+			console.error("Error saving reservation:", error);
+			// Handle error scenario
+		}
+
+		// Log the reservation details
+		console.log("Reservation Details:", reservationData);
 	};
 
 	const handleShowMinutesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -189,8 +225,9 @@ const Dashboard = () => {
 						</span>
 					</div>
 					<DatePicker
+						id="startDate"
 						selected={startDate}
-						onChange={(date) => setStartDate(date)}
+						onChange={(date) => setStartDate(date ?? new Date())}
 						minDate={new Date()}
 						maxDate={addDays(new Date(), 30)}
 						showTimeSelect
@@ -203,14 +240,15 @@ const Dashboard = () => {
 						locale={enGB}
 						// timeZone="Asia/Manila"
 					/>
-					<div>
+					<form onSubmit={handleContinue}>
+						{/* Your form inputs and button here */}
 						<button
-							onChange={handleContinue}
+							type="submit"
 							className="bg-[#3fa8ee] mt-2 hover:bg-[#ff6f00] xl:text-[18px] font-extrabold text-white rounded text-[12px] w-auto p-2 uppercase"
 						>
 							Continue
 						</button>
-					</div>
+					</form>
 				</div>
 			</div>
 		</div>
