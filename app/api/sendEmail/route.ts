@@ -8,7 +8,7 @@ export async function POST(request: NextRequest) {
 		const response = await fetch(
 			`${process.env.NEXT_PUBLIC_BASE_URL}/api/fetchData`
 		);
-		const data = await response.json();
+		const newData = await response.json();
 
 		// Create a transporter
 		const transporter = nodemailer.createTransport({
@@ -21,8 +21,8 @@ export async function POST(request: NextRequest) {
 
 		// Generate HTML content for the email
 		const htmlContent = `
-			<h1>Reservations Data</h1>
-			<p>Here are the reservations:</p>
+			<h1>New Reservation Data</h1>
+			<p>Here is the new reservation:</p>
 			<table border="1" cellpadding="10" cellspacing="0" style="border-collapse: collapse;">
 				<thead>
 					<tr>
@@ -33,18 +33,12 @@ export async function POST(request: NextRequest) {
 					</tr>
 				</thead>
 				<tbody>
-					${data.reservation
-						.map(
-							(res: any) => `
-						<tr>
-							<td>${res.title}</td>
-							<td>${new Date(res.startDate).toLocaleString()}</td>
-							<td>${res.duration.hours}</td>
-							<td>${res.duration.minutes}</td>
-						</tr>
-					`
-						)
-						.join("")}
+					<tr>
+						<td>${newData.title}</td>
+						<td>${new Date(newData.startDate).toLocaleString()}</td>
+						<td>${newData.duration.hours}</td>
+						<td>${newData.duration.minutes}</td>
+					</tr>
 				</tbody>
 			</table>
 		`;
@@ -54,7 +48,7 @@ export async function POST(request: NextRequest) {
 			from: process.env.EMAIL_USER,
 			to: "yapgioedrian@gmail.com",
 			subject: "Reservations Data",
-			text: `Here are the reservations:\n\n${JSON.stringify(data, null, 2)}`,
+			html: htmlContent,
 		};
 
 		// Send the email
