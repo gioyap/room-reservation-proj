@@ -91,6 +91,22 @@ const Dashboard = () => {
 
 			if (response.ok) {
 				console.log("Reservation saved successfully!");
+
+				// After saving the reservation, send the email
+				const emailResponse = await fetch("/api/sendEmail", {
+					method: "POST",
+					headers: {
+						"Content-Type": "application/json",
+					},
+					body: JSON.stringify(reservationData),
+				});
+
+				if (emailResponse.ok) {
+					console.log("Email sent successfully");
+				} else {
+					console.error("Failed to send email");
+				}
+
 				// Handle success scenario
 			} else {
 				console.error("Failed to save reservation:", response.statusText);
