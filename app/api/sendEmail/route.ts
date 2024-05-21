@@ -4,11 +4,11 @@ import nodemailer from "nodemailer";
 
 export async function POST(request: NextRequest) {
 	try {
-		// Fetch data from the API
-		const response = await fetch(
-			`${process.env.NEXT_PUBLIC_BASE_URL}/api/fetchData`
-		);
-		const newData = await response.json();
+		// Parse the request body to get the new reservation data
+		const newData = await request.json();
+
+		// Log the newData to check its structure
+		console.log("New Data:", newData);
 
 		// Create a transporter
 		const transporter = nodemailer.createTransport({
@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
 
 		// Generate HTML content for the email
 		const htmlContent = `
-			<h1>New Reservation Data</h1>
+			<h1>New Reservation</h1>
 			<p>Here is the new reservation:</p>
 			<table border="1" cellpadding="10" cellspacing="0" style="border-collapse: collapse;">
 				<thead>
@@ -41,13 +41,15 @@ export async function POST(request: NextRequest) {
 					</tr>
 				</tbody>
 			</table>
+			<p>This is new reservation, please let me know if this is accepted or decline</p>
+			<p>Go to the Admin Dashboard to able to accepted or deny the request. Thank you</p>
 		`;
 
 		// Define email options
 		const mailOptions = {
 			from: process.env.EMAIL_USER,
-			to: "yapgioedrian@gmail.com",
-			subject: "Reservations Data",
+			to: process.env.ADMIN_EMAIL,
+			subject: "New Reservations",
 			html: htmlContent,
 		};
 
