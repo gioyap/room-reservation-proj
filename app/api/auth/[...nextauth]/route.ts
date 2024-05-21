@@ -52,7 +52,7 @@ export const authOptions: NextAuthOptions = {
 					await connect();
 					const ifUserExists = await User.findOne({ email });
 					if (ifUserExists) {
-						return user;
+						return { ...user, name, email }; // Return user's name and email
 					}
 					const newUser = new User({
 						name: name,
@@ -62,7 +62,7 @@ export const authOptions: NextAuthOptions = {
 					const res = await newUser.save();
 					if (res.status === 200 || res.status === 201) {
 						console.log(res);
-						return user;
+						return { ...user, name, email }; // Return user's name and email
 					}
 				} catch (err) {
 					console.log(err);
@@ -70,6 +70,7 @@ export const authOptions: NextAuthOptions = {
 			}
 			return user;
 		},
+
 		async jwt({ token, user }: { token: any; user: any }) {
 			if (user) {
 				token.email = user.email;

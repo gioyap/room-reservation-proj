@@ -1,49 +1,16 @@
-// "use client";
-
-// import { signOut, useSession } from "next-auth/react";
-// import React from "react";
-
-// const Dashboard = () => {
-
-//   const {data:session} = useSession();
-
-//   return (
-//     <div
-//       className="min-h-screen py-20"
-//       style={{
-//         backgroundImage: `url("/background.png")`,
-//         backgroundRepeat: "no-repeat",
-//         backgroundSize: "cover",
-//       }}
-//     >
-//       <div className="w-full max-w-2xl grid place-items-center mx-auto py-40 gap-6 bg-slate-50">
-//         <span className="text-4xl tracking-wide font-semibold capitalize text-[#5D7DF3]">
-//           welcome to the Dashboard
-//         </span>
-//         {session && <span className="text-2xl tracking-normal py-10 font-semibold">{session.user?.name}</span>}
-
-//         <button onClick={()=> signOut()} className="bg-slate-950 text-white rounded text-lg w-auto px-6 py-3 uppercase">
-//           Logout
-//         </button>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Dashboard;
-
 "use client";
 
 import { signOut, useSession } from "next-auth/react";
 import React, { useState } from "react";
-import DatePicker from "react-datepicker";
+import Calendar from "@/components/Calendar"; // Import Calendar component
 import "react-datepicker/dist/react-datepicker.css";
-import { addDays } from "date-fns";
-import { enGB } from "date-fns/locale";
+import { format } from "date-fns";
+// import { enGB } from "date-fns/locale";
 
 const Dashboard = () => {
 	const { data: session } = useSession();
-	const [startDate, setStartDate] = useState(new Date());
+	const [selectedDate, setSelectedDate] = useState(new Date());
+	const [selectedTime, setSelectedTime] = useState(new Date());
 	const [title, setTitle] = useState("");
 	const [duration, setDuration] = useState({ hours: "", minutes: "" });
 	const [showMinutesInput, setShowMinutesInput] = useState(false);
@@ -60,19 +27,33 @@ const Dashboard = () => {
 		}));
 	};
 
+	const formattedSelectedTime = selectedTime.toLocaleTimeString([], {
+		hour: "2-digit",
+		minute: "2-digit",
+		hour12: true,
+		timeZone: "Asia/Manila",
+	});
+
 	const handleContinue = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 
 		// Ensure all form fields are filled properly
-		if (!title || !startDate || !duration.hours) {
+		if (!title || !selectedDate || !selectedTime || !duration.hours) {
 			console.log("Please fill out all required fields.");
 			return;
 		}
-
+		const combinedDateTime = new Date(
+			selectedDate.getFullYear(),
+			selectedDate.getMonth(),
+			selectedDate.getDate(),
+			selectedTime.getHours(),
+			selectedTime.getMinutes(),
+			selectedTime.getSeconds()
+		);
 		// Construct the reservation data object
 		const reservationData = {
 			title,
-			startDate,
+			startDate: combinedDateTime, // Use selectedDate instead of startDate
 			duration: {
 				hours: Number(duration.hours),
 				minutes: Number(duration.minutes) || 0, // Default to 0 if minutes are not specified
@@ -134,14 +115,14 @@ const Dashboard = () => {
 
 	return (
 		<div
-			className="min-h-screen py-20"
-			style={{
-				backgroundImage: `url("/background.png")`,
-				backgroundRepeat: "no-repeat",
-				backgroundSize: "cover",
-			}}
+			className="min-h-screen py-16"
+			// style={{
+			// 	backgroundImage: `url("/background.png")`,
+			// 	backgroundRepeat: "no-repeat",
+			// 	backgroundSize: "cover",
+			// }}
 		>
-			<div className=" grid grid-col-1 col-span-1 md:grid-cols-2 mx-5 px-6 lg:w-[800px] lg:ml-28 xl:w-[1000px] xl:ml-[500px] xl:mt-[50px] xl:h-[600px] xl:pl-24 xl:pt-20 bg-slate-50 py-8 rounded-md shadow-md">
+			<div className=" grid grid-col-1 col-span-1 md:grid-cols-2 mx-5 px-6 lg:w-[800px] lg:ml-28 xl:w-full xl:ml-0 xl:mt-0 xl:h-[800px] xl:pl-24 xl:pt-16 bg-slate-50 py-8 rounded-md shadow-md">
 				<div className="flex flex-col items-start gap-6">
 					<div className="ml-2 md:0 xl:ml-0">
 						<span className="text-2xl xl:text-4xl tracking-wide font-black font-sans text-[#3fa8ee]">
@@ -207,7 +188,7 @@ const Dashboard = () => {
 							{showMinutesInput && (
 								<div>
 									<label
-										className="text-[16px] font-extrabold tracking-normal py-2"
+										className="text-[16px] xl:text-[20px] font-extrabold tracking-normal py-2"
 										htmlFor="minutes"
 									>
 										Duration (minutes):
@@ -218,7 +199,7 @@ const Dashboard = () => {
 										type="number"
 										value={duration.minutes}
 										onChange={handleDurationChange}
-										className="w-full text-[14px] px-4 py-2 border rounded-md"
+										className="w-full text-[14px] xl:text-[18px] px-4 py-2 border rounded-md"
 										placeholder="Enter duration in minutes"
 										min="0"
 										max="59"
@@ -240,22 +221,23 @@ const Dashboard = () => {
 							Select Reservation Date
 						</span>
 					</div>
-					<DatePicker
-						id="startDate"
-						selected={startDate}
-						onChange={(date) => setStartDate(date ?? new Date())}
-						minDate={new Date()}
-						maxDate={addDays(new Date(), 30)}
-						showTimeSelect
-						timeFormat="HH:mm"
-						timeIntervals={15}
-						timeCaption="time"
-						dateFormat="MMMM d, yyyy h:mm aa"
-						className="w-full my-4 px-4 py-2 border rounded-md"
-						calendarStartDay={1}
-						locale={enGB}
-						// timeZone="Asia/Manila"
-					/>
+					<div className="py-5">
+						<Calendar
+							selectedDate={selectedDate}
+							onChange={setSelectedDate}
+							selectedTime={selectedTime}
+							onTimeChange={setSelectedTime}
+						/>
+					</div>
+					{/* Selected date and time display */}
+					<div className="mt-4">
+						<p className="text-lg font-semibold">Selected Date:</p>
+						<p>{selectedDate.toDateString()}</p>
+					</div>
+					<div className="mt-4 pb-6">
+						<p className="text-lg font-semibold">Selected Time:</p>
+						<p>{formattedSelectedTime}</p>
+					</div>
 					<form onSubmit={handleContinue}>
 						{/* Your form inputs and button here */}
 						<button
