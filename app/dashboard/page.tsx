@@ -4,16 +4,26 @@ import { signOut, useSession } from "next-auth/react";
 import React, { useState } from "react";
 import Calendar from "@/components/Calendar"; // Import Calendar component
 import "react-datepicker/dist/react-datepicker.css";
-import { format } from "date-fns";
+//import { format } from "date-fns";
 // import { enGB } from "date-fns/locale";
 
 const Dashboard = () => {
 	const { data: session } = useSession();
 	const [selectedDate, setSelectedDate] = useState(new Date());
 	const [selectedTime, setSelectedTime] = useState(new Date());
+	const [department, setDepartment] = useState("");
+	const [name, setName] = useState("");
 	const [title, setTitle] = useState("");
 	const [duration, setDuration] = useState({ hours: "", minutes: "" });
 	const [showMinutesInput, setShowMinutesInput] = useState(false);
+
+	const handleDepartmentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		setDepartment(e.target.value);
+	};
+
+	const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		setName(e.target.value);
+	};
 
 	const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setTitle(e.target.value);
@@ -38,7 +48,14 @@ const Dashboard = () => {
 		e.preventDefault();
 
 		// Ensure all form fields are filled properly
-		if (!title || !selectedDate || !selectedTime || !duration.hours) {
+		if (
+			!department ||
+			!name ||
+			!title ||
+			!selectedDate ||
+			!selectedTime ||
+			!duration.hours
+		) {
 			console.log("Please fill out all required fields.");
 			return;
 		}
@@ -52,6 +69,8 @@ const Dashboard = () => {
 		);
 		// Construct the reservation data object
 		const reservationData = {
+			department,
+			name,
 			title,
 			startDate: combinedDateTime, // Use selectedDate instead of startDate
 			duration: {
@@ -115,28 +134,67 @@ const Dashboard = () => {
 
 	return (
 		<div
-			className="min-h-screen py-16"
+			className="min-h-screen py-0"
 			// style={{
 			// 	backgroundImage: `url("/background.png")`,
 			// 	backgroundRepeat: "no-repeat",
 			// 	backgroundSize: "cover",
 			// }}
 		>
-			<div className=" grid grid-col-1 col-span-1 md:grid-cols-2 mx-5 px-6 lg:w-[800px] lg:ml-28 xl:w-full xl:ml-0 xl:mt-0 xl:h-[800px] xl:pl-24 xl:pt-16 bg-slate-50 py-8 rounded-md shadow-md">
+			{session && (
+				<div className="flex flex-col gap-2 bg-[#e61e84] py-2 items-center">
+					<h1 className="text-2xl font-bold text-white mb-2">
+						Welcome {session.user?.name}
+					</h1>
+				</div>
+			)}
+			<div className=" grid grid-col-1 col-span-1 md:grid-cols-2 mx-5 px-6 lg:w-full lg:h-[750px] lg:ml-0 xl:w-full xl:ml-0 xl:mt-0 xl:h-[860px] xl:pl-24 xl:pt-16 bg-slate-100 py-8 rounded-md shadow-md">
 				<div className="flex flex-col items-start gap-6">
 					<div className="ml-2 md:0 xl:ml-0">
-						<span className="text-2xl xl:text-4xl tracking-wide font-black font-sans text-[#3fa8ee]">
+						<span className="text-2xl xl:text-4xl tracking-wide font-black font-sans text-[#e61e84]">
 							Calendar Reservation
 						</span>
 					</div>
 					{session && (
-						<div className="flex flex-col gap-4">
+						<div className="flex flex-col w-[400px] xl:w-[600px] gap-4">
 							<div>
 								<label
-									className="text-[16px] xl:text-[22px] tracking-normal font-extrabold"
+									className="text-[16px] xl:text-[22px] text-[#e61e84] tracking-normal font-extrabold"
+									htmlFor="department"
+								>
+									Department:
+								</label>
+								<input
+									id="department"
+									type="text"
+									value={department}
+									onChange={handleDepartmentChange}
+									className="w-full text-[14px] xl:text-[18px] px-4 py-2 border  rounded-md"
+									placeholder="Enter your Department"
+								/>
+							</div>
+							<div>
+								<label
+									className="text-[16px] xl:text-[22px] text-[#e61e84] tracking-normal font-extrabold"
+									htmlFor="name"
+								>
+									Full Name:
+								</label>
+								<input
+									id="name"
+									type="text"
+									value={name}
+									onChange={handleNameChange}
+									className="w-full text-[14px] xl:text-[18px] px-4 py-2 border  rounded-md"
+									placeholder="Please enter your full name"
+								/>
+							</div>
+							<div>
+								<label
+									className="text-[16px] xl:text-[22px] text-[#e61e84] tracking-normal font-extrabold"
 									htmlFor="title"
 								>
-									Title:
+									Room:
 								</label>
 								<input
 									id="title"
@@ -149,7 +207,7 @@ const Dashboard = () => {
 							</div>
 							<div>
 								<label
-									className="text-[16px] xl:text-[20px] tracking-normal font-extrabold"
+									className="text-[16px] xl:text-[20px] text-[#e61e84] tracking-normal font-extrabold"
 									htmlFor="hours"
 								>
 									Duration (hours):
@@ -188,7 +246,7 @@ const Dashboard = () => {
 							{showMinutesInput && (
 								<div>
 									<label
-										className="text-[16px] xl:text-[20px] font-extrabold tracking-normal py-2"
+										className="text-[16px] xl:text-[20px] font-extrabold text-[#e61e84] tracking-normal py-2"
 										htmlFor="minutes"
 									>
 										Duration (minutes):
@@ -210,14 +268,14 @@ const Dashboard = () => {
 					)}
 					<button
 						onClick={() => signOut()}
-						className="bg-[#3fa8ee] hover:bg-[#ff6f00] text-white rounded text-[12px] xl:text-[18px] w-auto p-2 uppercase font-extrabold"
+						className="bg-[#e61e84] hover:bg-[#3fa8ee] text-white rounded text-[12px] xl:text-[18px] w-auto p-2 uppercase font-extrabold"
 					>
 						Logout
 					</button>
 				</div>
 				<div className=" col-span-1">
 					<div className="ml-2">
-						<span className="text-[22px] text-[#3fa8ee] xl:text-[35px] mt-4 font-sans tracking-wide font-extrabold">
+						<span className="text-[22px] text-[#e61e84] xl:text-[35px] mt-4 font-sans tracking-wide font-extrabold">
 							Select Reservation Date
 						</span>
 					</div>
@@ -231,18 +289,22 @@ const Dashboard = () => {
 					</div>
 					{/* Selected date and time display */}
 					<div className="mt-4">
-						<p className="text-lg font-semibold">Selected Date:</p>
+						<p className="text-lg font-semibold text-[#e61e84] ">
+							Selected Date:
+						</p>
 						<p>{selectedDate.toDateString()}</p>
 					</div>
 					<div className="mt-4 pb-6">
-						<p className="text-lg font-semibold">Selected Time:</p>
+						<p className="text-lg font-semibold text-[#e61e84] ">
+							Selected Time:
+						</p>
 						<p>{formattedSelectedTime}</p>
 					</div>
 					<form onSubmit={handleContinue}>
 						{/* Your form inputs and button here */}
 						<button
 							type="submit"
-							className="bg-[#3fa8ee] mt-2 hover:bg-[#ff6f00] xl:text-[18px] font-extrabold text-white rounded text-[12px] w-auto p-2 uppercase"
+							className="bg-[#e61e84] mt-2 hover:bg-[#3fa8ee] xl:text-[18px] font-extrabold text-white rounded text-[12px] w-auto p-2 uppercase"
 						>
 							Continue
 						</button>
