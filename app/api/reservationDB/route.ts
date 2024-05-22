@@ -23,9 +23,17 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
 	try {
-		const { title, startDate, duration } = await request.json();
+		const { department, name, title, startDate, duration } =
+			await request.json();
 
-		if (!title || !startDate || !duration || !duration.hours) {
+		if (
+			!department ||
+			!name ||
+			!title ||
+			!startDate ||
+			!duration ||
+			!duration.hours
+		) {
 			return NextResponse.json(
 				{
 					error: "Missing required fields: title, startDate, or duration.hours",
@@ -38,6 +46,8 @@ export async function POST(request: NextRequest) {
 		const formattedStartDate = new Date(startDate);
 
 		const newReservation = new Reservation({
+			department,
+			name,
 			title,
 			startDate: formattedStartDate,
 			duration,
