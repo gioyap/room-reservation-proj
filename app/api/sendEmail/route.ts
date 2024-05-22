@@ -26,7 +26,9 @@ export async function POST(request: NextRequest) {
 			<table border="1" cellpadding="10" cellspacing="0" style="border-collapse: collapse;">
 				<thead>
 					<tr>
-						<th>Title</th>
+						<th>Department</th>
+						<th>Name</th>
+						<th>Room</th>
 						<th>Start Date</th>
 						<th>Duration (hours)</th>
 						<th>Duration (minutes)</th>
@@ -34,6 +36,8 @@ export async function POST(request: NextRequest) {
 				</thead>
 				<tbody>
 					<tr>
+						<td>${newData.department}</td>
+						<td>${newData.name}</td>
 						<td>${newData.title}</td>
 						<td>${new Date(newData.startDate).toLocaleString()}</td>
 						<td>${newData.duration.hours}</td>
