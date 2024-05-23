@@ -137,7 +137,7 @@ const Dashboard = () => {
 
 	return (
 		<div className="min-h-screen py-0">
-			<ToastContainer />
+			<ToastContainer autoClose={3000} />
 			{session && (
 				<div className="flex flex-col gap-2 bg-[#e61e84] py-2 items-center">
 					<h1 className="text-2xl font-bold text-white mb-2">
