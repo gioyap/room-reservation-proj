@@ -12,6 +12,8 @@ import {
 
 interface Reservation {
 	_id: string;
+	department: string;
+	name: string;
 	title: string;
 	startDate: string;
 	duration: {
@@ -178,7 +180,23 @@ const Calendar: React.FC<CalendarProps> = ({
 						<div key={index}>
 							<p>
 								<span className="font-bold lg:text-sm xl:text-[16px] text-[#e61e84]">
+									Department:
+								</span>{" "}
+								<span className="lg:text-sm xl:text-[16px]">
+									{reservation.department}
+								</span>
+							</p>
+							<p>
+								<span className="font-bold lg:text-sm xl:text-[16px] text-[#e61e84]">
 									Name:
+								</span>{" "}
+								<span className="lg:text-sm xl:text-[16px]">
+									{reservation.name}
+								</span>
+							</p>
+							<p>
+								<span className="font-bold lg:text-sm xl:text-[16px] text-[#e61e84]">
+									Room:
 								</span>{" "}
 								<span className="lg:text-sm xl:text-[16px]">
 									{reservation.title}
