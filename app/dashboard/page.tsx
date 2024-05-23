@@ -4,8 +4,8 @@ import { signOut, useSession } from "next-auth/react";
 import React, { useState } from "react";
 import Calendar from "@/components/Calendar"; // Import Calendar component
 import "react-datepicker/dist/react-datepicker.css";
-//import { format } from "date-fns";
-// import { enGB } from "date-fns/locale";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Dashboard = () => {
 	const { data: session } = useSession();
@@ -56,7 +56,7 @@ const Dashboard = () => {
 			!selectedTime ||
 			!duration.hours
 		) {
-			console.log("Please fill out all required fields.");
+			toast.error("Please fill out all required fields.");
 			return;
 		}
 		const combinedDateTime = new Date(
@@ -90,7 +90,7 @@ const Dashboard = () => {
 			});
 
 			if (response.ok) {
-				console.log("Reservation saved successfully!");
+				toast.success("Reservation saved successfully!");
 
 				// After saving the reservation, send the email
 				const emailResponse = await fetch("/api/sendEmail", {
@@ -102,19 +102,22 @@ const Dashboard = () => {
 				});
 
 				if (emailResponse.ok) {
-					console.log("Email sent successfully");
+					toast.success("Email sent successfully");
 				} else {
-					console.error("Failed to send email");
+					toast.error("Failed to send email");
 				}
 
 				// Handle success scenario
 			} else {
-				console.error("Failed to save reservation:", response.statusText);
+				toast.error("Failed to save reservation: " + response.statusText);
 				// Handle error scenario
 			}
 		} catch (error) {
-			console.error("Error saving reservation:", error);
-			// Handle error scenario
+			if (error instanceof Error) {
+				toast.error("Error saving reservation: " + error.message);
+			} else {
+				toast.error("An unknown error occurred");
+			}
 		}
 
 		// Log the reservation details
@@ -133,14 +136,8 @@ const Dashboard = () => {
 	};
 
 	return (
-		<div
-			className="min-h-screen py-0"
-			// style={{
-			// 	backgroundImage: `url("/background.png")`,
-			// 	backgroundRepeat: "no-repeat",
-			// 	backgroundSize: "cover",
-			// }}
-		>
+		<div className="min-h-screen py-0">
+			<ToastContainer />
 			{session && (
 				<div className="flex flex-col gap-2 bg-[#e61e84] py-2 items-center">
 					<h1 className="text-2xl font-bold text-white mb-2">
@@ -148,7 +145,7 @@ const Dashboard = () => {
 					</h1>
 				</div>
 			)}
-			<div className=" grid grid-col-1 col-span-1 md:grid-cols-2 mx-5 px-6 lg:w-full lg:h-[750px] lg:ml-0 xl:w-full xl:ml-0 xl:mt-0 xl:h-[860px] xl:pl-24 xl:pt-16 bg-slate-100 py-8 rounded-md shadow-md">
+			<div className="grid grid-col-1 col-span-1 md:grid-cols-2 mx-5 px-6 lg:w-full lg:h-[750px] lg:ml-0 xl:w-full xl:ml-0 xl:mt-0 xl:h-[860px] xl:pl-24 xl:pt-16 bg-slate-100 py-8 rounded-md shadow-md">
 				<div className="flex flex-col items-start gap-6">
 					<div className="ml-2 md:0 xl:ml-0">
 						<span className="text-2xl xl:text-4xl tracking-wide font-black font-sans text-[#e61e84]">
@@ -169,7 +166,7 @@ const Dashboard = () => {
 									type="text"
 									value={department}
 									onChange={handleDepartmentChange}
-									className="w-full text-[14px] xl:text-[18px] px-4 py-2 border  rounded-md"
+									className="w-full text-[14px] xl:text-[18px] px-4 py-2 border rounded-md"
 									placeholder="Enter your Department"
 								/>
 							</div>
@@ -185,7 +182,7 @@ const Dashboard = () => {
 									type="text"
 									value={name}
 									onChange={handleNameChange}
-									className="w-full text-[14px] xl:text-[18px] px-4 py-2 border  rounded-md"
+									className="w-full text-[14px] xl:text-[18px] px-4 py-2 border rounded-md"
 									placeholder="Please enter your full name"
 								/>
 							</div>
@@ -201,7 +198,7 @@ const Dashboard = () => {
 									type="text"
 									value={title}
 									onChange={handleTitleChange}
-									className="w-full text-[14px] xl:text-[18px] px-4 py-2 border  rounded-md"
+									className="w-full text-[14px] xl:text-[18px] px-4 py-2 border rounded-md"
 									placeholder="Enter reservation title"
 								/>
 							</div>
@@ -273,7 +270,7 @@ const Dashboard = () => {
 						Logout
 					</button>
 				</div>
-				<div className=" col-span-1">
+				<div className="col-span-1">
 					<div className="ml-2">
 						<span className="text-[22px] text-[#e61e84] xl:text-[35px] mt-4 font-sans tracking-wide font-extrabold">
 							Select Reservation Date
@@ -289,13 +286,13 @@ const Dashboard = () => {
 					</div>
 					{/* Selected date and time display */}
 					<div className="mt-4">
-						<p className="text-lg font-semibold text-[#e61e84] ">
+						<p className="text-lg font-semibold text-[#e61e84]">
 							Selected Date:
 						</p>
 						<p>{selectedDate.toDateString()}</p>
 					</div>
 					<div className="mt-4 pb-6">
-						<p className="text-lg font-semibold text-[#e61e84] ">
+						<p className="text-lg font-semibold text-[#e61e84]">
 							Selected Time:
 						</p>
 						<p>{formattedSelectedTime}</p>
@@ -306,7 +303,7 @@ const Dashboard = () => {
 							type="submit"
 							className="bg-[#e61e84] mt-2 hover:bg-[#3fa8ee] xl:text-[18px] font-extrabold text-white rounded text-[12px] w-auto p-2 uppercase"
 						>
-							Continue
+							Submit
 						</button>
 					</form>
 				</div>
