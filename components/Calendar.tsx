@@ -20,6 +20,7 @@ interface Reservation {
 		hours: number;
 		minutes: number;
 	};
+	status: string;
 }
 
 interface CalendarProps {
@@ -91,11 +92,10 @@ const Calendar: React.FC<CalendarProps> = ({
 		const date = new Date(reservation.startDate);
 		onChange(date);
 
-		// Filter all reservations for the selected date
 		const reservationsForDate = bookedDates.filter(
 			(res) => new Date(res.startDate).toDateString() === date.toDateString()
 		);
-		setSelectedReservation(reservationsForDate); // Set selectedReservation with all reservations for the selected date
+		setSelectedReservation(reservationsForDate);
 	};
 
 	const handleTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -126,7 +126,7 @@ const Calendar: React.FC<CalendarProps> = ({
 		<div className="flex gap-x-4 items-start">
 			<div className="calendar bg-white p-8 rounded shadow mr-4">
 				<div className="header text-center mb-4">
-					<span className="text-lg font-extrabold text-[#e61e84] ">
+					<span className="text-lg font-extrabold text-[#e61e84]">
 						{format(selectedDate, "MMMM yyyy")}
 					</span>
 				</div>
@@ -173,7 +173,7 @@ const Calendar: React.FC<CalendarProps> = ({
 			</div>
 			{selectedReservation && selectedReservation.length > 0 && (
 				<div className="reservation-details bg-white lg:p-2 xl:p-4 rounded shadow absolute lg:ml-[300px] lg:mt-[150px] xl:ml-[485px] xl:mt-[150px]">
-					<h2 className="lg:text-sm xl:text-lg font-extrabold text-[#e61e84] ">
+					<h2 className="lg:text-sm xl:text-lg font-extrabold text-[#e61e84]">
 						Reservation Details
 					</h2>
 					{selectedReservation.map((reservation, index) => (
@@ -217,6 +217,14 @@ const Calendar: React.FC<CalendarProps> = ({
 								<span className="lg:text-sm xl:text-[16px]">
 									{reservation.duration.hours} hours{" "}
 									{reservation.duration.minutes} minutes
+								</span>
+							</p>
+							<p>
+								<span className="font-bold lg:text-sm xl:text-[16px] text-[#e61e84]">
+									Status:
+								</span>{" "}
+								<span className="lg:text-sm xl:text-[16px]">
+									{reservation.status}
 								</span>
 							</p>
 							<hr className="my-4" />

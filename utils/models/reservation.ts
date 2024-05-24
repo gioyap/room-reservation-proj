@@ -29,6 +29,9 @@ const ReservationSchema = new mongoose.Schema({
 			default: 0,
 		},
 	},
+	status: {
+		type: String,
+	},
 });
 
 const Reservation =
