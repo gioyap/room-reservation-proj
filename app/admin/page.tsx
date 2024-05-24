@@ -1,54 +1,235 @@
 "use client";
+import { useEffect, useState } from "react";
 import { signOut, useSession } from "next-auth/react";
+
+interface Duration {
+	hours: number;
+	minutes: number;
+}
+
+interface Reservation {
+	_id: string;
+	department: string;
+	name: string;
+	title: string;
+	startDate: string;
+	duration: Duration;
+	status: string;
+}
 
 const AdminDashboard = () => {
 	const { data: session } = useSession();
+	const [reservations, setReservations] = useState<Reservation[]>([]);
+	const [loading, setLoading] = useState(true);
+	const [currentPage, setCurrentPage] = useState(1);
+	const [reservationsPerPage, setReservationsPerPage] = useState(10);
+
+	useEffect(() => {
+		const fetchData = async () => {
+			try {
+				const response = await fetch("/api/reservationDB");
+				const data = await response.json();
+				setReservations(data.reservations);
+			} catch (error) {
+				console.error("Error fetching reservations:", error);
+			} finally {
+				setLoading(false);
+			}
+		};
+
+		if (session && session.user.isAdmin) {
+			fetchData();
+		}
+	}, [session]);
+
+	const handleAccept = async (id: string) => {
+		try {
+			console.log("Accept button clicked for reservation ID:", id);
+			await fetch(`/api/reservationDB/${id}/accept`, { method: "PUT" });
+			console.log("Accept request sent successfully");
+			setReservations(
+				reservations.map((reservation) =>
+					reservation._id === id
+						? { ...reservation, status: "Accepted" }
+						: reservation
+				)
+			);
+		} catch (error) {
+			console.error("Error accepting reservation:", error);
+		}
+	};
+
+	const handleDecline = async (id: string) => {
+		try {
+			console.log("Decline button clicked for reservation ID:", id);
+			await fetch(`/api/reservationDB/${id}/decline`, { method: "PUT" });
+			console.log("Decline request sent successfully");
+			setReservations(
+				reservations.map((reservation) =>
+					reservation._id === id
+						? { ...reservation, status: "Declined" }
+						: reservation
+				)
+			);
+		} catch (error) {
+			console.error("Error declining reservation:", error);
+		}
+	};
 
 	if (!session || !session.user.isAdmin) {
-		return <p>Access Denied</p>;
+		return (
+			<p className="text-center text-red-500 mt-20 text-xl">Access Denied</p>
+		);
 	}
 
+	if (loading) {
+		return (
+			<p className="text-center text-gray-500 mt-20 text-xl">Loading...</p>
+		);
+	}
+
+	const indexOfLastReservation = currentPage * reservationsPerPage;
+	const indexOfFirstReservation = indexOfLastReservation - reservationsPerPage;
+	const currentReservations = reservations.slice(
+		indexOfFirstReservation,
+		indexOfLastReservation
+	);
+
+	const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+
 	return (
-		<div className="flex justify-between">
-			<div className="w-[900px] h-[700px] bg-slate-200 ml-20 mt-20">
-				<table className="">
-					<thead>
-						<tr>
-							<th>Department</th>
-							<th>Name</th>
-							<th>Room</th>
-							<th>Start Date</th>
-							<th>Duration (hours)</th>
-							<th>Duration (minutes)</th>
-							<th>Status</th>
-							<th>
-								<button>Accepted</button>
-							</th>
-							<th>
-								<button>Decline</button>
-							</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td>test</td>
-							<td>test</td>
-							<td>test</td>
-							<td>test</td>
-							<td>test</td>
-							<td>test</td>
-							<td>Pending</td>
-						</tr>
-					</tbody>
-				</table>
+		<div className="flex">
+			<div className="w-[250px] bg-[#e81e83] h-screen p-3">
+				<div className="flex flex-col items-center">
+					<button
+						onClick={() => signOut()}
+						className="bg-[#f93e9e] hover:bg-[#3fa8ee] text-white rounded text-[12px] xl:text-[18px] w-auto p-3 uppercase font-extrabold shadow-lg"
+					>
+						Logout
+					</button>
+				</div>
 			</div>
-			<div>
-				<button
-					onClick={() => signOut()}
-					className="bg-[#e61e84] hover:bg-[#3fa8ee] text-white rounded text-[12px] xl:text-[18px] w-auto p-2 uppercase font-extrabold"
-				>
-					Logout
-				</button>
+			<div className="flex-1 p-8 bg-gray-100 min-h-screen">
+				<div className="w-full max-w-8xl mx-auto bg-white shadow-md rounded-lg overflow-hidden">
+					<div className="flex justify-end p-3">
+						<label htmlFor="perPage" className="mr-2 text-gray-600">
+							Per Page:
+						</label>
+						<select
+							id="perPage"
+							className="bg-white border border-gray-300 rounded-md"
+							value={reservationsPerPage}
+							onChange={(e) => setReservationsPerPage(parseInt(e.target.value))}
+						>
+							<option value={5}>5</option>
+							<option value={10}>10</option>
+							<option value={15}>15</option>
+							<option value={20}>20</option>
+						</select>
+					</div>
+					<table className="min-w-full divide-y divide-gray-200">
+						<thead className="bg-gray-50">
+							<tr>
+								<th className="pl-8 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+									Department
+								</th>
+								<th className="pl-8 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+									Name
+								</th>
+								<th className="pl-8 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+									Room
+								</th>
+								<th className="pl-8 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+									Start Date
+								</th>
+								<th className="pl-8 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+									Duration (hours)
+								</th>
+								<th className="pl-8 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+									Duration (minutes)
+								</th>
+								<th className="pl-8 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+									Status
+								</th>
+								<th className="pl-8 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+									Accept
+								</th>
+								<th className="pl-8 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+									Decline
+								</th>
+							</tr>
+						</thead>
+						<tbody className="bg-white divide-y divide-gray-200">
+							{currentReservations.map((reservation) => (
+								<tr key={reservation._id}>
+									<td className="px-8 py-3 whitespace-nowrap">
+										{reservation.department}
+									</td>
+									<td className="px-8 py-3 whitespace-nowrap">
+										{reservation.name}
+									</td>
+									<td className="px-8 py-3 whitespace-nowrap">
+										{reservation.title}
+									</td>
+									<td className="px-8 py-3 whitespace-nowrap">
+										{new Date(reservation.startDate).toLocaleString()}
+									</td>
+									<td className="px-8 py-3 whitespace-nowrap">
+										{reservation.duration.hours}
+									</td>
+									<td className="px-8 py-3 whitespace-nowrap">
+										{reservation.duration.minutes}
+									</td>
+									<td className="px-8 py-3 whitespace-nowrap">
+										{reservation.status}
+									</td>
+									<td className="px-8 py-3 whitespace-nowrap">
+										<button
+											className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-3 rounded"
+											onClick={() => handleAccept(reservation._id)}
+										>
+											Accept
+										</button>
+									</td>
+									<td className="px-8 py-3 whitespace-nowrap">
+										<button
+											className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-3 rounded"
+											onClick={() => handleDecline(reservation._id)}
+										>
+											Decline
+										</button>
+									</td>
+								</tr>
+							))}
+						</tbody>
+					</table>
+					<div className="flex justify-between p-3">
+						{/* Pagination Controls */}
+						<nav>
+							<ul className="inline-flex -space-x-px">
+								{Array.from(
+									{
+										length: Math.ceil(
+											reservations.length / reservationsPerPage
+										),
+									},
+									(_, index) => (
+										<li key={index}>
+											<button
+												onClick={() => paginate(index + 1)}
+												className={`px-3 py-2 border ${
+													currentPage === index + 1 ? "bg-gray-300" : "bg-white"
+												}`}
+											>
+												{index + 1}
+											</button>
+										</li>
+									)
+								)}
+							</ul>
+						</nav>
+					</div>
+				</div>
 			</div>
 		</div>
 	);
