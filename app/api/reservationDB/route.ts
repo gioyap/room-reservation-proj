@@ -67,3 +67,43 @@ export async function POST(request: NextRequest) {
 		return NextResponse.json({ error: error.message }, { status: 500 });
 	}
 }
+
+export async function PUT(request: NextRequest) {
+	try {
+		// const id = request.url.split("/").pop(); // Extract ID from URL
+		// const { status } = await request.json();
+		const { id, status } = await request.json();
+
+		if (!id || !status) {
+			return NextResponse.json(
+				{ error: "Missing required fields: id or status" },
+				{ status: 400 }
+			);
+		}
+
+		// Update the status of the reservation in the database
+		const updatedReservation = await Reservation.findByIdAndUpdate(
+			id,
+			{ status },
+			{ new: true } // Return the updated document
+		);
+
+		if (!updatedReservation) {
+			return NextResponse.json(
+				{ error: "Reservation not found" },
+				{ status: 404 }
+			);
+		}
+
+		return NextResponse.json(
+			{
+				message: "Reservation status updated successfully!",
+				reservation: updatedReservation,
+			},
+			{ status: 200 }
+		);
+	} catch (error: any) {
+		console.error("Error updating reservation status:", error);
+		return NextResponse.json({ error: error.message }, { status: 500 });
+	}
+}

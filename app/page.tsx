@@ -7,6 +7,8 @@ import google from "../public/google2.svg";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
+import "react-toastify/dist/ReactToastify.css";
+import { toast, ToastContainer } from "react-toastify";
 
 const Login = () => {
 	const [loading, setLoading] = useState(false);
@@ -27,12 +29,13 @@ const Login = () => {
 		setLoading(true);
 		try {
 			if (!user.email || !user.password) {
-				setError("please fill all the fields");
+				toast.error("Please fill out all required fields");
 				return;
 			}
 			const emailRegex = /^([a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/;
 			if (!emailRegex.test(user.email)) {
 				setError("invalid email id");
+				toast.error("Invalid email address");
 				return;
 			}
 
@@ -51,6 +54,7 @@ const Login = () => {
 			router.push("/dashboard");
 		} catch (error) {
 			console.log(error);
+			toast.error("An error occurred during log in. Please try again.");
 			setError("");
 		} finally {
 			setLoading(false);
@@ -69,6 +73,7 @@ const Login = () => {
 				backgroundSize: "cover",
 			}}
 		>
+			<ToastContainer autoClose={3000} />
 			<div className="grid place-items-center mx-auto max-w-4xl w-full py-10 min-h-screen">
 				<div className="flex justify-center items-center lg:flex-row flex-col gap-6 lg:gap-0 shadow-md rounded-2xl">
 					<div className=" flex flex-col justify-center items-center py-6 bg-[#eff1f6] rounded-2xl">

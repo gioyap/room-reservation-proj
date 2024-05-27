@@ -29,6 +29,10 @@ const ReservationSchema = new mongoose.Schema({
 			default: 0,
 		},
 	},
+	status: {
+		type: String,
+		default: "Pending",
+	},
 });
 
 const Reservation =
