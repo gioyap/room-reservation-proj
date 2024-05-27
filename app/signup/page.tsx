@@ -9,6 +9,8 @@ import google from "../../public/google2.svg";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
+import "react-toastify/dist/ReactToastify.css";
+import { toast, ToastContainer } from "react-toastify";
 
 const Signup = () => {
 	const [loading, setLoading] = useState(false);
@@ -24,33 +26,37 @@ const Signup = () => {
 		const { name, value } = event.target;
 		return setUser((prevInfo) => ({ ...prevInfo, [name]: value }));
 	};
+
 	const handleSubmit = async (e: any) => {
 		e.preventDefault();
 		setLoading(true);
 		console.log(user);
 		try {
 			if (!user.name || !user.email || !user.password) {
-				setError("please fill all the fields");
+				toast.error("Please fill out all required fields.");
 				return;
 			}
 			const emailRegex = /^([a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/;
 			if (!emailRegex.test(user.email)) {
-				setError("invalid email id");
+				setError("Invalid email address");
+				toast.error("Invalid email address");
 				return;
 			}
 			const res = await axios.post("/api/register", user);
 			console.log(res.data);
-			if (res.status == 200 || res.status == 201) {
-				console.log("user added successfully");
+			if (res.status === 200 || res.status === 201) {
+				toast.success("Registered successfully!");
 				setError("");
-				router.push("/");
+				setTimeout(() => {
+					router.push("/");
+				}, 2000); // Redirect after 2 seconds
 			}
 		} catch (error) {
-			console.log(error);
+			console.error(error);
+			toast.error("An error occurred during registration. Please try again.");
 			setError("");
 		} finally {
 			setLoading(false);
-
 			setUser({
 				name: "",
 				email: "",
@@ -58,8 +64,10 @@ const Signup = () => {
 			});
 		}
 	};
+
 	return (
 		<div className="min-h-screen">
+			<ToastContainer autoClose={3000} />
 			<div className="grid place-items-center mx-auto max-w-4xl w-full py-10 min-h-screen">
 				<div className="flex justify-center lg:w-1/2 items-center lg:flex-row flex-col gap-6 lg:gap-0 w-full shadow-md rounded-2xl">
 					{/* <div className="lg:w-1/2 w-full bg-[#5D7DF3]">
@@ -126,7 +134,7 @@ const Signup = () => {
 										type="submit"
 										className="bg-[#5D7DF3] text-white text-lg w-full px-8 py-3 rounded-md uppercase font-semibold"
 									>
-										{loading ? "Processing..." : " Register"}
+										{loading ? "Processing..." : "Register"}
 									</button>
 								</div>
 								<div className="flex justify-center w-full items-center gap-3 py-3">
@@ -139,7 +147,7 @@ const Signup = () => {
 									className="rounded px-6 py-2 shadow cursor-pointer bg-gray-50 grid place-items-center mx-auto mb-8"
 								>
 									<Image src={google} alt="bg" width={100} height={100} />
-								</div>{" "}
+								</div>
 								<div className="text-lg text-slate-900 font-medium">
 									<span>Have an account?</span>
 									<a href="/" className="text-[#5D7DF3] pl-3 hover:underline">
