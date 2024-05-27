@@ -119,7 +119,7 @@ const Calendar: React.FC<CalendarProps> = ({
 
 	const getDayClassName = (day: Date) => {
 		const isBooked = isDateBooked(day);
-		return isBooked ? "booked-day bg-green-300 lg:px-0 xl:px-2" : "";
+		return isBooked ? "booked-day bg-green-300 rounded-lg lg:px-0 xl:px-2" : "";
 	};
 
 	return (
@@ -172,7 +172,7 @@ const Calendar: React.FC<CalendarProps> = ({
 				/>
 			</div>
 			{selectedReservation && selectedReservation.length > 0 && (
-				<div className="reservation-details bg-white lg:p-2 xl:p-4 rounded shadow absolute lg:ml-[300px] lg:mt-[150px] xl:ml-[485px] xl:mt-[150px]">
+				<div className="reservation-details bg-white lg:p-2 xl:p-4 rounded shadow absolute lg:ml-[300px] lg:mt-[150px] xl:ml-[485px] xl:mt-[135px]">
 					<h2 className="lg:text-sm xl:text-lg font-extrabold text-[#e61e84]">
 						Reservation Details
 					</h2>
@@ -223,10 +223,19 @@ const Calendar: React.FC<CalendarProps> = ({
 								<span className="font-bold lg:text-sm xl:text-[16px] text-[#e61e84]">
 									Status:
 								</span>{" "}
-								<span className="lg:text-sm xl:text-[16px]">
-									{reservation.status}
+								<span
+									className={`lg:text-sm xl:text-[16px] rounded-full px-2 py-[1px] text-white ${
+										reservation.status === "Accepted"
+											? "bg-green-600"
+											: reservation.status === "Declined"
+											? "bg-red-600 "
+											: "bg-yellow-500"
+									}`}
+								>
+									{reservation.status || "Pending"}
 								</span>
 							</p>
+
 							<hr className="my-4" />
 						</div>
 					))}
