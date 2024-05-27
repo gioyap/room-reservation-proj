@@ -70,8 +70,9 @@ export async function POST(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
 	try {
-		const id = request.url.split("/").pop(); // Extract ID from URL
-		const { status } = await request.json();
+		// const id = request.url.split("/").pop(); // Extract ID from URL
+		// const { status } = await request.json();
+		const { id, status } = await request.json();
 
 		if (!id || !status) {
 			return NextResponse.json(

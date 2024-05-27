@@ -1,6 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
 import { signOut, useSession } from "next-auth/react";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 interface Duration {
 	hours: number;
@@ -44,35 +46,57 @@ const AdminDashboard = () => {
 
 	const handleAccept = async (id: string) => {
 		try {
-			console.log("Accept button clicked for reservation ID:", id);
-			await fetch(`/api/reservationDB/${id}/accept`, { method: "PUT" });
-			console.log("Accept request sent successfully");
-			setReservations(
-				reservations.map((reservation) =>
+			const response = await fetch(`/api/reservationDB/`, {
+				method: "PUT",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ id, status: "Accepted" }),
+			});
+
+			if (!response.ok) {
+				throw new Error("Failed to accept reservation");
+			}
+
+			setReservations((prevReservations) =>
+				prevReservations.map((reservation) =>
 					reservation._id === id
 						? { ...reservation, status: "Accepted" }
 						: reservation
 				)
 			);
+			toast.success("Reservation accepted successfully!");
 		} catch (error) {
 			console.error("Error accepting reservation:", error);
+			toast.error("Failed to accept reservation.");
 		}
 	};
 
 	const handleDecline = async (id: string) => {
 		try {
-			console.log("Decline button clicked for reservation ID:", id);
-			await fetch(`/api/reservationDB/${id}/decline`, { method: "PUT" });
-			console.log("Decline request sent successfully");
-			setReservations(
-				reservations.map((reservation) =>
+			const response = await fetch(`/api/reservationDB/`, {
+				method: "PUT",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ id, status: "Declined" }),
+			});
+
+			if (!response.ok) {
+				throw new Error("Failed to decline reservation");
+			}
+
+			setReservations((prevReservations) =>
+				prevReservations.map((reservation) =>
 					reservation._id === id
 						? { ...reservation, status: "Declined" }
 						: reservation
 				)
 			);
+			toast.success("Reservation declined successfully!");
 		} catch (error) {
 			console.error("Error declining reservation:", error);
+			toast.error("Failed to decline reservation.");
 		}
 	};
 
@@ -99,6 +123,7 @@ const AdminDashboard = () => {
 
 	return (
 		<div className="flex">
+			<ToastContainer autoClose={4000} />
 			<div className="w-[250px] bg-[#e81e83] h-screen p-3">
 				<div className="flex flex-col items-center">
 					<button
@@ -181,7 +206,10 @@ const AdminDashboard = () => {
 										{reservation.duration.minutes}
 									</td>
 									<td className="px-8 py-3 whitespace-nowrap">
-										{reservation.status}
+										{reservation.status === "Accepted" ||
+										reservation.status === "Declined"
+											? reservation.status
+											: "Pending"}
 									</td>
 									<td className="px-8 py-3 whitespace-nowrap">
 										<button
