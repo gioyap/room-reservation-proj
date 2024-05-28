@@ -74,7 +74,7 @@ const AdminDashboard = () => {
 			);
 			toast.success("Reservation accepted successfully!");
 			// Send notification email
-			await fetch("/api/sendEmail", {
+			const emailResponse = await fetch("/api/sendEmail", {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
@@ -85,6 +85,11 @@ const AdminDashboard = () => {
 					message: `Your reservation has been accepted.`,
 				}),
 			});
+			if (emailResponse.ok) {
+				toast.success("Email sent successfully");
+			} else {
+				toast.error("Failed to send email");
+			}
 		} catch (error) {
 			console.error("Error accepting reservation:", error);
 			toast.error("Failed to accept reservation.");
@@ -116,7 +121,7 @@ const AdminDashboard = () => {
 			);
 			toast.success("Reservation declined successfully!");
 			// Send notification email
-			await fetch("/api/sendEmail", {
+			const emailResponse = await fetch("/api/sendEmail", {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
@@ -127,6 +132,11 @@ const AdminDashboard = () => {
 					message: `Your reservation has been declined.`,
 				}),
 			});
+			if (emailResponse.ok) {
+				toast.success("Email sent successfully");
+			} else {
+				toast.error("Failed to send email");
+			}
 		} catch (error) {
 			console.error("Error declining reservation:", error);
 			toast.error("Failed to decline reservation.");
