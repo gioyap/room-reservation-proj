@@ -42,6 +42,18 @@ const Signup = () => {
 				toast.error("Invalid email address");
 				return;
 			}
+
+			// Password validation regex pattern
+			const passwordRegex =
+				/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/;
+			if (!passwordRegex.test(user.password)) {
+				setError("invalid password");
+				toast.error(
+					"Password must contain at least one uppercase letter, one lowercase letter, one number, and be at least 8 characters long"
+				);
+				return;
+			}
+
 			const res = await axios.post("/api/register", user);
 			console.log(res.data);
 			if (res.status === 200 || res.status === 201) {
@@ -66,99 +78,73 @@ const Signup = () => {
 	};
 
 	return (
-		<div className="min-h-screen">
-			<ToastContainer autoClose={3000} />
-			<div className="grid place-items-center mx-auto max-w-4xl w-full py-10 min-h-screen">
-				<div className="flex justify-center lg:w-1/2 items-center lg:flex-row flex-col gap-6 lg:gap-0 w-full shadow-md rounded-2xl">
-					{/* <div className="lg:w-1/2 w-full bg-[#5D7DF3]">
-            <Image
-              src={bg}
-              alt="bg"
-              className="w-full h-full"
-              width={300}
-              height={300}
-            />
-          </div> */}
-					<div className="flex flex-col w-full justify-center items-center rounded-2xl pt-8 bg-[#eff1f6]">
-						<div className="rounded px-4 py-2 shadow ">
-							<Image src={logo} alt="bg" className=" w-[100px] h-[100px]" />
+		<div className="flex justify-center items-center min-h-screen bg-slate-50 p-8">
+			<ToastContainer autoClose={5000} />
+			<form
+				className="flex flex-col gap-6 md:flex-row bg-white rounded-lg shadow-lg overflow-hidden"
+				onSubmit={handleSubmit}
+			>
+				<div className="bg-[#f93e9e] text-white flex flex-col justify-between w-[500px]">
+					<div className="p-16 pt-40">
+						<h1 className="text-4xl font-extrabold mb-4 whitespace-nowrap">
+							Welcome to Sign Up
+						</h1>
+						<p className="mb-2">Have an account?</p>
+						<div className="pt-6">
+							<a
+								className="p-2 px-6 border-[1px] border-white rounded-full text-white"
+								href="/"
+							>
+								Log In
+							</a>
 						</div>
-						<form
-							className="w-full px-5 py-6 space-y-6"
-							onSubmit={handleSubmit}
-						>
-							<div className="flex flex-col w-full lg:px-5">
-								<label className="text-sm">Fullname</label>
-								<div className="bg-white flex justify-start items-start py-3 px-4 rounded text-slate-600 text-lg mt-1">
-									<User className="w-7 h-7 text-[#A1BDFD]" />
-									<input
-										type={"text"}
-										placeholder="John Doe"
-										name="name"
-										className="outline-none w-full px-4"
-										value={user.name}
-										onChange={handleInputChange}
-									/>
-								</div>
-							</div>
-							<div className="flex flex-col w-full lg:px-5">
-								<label className="text-sm">Email</label>
-								<div className="bg-white flex justify-start items-start py-3 px-4 rounded text-slate-600 text-lg mt-1">
-									<Mail className="w-7 h-7 text-[#A1BDFD]" />
-									<input
-										type={"email"}
-										placeholder="example@123.com"
-										name="email"
-										className="outline-none w-full px-4"
-										value={user.email}
-										onChange={handleInputChange}
-									/>
-								</div>
-							</div>
-							<div className="flex flex-col w-full lg:px-5">
-								<label className="text-sm">Password</label>
-								<div className="bg-white flex justify-start items-start py-3 px-4 rounded text-slate-600 text-lg mt-1">
-									<Lock className="w-7 h-7 text-[#A1BDFD]" />
-									<input
-										type={"password"}
-										placeholder="**********"
-										name="password"
-										className="outline-none w-full px-4"
-										value={user.password}
-										onChange={handleInputChange}
-									/>
-								</div>
-								<div className="grid place-items-center w-full mx-auto pt-7">
-									{error && <p className="py-6 text-lg">{error}</p>}
-									<button
-										type="submit"
-										className="bg-[#5D7DF3] text-white text-lg w-full px-8 py-3 rounded-md uppercase font-semibold"
-									>
-										{loading ? "Processing..." : "Register"}
-									</button>
-								</div>
-								<div className="flex justify-center w-full items-center gap-3 py-3">
-									<div className="border-b border-gray-800 py-2 w-full px-6" />
-									<div className="mt-3">or</div>
-									<div className="border-b border-gray-800 py-2 w-full px-6" />
-								</div>
-								<div
-									onClick={() => signIn("google")}
-									className="rounded px-6 py-2 shadow cursor-pointer bg-gray-50 grid place-items-center mx-auto mb-8"
-								>
-									<Image src={google} alt="bg" width={100} height={100} />
-								</div>
-								<div className="text-lg text-slate-900 font-medium">
-									<span>Have an account?</span>
-									<a href="/" className="text-[#5D7DF3] pl-3 hover:underline">
-										Login
-									</a>
-								</div>
-							</div>
-						</form>
 					</div>
 				</div>
-			</div>
+				<div className="p-12 flex flex-col gap-6 w-[500px]">
+					<h1 className="text-4xl font-bold mb-4">Sign Up</h1>
+					<div>
+						<h2 className="font-extrabold mb-1">Fullname</h2>
+						<input
+							type="text"
+							name="name"
+							className="w-full bg-slate-100 p-3 rounded-full"
+							placeholder="John Doe"
+							value={user.name}
+							onChange={handleInputChange}
+						/>
+					</div>
+					<div>
+						<h2 className="font-extrabold mb-1">Email</h2>
+						<input
+							type="email"
+							name="email"
+							className="w-full bg-slate-100 p-3 rounded-full"
+							placeholder="example@123.com"
+							value={user.email}
+							onChange={handleInputChange}
+						/>
+					</div>
+					<div>
+						<h2 className="font-extrabold mb-1">Password</h2>
+						<input
+							type="password"
+							name="password"
+							className="w-full bg-slate-100 p-3 rounded-full"
+							placeholder="**********"
+							value={user.password}
+							onChange={handleInputChange}
+						/>
+					</div>
+					<div>
+						<button
+							type="submit"
+							className="w-full px-10 py-3 rounded-full bg-[#f93e9e] text-white font-bold"
+						>
+							{loading ? "Processing..." : "Register"}
+						</button>
+					</div>
+				</div>
+			</form>
 		</div>
 	);
 };
