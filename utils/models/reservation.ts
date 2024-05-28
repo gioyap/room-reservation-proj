@@ -3,6 +3,10 @@
 import mongoose from "mongoose";
 
 const ReservationSchema = new mongoose.Schema({
+	email: {
+		type: String,
+		required: [true, "Email is required"],
+	},
 	department: {
 		type: String,
 		required: [true, "Department is required"],
