@@ -66,91 +66,68 @@ const Login = () => {
 		}
 	};
 	return (
-		<div
-			className="min-h-screen"
-			style={{
-				backgroundRepeat: "no-repeat",
-				backgroundSize: "cover",
-			}}
-		>
+		<div className="flex justify-center items-center min-h-screen bg-slate-50 p-8">
 			<ToastContainer autoClose={3000} />
-			<div className="grid place-items-center mx-auto max-w-4xl w-full py-10 min-h-screen">
-				<div className="flex justify-center items-center lg:flex-row flex-col gap-6 lg:gap-0 shadow-md rounded-2xl">
-					<div className=" flex flex-col justify-center items-center py-6 bg-[#eff1f6] rounded-2xl">
-						<div className="rounded shadow">
-							<Image src={bg} alt="bg" className="w-[100px] h-[100px]" />
+			<form
+				className="flex flex-col md:flex-row gap-8 bg-white rounded-lg shadow-lg overflow-hidden"
+				onSubmit={handleSubmit}
+			>
+				<div className="bg-[#f93e9e] text-white flex flex-col justify-between w-[500px]">
+					<div className="p-24 pt-40">
+						<h1 className="text-4xl font-extrabold mb-4 whitespace-nowrap">
+							Welcome to Login
+						</h1>
+						<p className="mb-2">Don't have an account?</p>
+						<div className="pt-6">
+							<a
+								className="p-2 px-6 border-[1px] border-white rounded-full text-white"
+								href="/signup"
+							>
+								Sign Up
+							</a>
 						</div>
-						<div className="text-slate-900 font-medium text-xl pt-5">
-							Hello! Welcome Back
-						</div>
-
-						<form
-							className="w-full px-5 py-6 space-y-6"
-							onSubmit={handleSubmit}
-						>
-							<div className="flex flex-col w-full lg:px-5">
-								<label className="text-sm">Email</label>
-								<div className="bg-white flex justify-start items-start py-3 px-4 rounded text-slate-600 text-lg mt-1">
-									<Mail className="w-7 h-7 text-[#A1BDFD]" />
-									<input
-										type={"email"}
-										placeholder="example@123.com"
-										name="email"
-										className="outline-none w-full px-4"
-										value={user.email}
-										onChange={handleInputChange}
-									/>
-								</div>
-							</div>
-							<div className="flex flex-col w-full lg:px-5">
-								<label className="text-sm">Password</label>
-								<div className="bg-white flex justify-start items-start py-3 px-4 rounded text-slate-600 text-lg mt-1">
-									<Lock className="w-7 h-7 text-[#A1BDFD]" />
-									<input
-										type={"password"}
-										placeholder="**********"
-										name="password"
-										className="outline-none w-full px-4"
-										value={user.password}
-										onChange={handleInputChange}
-									/>
-								</div>
-
-								<div className="grid place-items-center w-full mx-auto pt-7">
-									<button
-										type="submit"
-										className="bg-[#5D7DF3] text-white text-lg w-full px-8 py-3 rounded-md uppercase font-semibold"
-									>
-										Login
-									</button>
-								</div>
-								<div className="flex justify-center w-full items-center gap-3 py-3">
-									<div className="border-b border-gray-800 py-2 w-full px-6" />
-									<div className="mt-3">or</div>
-									<div className="border-b border-gray-800 py-2 w-full px-6" />
-								</div>
-								<div className="flex justify-center items-center w-full gap-8 pb-8">
-									<div
-										onClick={() => signIn("google")}
-										className="rounded px-6 py-2 shadow cursor-pointer bg-gray-50 grid place-items-center mx-auto mb-4"
-									>
-										<Image src={google} alt="bg" width={100} height={100} />
-									</div>{" "}
-								</div>
-								<div className="text-lg text-slate-900 font-medium">
-									<span>Don't have an account?</span>
-									<a
-										href="/signup"
-										className="text-[#5D7DF3] pl-3 hover:underline"
-									>
-										Create an account
-									</a>
-								</div>
-							</div>
-						</form>
 					</div>
 				</div>
-			</div>
+				<div className="p-12 flex flex-col gap-6 w-[500px]">
+					<h1 className="text-4xl font-bold mb-4">Sign In</h1>
+					<div>
+						<h2 className="font-extrabold mb-1">Email</h2>
+						<input
+							type="email"
+							name="email"
+							value={user.email}
+							className="w-full bg-slate-100 p-3 rounded-full"
+							placeholder="example@123.com"
+							onChange={handleInputChange}
+						/>
+					</div>
+					<div>
+						<h2 className="font-extrabold mb-1">Password</h2>
+						<input
+							type="password"
+							name="password"
+							className="w-full bg-slate-100 p-3 rounded-full"
+							placeholder="**********"
+							value={user.password}
+							onChange={handleInputChange}
+						/>
+					</div>
+					<div>
+						<button
+							type="submit"
+							className="w-full px-10 py-3 rounded-full bg-[#f93e9e] text-white font-bold"
+						>
+							Sign in
+						</button>
+					</div>
+					<div
+						onClick={() => signIn("google")}
+						className="flex justify-center cursor-pointer mt-4"
+					>
+						<Image src={google} alt="Sign in with Google" width={80} />
+					</div>
+				</div>
+			</form>
 		</div>
 	);
 };
