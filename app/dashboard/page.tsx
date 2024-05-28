@@ -11,11 +11,16 @@ const Dashboard = () => {
 	const { data: session } = useSession();
 	const [selectedDate, setSelectedDate] = useState(new Date());
 	const [selectedTime, setSelectedTime] = useState(new Date());
+	const [email, setEmail] = useState("");
 	const [department, setDepartment] = useState("");
 	const [name, setName] = useState("");
 	const [title, setTitle] = useState("");
 	const [duration, setDuration] = useState({ hours: "", minutes: "" });
 	const [showMinutesInput, setShowMinutesInput] = useState(false);
+
+	const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		setEmail(e.target.value);
+	};
 
 	const handleDepartmentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setDepartment(e.target.value);
@@ -49,6 +54,7 @@ const Dashboard = () => {
 
 		// Ensure all form fields are filled properly
 		if (
+			!email ||
 			!department ||
 			!name ||
 			!title ||
@@ -69,6 +75,7 @@ const Dashboard = () => {
 		);
 		// Construct the reservation data object
 		const reservationData = {
+			email,
 			department,
 			name,
 			title,
@@ -154,6 +161,22 @@ const Dashboard = () => {
 					</div>
 					{session && (
 						<div className="flex flex-col w-[400px] xl:w-[600px] gap-4">
+							<div>
+								<label
+									className="text-[16px] xl:text-[22px] text-[#e61e84] tracking-normal font-extrabold"
+									htmlFor="email"
+								>
+									Email:
+								</label>
+								<input
+									id="email"
+									type="text"
+									value={email}
+									onChange={handleEmailChange}
+									className="w-full text-[14px] xl:text-[18px] px-4 py-2 border rounded-md"
+									placeholder="example123@gmail.com"
+								/>
+							</div>
 							<div>
 								<label
 									className="text-[16px] xl:text-[22px] text-[#e61e84] tracking-normal font-extrabold"
