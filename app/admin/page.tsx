@@ -17,7 +17,14 @@ interface Reservation {
 	startDate: string;
 	duration: Duration;
 	status: string;
+	email: string;
 }
+
+// interface ApiResponse {
+// 	message: string;
+// 	reservation: Reservation;
+// 	email: string;
+// }
 
 const AdminDashboard = () => {
 	const { data: session } = useSession();
@@ -44,7 +51,7 @@ const AdminDashboard = () => {
 		}
 	}, [session]);
 
-	const handleAccept = async (id: string) => {
+	const handleAccept = async (id: string, email: string) => {
 		try {
 			const response = await fetch(`/api/reservationDB/`, {
 				method: "PUT",
@@ -66,13 +73,25 @@ const AdminDashboard = () => {
 				)
 			);
 			toast.success("Reservation accepted successfully!");
+			// Send notification email
+			await fetch("/api/sendEmail", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					email,
+					subject: "Reservation Accepted",
+					message: `Your reservation has been accepted.`,
+				}),
+			});
 		} catch (error) {
 			console.error("Error accepting reservation:", error);
 			toast.error("Failed to accept reservation.");
 		}
 	};
 
-	const handleDecline = async (id: string) => {
+	const handleDecline = async (id: string, email: string) => {
 		try {
 			const response = await fetch(`/api/reservationDB/`, {
 				method: "PUT",
@@ -86,6 +105,8 @@ const AdminDashboard = () => {
 				throw new Error("Failed to decline reservation");
 			}
 
+			// const data: ApiResponse = await response.json();
+
 			setReservations((prevReservations) =>
 				prevReservations.map((reservation) =>
 					reservation._id === id
@@ -94,6 +115,18 @@ const AdminDashboard = () => {
 				)
 			);
 			toast.success("Reservation declined successfully!");
+			// Send notification email
+			await fetch("/api/sendEmail", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					email,
+					subject: "Reservation Declined",
+					message: `Your reservation has been declined.`,
+				}),
+			});
 		} catch (error) {
 			console.error("Error declining reservation:", error);
 			toast.error("Failed to decline reservation.");
@@ -214,7 +247,9 @@ const AdminDashboard = () => {
 									<td className="px-8 py-3 whitespace-nowrap">
 										<button
 											className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-3 rounded"
-											onClick={() => handleAccept(reservation._id)}
+											onClick={() =>
+												handleAccept(reservation._id, reservation.email)
+											}
 										>
 											Accept
 										</button>
@@ -222,7 +257,9 @@ const AdminDashboard = () => {
 									<td className="px-8 py-3 whitespace-nowrap">
 										<button
 											className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-3 rounded"
-											onClick={() => handleDecline(reservation._id)}
+											onClick={() =>
+												handleDecline(reservation._id, reservation.email)
+											}
 										>
 											Decline
 										</button>

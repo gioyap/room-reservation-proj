@@ -23,10 +23,11 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
 	try {
-		const { department, name, title, startDate, duration } =
+		const { email, department, name, title, startDate, duration } =
 			await request.json();
 
 		if (
+			!email ||
 			!department ||
 			!name ||
 			!title ||
@@ -46,6 +47,7 @@ export async function POST(request: NextRequest) {
 		const formattedStartDate = new Date(startDate);
 
 		const newReservation = new Reservation({
+			email,
 			department,
 			name,
 			title,
@@ -95,10 +97,14 @@ export async function PUT(request: NextRequest) {
 			);
 		}
 
+		// Fetch the user's email from the reservation
+		const { email } = updatedReservation;
+
 		return NextResponse.json(
 			{
 				message: "Reservation status updated successfully!",
 				reservation: updatedReservation,
+				email,
 			},
 			{ status: 200 }
 		);
