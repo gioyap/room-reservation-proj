@@ -4,11 +4,17 @@ import nodemailer from "nodemailer";
 
 export async function POST(request: NextRequest) {
 	try {
-		// Parse the request body to get the new reservation data
+		// // Parse the request body to get the new reservation data
+		// const newData = await request.json();
+
+		// // Log the newData to check its structure
+		// console.log("New Data:", newData);
+
+		// Parse the request body to get the email details
 		const newData = await request.json();
 
-		// Log the newData to check its structure
-		console.log("New Data:", newData);
+		// Log the email details to check its structure
+		console.log("Email details:", newData);
 
 		// Create a transporter
 		const transporter = nodemailer.createTransport({
@@ -18,6 +24,9 @@ export async function POST(request: NextRequest) {
 				pass: process.env.EMAIL_PASS,
 			},
 		});
+
+		let durationHours = newData.duration?.hours ?? "N/A";
+		let durationMinutes = newData.duration?.minutes ?? "N/A";
 
 		// Generate HTML content for the email
 		const htmlContent = `
@@ -40,8 +49,8 @@ export async function POST(request: NextRequest) {
 						<td>${newData.name}</td>
 						<td>${newData.title}</td>
 						<td>${new Date(newData.startDate).toLocaleString()}</td>
-						<td>${newData.duration.hours}</td>
-						<td>${newData.duration.minutes}</td>
+						<td>${durationHours}</td>
+						<td>${durationMinutes}</td>
 					</tr>
 				</tbody>
 			</table>
@@ -50,15 +59,24 @@ export async function POST(request: NextRequest) {
 		`;
 
 		// Define email options
-		const mailOptions = {
+		const adminMailOptions = {
 			from: process.env.EMAIL_USER,
 			to: process.env.ADMIN_EMAIL,
 			subject: "New Reservations",
 			html: htmlContent,
 		};
 
+		// Define email options
+		const userMailOption = {
+			from: process.env.EMAIL_USER,
+			to: newData.email,
+			subject: newData.subject,
+			text: newData.message,
+		};
+
 		// Send the email
-		await transporter.sendMail(mailOptions);
+		await transporter.sendMail(adminMailOptions);
+		await transporter.sendMail(userMailOption);
 
 		return NextResponse.json(
 			{
@@ -68,6 +86,6 @@ export async function POST(request: NextRequest) {
 		);
 	} catch (error: any) {
 		console.error("Failed to send email", error);
-		return NextResponse.json({ error: error.message }), { status: 500 };
+		return NextResponse.json({ error: error.message }, { status: 500 });
 	}
 }
