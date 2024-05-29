@@ -1,7 +1,7 @@
 "use client";
 
 import { signOut, useSession } from "next-auth/react";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Calendar from "@/components/Calendar"; // Import Calendar component
 import "react-datepicker/dist/react-datepicker.css";
 import { toast, ToastContainer } from "react-toastify";
@@ -17,6 +17,7 @@ const Dashboard = () => {
 	const [title, setTitle] = useState("");
 	const [duration, setDuration] = useState({ hours: "", minutes: "" });
 	const [showMinutesInput, setShowMinutesInput] = useState(false);
+	const [reservations, setReservations] = useState<[]>([]);
 
 	const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setEmail(e.target.value);
@@ -41,6 +42,24 @@ const Dashboard = () => {
 			[name]: value,
 		}));
 	};
+	//just to get the data of reservation details
+	useEffect(() => {
+		const fetchReservations = async () => {
+			try {
+				const response = await fetch("/api/reservationDB");
+				if (response.ok) {
+					const data = await response.json();
+					setReservations(data.reservations);
+				} else {
+					toast.error("Failed to fetch reservations");
+				}
+			} catch (error) {
+				toast.error("An error occurred while fetching reservations");
+			}
+		};
+
+		fetchReservations();
+	}, []);
 
 	const formattedSelectedTime = selectedTime.toLocaleTimeString([], {
 		hour: "2-digit",
@@ -52,7 +71,6 @@ const Dashboard = () => {
 	const handleContinue = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 
-		// Ensure all form fields are filled properly
 		if (
 			!email ||
 			!department ||
@@ -65,6 +83,7 @@ const Dashboard = () => {
 			toast.error("Please fill out all required fields.");
 			return;
 		}
+
 		const combinedDateTime = new Date(
 			selectedDate.getFullYear(),
 			selectedDate.getMonth(),
@@ -73,21 +92,60 @@ const Dashboard = () => {
 			selectedTime.getMinutes(),
 			selectedTime.getSeconds()
 		);
-		// Construct the reservation data object
+
+		//this is the function for having a restriction in reserved date and time
+		//now the user has no ability to reserve in accepted reservation
+		const newEndTime = new Date(combinedDateTime);
+		newEndTime.setHours(newEndTime.getHours() + Number(duration.hours));
+		newEndTime.setMinutes(
+			newEndTime.getMinutes() + (Number(duration.minutes) || 0)
+		);
+
+		for (const reservation of reservations as {
+			_id: string;
+			email: string;
+			department: string;
+			name: string;
+			title: string;
+			startDate: string;
+			duration: {
+				hours: number;
+				minutes: number;
+			};
+			status: string;
+		}[]) {
+			const resStart = new Date(reservation.startDate);
+			const resEnd = new Date(resStart);
+			resEnd.setHours(resEnd.getHours() + reservation.duration.hours);
+			resEnd.setMinutes(resEnd.getMinutes() + reservation.duration.minutes);
+
+			if (
+				(combinedDateTime >= resStart && combinedDateTime < resEnd) ||
+				(newEndTime > resStart && newEndTime <= resEnd) ||
+				(combinedDateTime <= resStart && newEndTime >= resEnd)
+			) {
+				if (reservation.status === "Accepted") {
+					toast.error(
+						"This date and time is already reserved and accepted. Please choose another date or time."
+					);
+					return;
+				}
+			}
+		}
+
 		const reservationData = {
 			email,
 			department,
 			name,
 			title,
-			startDate: combinedDateTime, // Use selectedDate instead of startDate
+			startDate: combinedDateTime,
 			duration: {
 				hours: Number(duration.hours),
-				minutes: Number(duration.minutes) || 0, // Default to 0 if minutes are not specified
+				minutes: Number(duration.minutes) || 0,
 			},
 		};
 
 		try {
-			// Send reservation data to backend route for saving to MongoDB
 			const response = await fetch("/api/reservationDB", {
 				method: "POST",
 				headers: {
@@ -99,7 +157,6 @@ const Dashboard = () => {
 			if (response.ok) {
 				toast.success("Reservation saved successfully!");
 
-				// After saving the reservation, send the email
 				const emailResponse = await fetch("/api/sendEmail", {
 					method: "POST",
 					headers: {
@@ -113,11 +170,8 @@ const Dashboard = () => {
 				} else {
 					toast.error("Failed to send email");
 				}
-
-				// Handle success scenario
 			} else {
 				toast.error("Failed to save reservation: " + response.statusText);
-				// Handle error scenario
 			}
 		} catch (error) {
 			if (error instanceof Error) {
@@ -127,13 +181,11 @@ const Dashboard = () => {
 			}
 		}
 
-		// Log the reservation details
 		console.log("Reservation Details:", reservationData);
 	};
 
 	const handleShowMinutesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setShowMinutesInput(e.target.checked);
-		// Reset minutes when hiding the input
 		if (!e.target.checked) {
 			setDuration((prevDuration) => ({
 				...prevDuration,
@@ -144,7 +196,7 @@ const Dashboard = () => {
 
 	return (
 		<div className="min-h-screen py-0">
-			<ToastContainer autoClose={3000} />
+			<ToastContainer autoClose={5000} />
 			{session && (
 				<div className="flex flex-col gap-2 bg-[#e61e84] py-2 items-center">
 					<h1 className="text-2xl font-bold text-white mb-2">
@@ -305,9 +357,10 @@ const Dashboard = () => {
 							onChange={setSelectedDate}
 							selectedTime={selectedTime}
 							onTimeChange={setSelectedTime}
+							reservations={reservations}
 						/>
 					</div>
-					{/* Selected date and time display */}
+
 					<div className="mt-4">
 						<p className="text-lg font-semibold text-[#e61e84]">
 							Selected Date:
@@ -320,8 +373,8 @@ const Dashboard = () => {
 						</p>
 						<p>{formattedSelectedTime}</p>
 					</div>
+
 					<form onSubmit={handleContinue}>
-						{/* Your form inputs and button here */}
 						<button
 							type="submit"
 							className="bg-[#e61e84] mt-2 hover:bg-[#3fa8ee] xl:text-[18px] font-extrabold text-white rounded text-[12px] w-auto p-2 uppercase"
