@@ -65,6 +65,10 @@ const AdminDashboard = () => {
 				throw new Error("Failed to accept reservation");
 			}
 
+			const updatedReservation = reservations.find(
+				(reservation) => reservation._id === id
+			);
+
 			setReservations((prevReservations) =>
 				prevReservations.map((reservation) =>
 					reservation._id === id
@@ -72,7 +76,13 @@ const AdminDashboard = () => {
 						: reservation
 				)
 			);
+
 			toast.success("Reservation accepted successfully!");
+
+			if (!updatedReservation) {
+				throw new Error("Reservation not found");
+			}
+
 			// Send notification email
 			const emailResponse = await fetch("/api/sendEmail", {
 				method: "POST",
@@ -82,9 +92,18 @@ const AdminDashboard = () => {
 				body: JSON.stringify({
 					email,
 					subject: "Reservation Accepted",
-					message: `Your reservation has been accepted.`,
+					message: `
+						Your reservation has been accepted.
+						Department: ${updatedReservation.department}
+						Name: ${updatedReservation.name}
+						Room: ${updatedReservation.title}
+						Start Date: ${new Date(updatedReservation.startDate).toLocaleString()}
+						Duration (hours): ${updatedReservation.duration.hours}
+						Duration (minutes): ${updatedReservation.duration.minutes}
+					`,
 				}),
 			});
+
 			if (emailResponse.ok) {
 				toast.success("Email sent successfully");
 			} else {
@@ -110,7 +129,9 @@ const AdminDashboard = () => {
 				throw new Error("Failed to decline reservation");
 			}
 
-			// const data: ApiResponse = await response.json();
+			const updatedReservation = reservations.find(
+				(reservation) => reservation._id === id
+			);
 
 			setReservations((prevReservations) =>
 				prevReservations.map((reservation) =>
@@ -119,7 +140,13 @@ const AdminDashboard = () => {
 						: reservation
 				)
 			);
+
 			toast.success("Reservation declined successfully!");
+
+			if (!updatedReservation) {
+				throw new Error("Reservation not found");
+			}
+
 			// Send notification email
 			const emailResponse = await fetch("/api/sendEmail", {
 				method: "POST",
@@ -129,9 +156,18 @@ const AdminDashboard = () => {
 				body: JSON.stringify({
 					email,
 					subject: "Reservation Declined",
-					message: `Your reservation has been declined.`,
+					message: `
+						Your reservation has been declined.
+						Department: ${updatedReservation.department}
+						Name: ${updatedReservation.name}
+						Room: ${updatedReservation.title}
+						Start Date: ${new Date(updatedReservation.startDate).toLocaleString()}
+						Duration (hours): ${updatedReservation.duration.hours}
+						Duration (minutes): ${updatedReservation.duration.minutes}
+					`,
 				}),
 			});
+
 			if (emailResponse.ok) {
 				toast.success("Email sent successfully");
 			} else {
