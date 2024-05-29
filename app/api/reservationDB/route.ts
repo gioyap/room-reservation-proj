@@ -9,8 +9,6 @@ export async function GET(request: NextRequest) {
 	try {
 		// Fetch reservation data from the database
 		const reservations = await Reservation.find();
-
-		// Return the fetched reservation data in the response
 		return NextResponse.json({ reservations }, { status: 200 });
 	} catch (error: any) {
 		console.error("Error fetching reservations:", error);
