@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
 		const newData = await request.json();
 
 		// Log the email details to check its structure
-		console.log("Email details:", newData);
+		// console.log("Email details:", newData);
 
 		// Create a transporter
 		const transporter = nodemailer.createTransport({
