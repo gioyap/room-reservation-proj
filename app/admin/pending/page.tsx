@@ -1,9 +1,12 @@
+// pages/admin/accepted.tsx
+
 "use client";
+
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Sidebar from "@/components/Sidebar";
+import Sidebar from "@/components/Sidebar"; // Ensure you have this Sidebar component
 
 interface Duration {
 	hours: number;
@@ -21,14 +24,8 @@ interface Reservation {
 	email: string;
 }
 
-// interface ApiResponse {
-// 	message: string;
-// 	reservation: Reservation;
-// 	email: string;
-// }
-
-const AdminDashboard = () => {
-	const { data: session } = useSession();
+const PendingPage = () => {
+	const { data: session, status } = useSession();
 	const [reservations, setReservations] = useState<Reservation[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [currentPage, setCurrentPage] = useState(1);
@@ -37,7 +34,7 @@ const AdminDashboard = () => {
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
-				const response = await fetch("/api/reservationDB");
+				const response = await fetch("/api/status/pending"); // Adjust your API endpoint accordingly
 				const data = await response.json();
 				setReservations(data.reservations);
 			} catch (error) {
@@ -54,7 +51,7 @@ const AdminDashboard = () => {
 
 	const handleAccept = async (id: string, email: string) => {
 		try {
-			const response = await fetch(`/api/reservationDB/`, {
+			const response = await fetch(`/api/reservationDB?status=Pending`, {
 				method: "PUT",
 				headers: {
 					"Content-Type": "application/json",
@@ -180,18 +177,6 @@ const AdminDashboard = () => {
 		}
 	};
 
-	// if (!session || !session.user.isAdmin) {
-	// 	return (
-	// 		<p className="text-center text-red-500 mt-20 text-xl">Access Denied</p>
-	// 	);
-	// }
-
-	if (loading) {
-		return (
-			<p className="text-extrabold text-white mt-20 text-xl">Loading...</p>
-		);
-	}
-
 	const indexOfLastReservation = currentPage * reservationsPerPage;
 	const indexOfFirstReservation = indexOfLastReservation - reservationsPerPage;
 	const currentReservations = reservations.slice(
@@ -201,14 +186,20 @@ const AdminDashboard = () => {
 
 	const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
+	if (loading) {
+		return (
+			<p className="text-center text-gray-500 mt-20 text-xl">Loading...</p>
+		);
+	}
+
 	return (
 		<div className="flex">
 			<ToastContainer autoClose={4000} />
-			<Sidebar />
+			<Sidebar /> {/* Use the Sidebar component */}
 			<div className="flex-1 p-8 bg-gray-100 min-h-screen">
 				<div className=" pb-6">
 					<h1 className=" text-4xl font-extrabold text-[#e81e83]">
-						Admin Dashboard
+						Pending Records
 					</h1>
 				</div>
 				<div className="w-full max-w-8xl mx-auto bg-white shadow-md rounded-lg overflow-hidden">
@@ -329,4 +320,4 @@ const AdminDashboard = () => {
 	);
 };
 
-export default AdminDashboard;
+export default PendingPage;
