@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import Reservation from "../utils/models/reservation";
+
 import {
 	format,
 	startOfMonth,
@@ -15,7 +17,7 @@ interface Reservation {
 	department: string;
 	name: string;
 	title: string;
-	startDate: string;
+	startDate: Date;
 	duration: {
 		hours: number;
 		minutes: number;
@@ -28,6 +30,7 @@ interface CalendarProps {
 	selectedTime: Date;
 	onChange: (date: Date) => void;
 	onTimeChange: (time: Date) => void;
+	reservations: Reservation[];
 }
 
 const Calendar: React.FC<CalendarProps> = ({
@@ -172,7 +175,11 @@ const Calendar: React.FC<CalendarProps> = ({
 				/>
 			</div>
 			{selectedReservation && selectedReservation.length > 0 && (
-				<div className="reservation-details bg-white lg:p-2 xl:p-4 rounded shadow absolute lg:ml-[300px] lg:mt-[150px] xl:ml-[485px] xl:mt-[135px]">
+				<div
+					className={`reservation-details bg-white lg:p-2 xl:p-4 rounded shadow absolute lg:ml-[300px] lg:mt-[150px] xl:ml-[485px] xl:mt-[135px] ${
+						selectedReservation.length >= 4 ? "overflow-y-auto max-h-80" : ""
+					}`}
+				>
 					<h2 className="lg:text-sm xl:text-lg font-extrabold text-[#e61e84]">
 						Reservation Details
 					</h2>
