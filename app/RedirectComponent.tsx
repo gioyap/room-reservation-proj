@@ -12,7 +12,13 @@ const RedirectComponent = () => {
 		if (status === "authenticated") {
 			console.log("test", status);
 			if (session?.user?.isAdmin) {
-				router.push("/admin");
+				const allowedPaths = [
+					"/admin",
+					"/admin/accepted",
+					"/admin/decline",
+					"/admin/pending",
+				];
+				//router.push("/admin");
 			} else {
 				router.push("/dashboard");
 			}
