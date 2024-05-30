@@ -11,17 +11,22 @@ const RedirectComponent = () => {
 	useEffect(() => {
 		if (status === "authenticated") {
 			console.log("test", status);
+			const currentPath = window.location.pathname;
 			if (session?.user?.isAdmin) {
 				const allowedPaths = [
 					"/admin",
 					"/admin/accepted",
-					"/admin/decline",
+					"/admin/declined",
 					"/admin/pending",
 				];
-				//router.push("/admin");
+				if (!allowedPaths.includes(currentPath)) {
+					router.push("/admin");
+				}
 			} else {
 				router.push("/dashboard");
 			}
+		} else if (status === "unauthenticated") {
+			router.push("/");
 		}
 	}, [session, status, router]);
 
