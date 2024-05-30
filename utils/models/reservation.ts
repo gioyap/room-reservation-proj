@@ -37,6 +37,10 @@ const ReservationSchema = new mongoose.Schema({
 		type: String,
 		default: "Pending",
 	},
+	description: {
+		type: String,
+		required: [true, "Description is required"],
+	},
 });
 
 const Reservation =
