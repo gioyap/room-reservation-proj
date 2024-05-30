@@ -4,9 +4,6 @@ import nodemailer from "nodemailer";
 
 export async function POST(request: NextRequest) {
 	try {
-		// // Parse the request body to get the new reservation data
-		// const newData = await request.json();
-
 		// // Log the newData to check its structure
 		// console.log("New Data:", newData);
 
@@ -27,6 +24,11 @@ export async function POST(request: NextRequest) {
 
 		let durationHours = newData.duration?.hours ?? "N/A";
 		let durationMinutes = newData.duration?.minutes ?? "N/A";
+
+		const descriptionContent = newData.description
+			? `<p>This is from user, he/she have a concern:</p>
+			<p>${newData.description}</p>`
+			: "";
 
 		// Generate HTML content for the email
 		const htmlContent = `
@@ -54,11 +56,12 @@ export async function POST(request: NextRequest) {
 					</tr>
 				</tbody>
 			</table>
+			${descriptionContent}	
 			<p>This is new reservation, please let me know if this is accepted or decline</p>
 			<p>Go to the Admin Dashboard to able to accepted or deny the request. Thank you</p>
 		`;
 
-		// Define email options
+		// the user able to notify the admin
 		const adminMailOptions = {
 			from: process.env.EMAIL_USER,
 			to: process.env.ADMIN_EMAIL,
@@ -66,7 +69,7 @@ export async function POST(request: NextRequest) {
 			html: htmlContent,
 		};
 
-		// Define email options
+		// the admin able to notify the user
 		const userMailOption = {
 			from: process.env.EMAIL_USER,
 			to: newData.email,
