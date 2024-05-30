@@ -16,8 +16,10 @@ const Dashboard = () => {
 	const [name, setName] = useState("");
 	const [title, setTitle] = useState("");
 	const [duration, setDuration] = useState({ hours: "", minutes: "" });
+	const [description, setDescription] = useState("");
 	const [showMinutesInput, setShowMinutesInput] = useState(false);
 	const [reservations, setReservations] = useState<[]>([]);
+	const [showDescription, setShowDescription] = useState(false);
 
 	const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setEmail(e.target.value);
@@ -42,6 +44,17 @@ const Dashboard = () => {
 			[name]: value,
 		}));
 	};
+
+	const handleDescriptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		setDescription(e.target.value);
+	};
+
+	const handleShowDescriptionChange = (
+		e: React.ChangeEvent<HTMLInputElement>
+	) => {
+		setShowDescription(e.target.checked);
+	};
+
 	//just to get the data of reservation details
 	useEffect(() => {
 		const fetchReservations = async () => {
@@ -143,6 +156,7 @@ const Dashboard = () => {
 				hours: Number(duration.hours),
 				minutes: Number(duration.minutes) || 0,
 			},
+			description,
 		};
 
 		try {
@@ -296,6 +310,43 @@ const Dashboard = () => {
 									max="24"
 								/>
 							</div>
+
+							<div className="mt-2">
+								<label
+									className="text-[16px] xl:text-[18px] tracking-normal"
+									htmlFor="showDescription"
+								>
+									Do you have any concern?
+								</label>
+								<input
+									id="showDescription"
+									name="showDescription"
+									type="checkbox"
+									checked={showDescription}
+									onChange={handleShowDescriptionChange}
+									className="ml-2"
+								/>
+								<span className="text-[16px] xl:text-[18px] ml-1">Yes</span>
+							</div>
+
+							{showDescription && (
+								<div>
+									<label
+										className="text-[16px] xl:text-[22px] text-[#e61e84] tracking-normal font-extrabold"
+										htmlFor="description"
+									>
+										Description:
+									</label>
+									<input
+										id="description"
+										type="description"
+										value={description}
+										onChange={handleDescriptionChange}
+										className="w-full text-[14px] xl:text-[18px] px-4 py-2 border rounded-md"
+										placeholder="Enter reservation title"
+									/>
+								</div>
+							)}
 
 							<div className="mt-2">
 								<label

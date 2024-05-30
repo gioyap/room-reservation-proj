@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
 	try {
-		const { email, department, name, title, startDate, duration } =
+		const { email, department, name, title, startDate, duration, description } =
 			await request.json();
 
 		if (
@@ -51,6 +51,7 @@ export async function POST(request: NextRequest) {
 			title,
 			startDate: formattedStartDate,
 			duration,
+			description,
 		});
 
 		await newReservation.save();
@@ -67,7 +68,7 @@ export async function POST(request: NextRequest) {
 		return NextResponse.json({ error: error.message }, { status: 500 });
 	}
 }
-
+// this put logic is for the admin able to click the accept and decline button
 export async function PUT(request: NextRequest) {
 	try {
 		// const id = request.url.split("/").pop(); // Extract ID from URL
