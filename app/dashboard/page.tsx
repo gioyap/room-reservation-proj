@@ -33,7 +33,7 @@ const Dashboard = () => {
 		setName(e.target.value);
 	};
 
-	const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handletitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setTitle(e.target.value);
 	};
 
@@ -282,14 +282,38 @@ const Dashboard = () => {
 								>
 									Room:
 								</label>
-								<input
-									id="title"
-									type="text"
-									value={title}
-									onChange={handleTitleChange}
-									className="w-full text-[14px] xl:text-[18px] px-4 py-2 border rounded-md"
-									placeholder="Enter reservation title"
-								/>
+								<div className="flex gap-2 pt-2">
+									<label className="text-[#e61e84]">
+										<input
+											type="radio"
+											value="Energy"
+											checked={title === "Energy"}
+											onChange={handletitleChange}
+											className="mr-1"
+										/>
+										Energy
+									</label>
+									<label className="text-[#e61e84]">
+										<input
+											type="radio"
+											value="Focus"
+											checked={title === "Focus"}
+											onChange={handletitleChange}
+											className="mr-1"
+										/>
+										Focus
+									</label>
+									<label className="text-[#e61e84]">
+										<input
+											type="radio"
+											value="Lecture"
+											checked={title === "Lecture"}
+											onChange={handletitleChange}
+											className="mr-1"
+										/>
+										Lecture
+									</label>
+								</div>
 							</div>
 							<div>
 								<label
