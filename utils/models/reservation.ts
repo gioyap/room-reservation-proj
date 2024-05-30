@@ -23,16 +23,6 @@ const ReservationSchema = new mongoose.Schema({
 		type: Date,
 		required: [true, "Start date is required"],
 	},
-	duration: {
-		hours: {
-			type: Number,
-			required: [true, "Duration hours are required"],
-		},
-		minutes: {
-			type: Number,
-			default: 0,
-		},
-	},
 	status: {
 		type: String,
 		default: "Pending",
