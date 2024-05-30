@@ -3,6 +3,18 @@
 import mongoose from "mongoose";
 
 const ReservationSchema = new mongoose.Schema({
+	email: {
+		type: String,
+		required: [true, "Email is required"],
+	},
+	department: {
+		type: String,
+		required: [true, "Department is required"],
+	},
+	name: {
+		type: String,
+		required: [true, "Name is required"],
+	},
 	title: {
 		type: String,
 		required: [true, "Title is required"],
@@ -20,6 +32,14 @@ const ReservationSchema = new mongoose.Schema({
 			type: Number,
 			default: 0,
 		},
+	},
+	status: {
+		type: String,
+		default: "Pending",
+	},
+	description: {
+		type: String,
+		required: [true, "Description is required"],
 	},
 });
 

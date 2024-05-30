@@ -5,11 +5,34 @@ import Reservation from "@/utils/models/reservation";
 
 connect();
 
+export async function GET(request: NextRequest) {
+	try {
+		// Fetch reservation data from the database
+		const reservations = await Reservation.find();
+		return NextResponse.json({ reservations }, { status: 200 });
+	} catch (error: any) {
+		console.error("Error fetching reservations:", error);
+		return NextResponse.json(
+			{ error: "Failed to fetch reservations" },
+			{ status: 500 }
+		);
+	}
+}
+
 export async function POST(request: NextRequest) {
 	try {
-		const { title, startDate, duration } = await request.json();
+		const { email, department, name, title, startDate, duration, description } =
+			await request.json();
 
-		if (!title || !startDate || !duration || !duration.hours) {
+		if (
+			!email ||
+			!department ||
+			!name ||
+			!title ||
+			!startDate ||
+			!duration ||
+			!duration.hours
+		) {
 			return NextResponse.json(
 				{
 					error: "Missing required fields: title, startDate, or duration.hours",
@@ -18,10 +41,17 @@ export async function POST(request: NextRequest) {
 			);
 		}
 
+		// Ensure the startDate is in the correct format
+		const formattedStartDate = new Date(startDate);
+
 		const newReservation = new Reservation({
+			email,
+			department,
+			name,
 			title,
-			startDate,
+			startDate: formattedStartDate,
 			duration,
+			description,
 		});
 
 		await newReservation.save();
@@ -35,6 +65,50 @@ export async function POST(request: NextRequest) {
 		);
 	} catch (error: any) {
 		console.error("Error saving reservation:", error);
+		return NextResponse.json({ error: error.message }, { status: 500 });
+	}
+}
+// this put logic is for the admin able to click the accept and decline button
+export async function PUT(request: NextRequest) {
+	try {
+		// const id = request.url.split("/").pop(); // Extract ID from URL
+		// const { status } = await request.json();
+		const { id, status } = await request.json();
+
+		if (!id || !status) {
+			return NextResponse.json(
+				{ error: "Missing required fields: id or status" },
+				{ status: 400 }
+			);
+		}
+
+		// Update the status of the reservation in the database
+		const updatedReservation = await Reservation.findByIdAndUpdate(
+			id,
+			{ status },
+			{ new: true } // Return the updated document
+		);
+
+		if (!updatedReservation) {
+			return NextResponse.json(
+				{ error: "Reservation not found" },
+				{ status: 404 }
+			);
+		}
+
+		// Fetch the user's email from the reservation
+		const { email } = updatedReservation;
+
+		return NextResponse.json(
+			{
+				message: "Reservation status updated successfully!",
+				reservation: updatedReservation,
+				email,
+			},
+			{ status: 200 }
+		);
+	} catch (error: any) {
+		console.error("Error updating reservation status:", error);
 		return NextResponse.json({ error: error.message }, { status: 500 });
 	}
 }
