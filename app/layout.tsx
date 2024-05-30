@@ -1,4 +1,5 @@
 import AuthProvider from "@/components/Provider";
+import RedirectComponent from "./RedirectComponent"; // Import the RedirectComponent
 import "./globals.css";
 import type { Metadata } from "next";
 import { Mulish } from "next/font/google";
@@ -22,7 +23,10 @@ export default function RootLayout({
 				suppressHydrationWarning
 				className={mulish.className}
 			>
-				<AuthProvider>{children}</AuthProvider>
+				<AuthProvider>
+					<RedirectComponent /> {/* Add the redirection logic component */}
+					{children}
+				</AuthProvider>
 			</body>
 		</html>
 	);

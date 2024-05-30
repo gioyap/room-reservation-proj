@@ -1,10 +1,11 @@
 import mongoose from "mongoose";
 
 let isConnected = false;
+let db: mongoose.Connection | null = null;
 
 export async function connect() {
-	if (isConnected) {
-		return;
+	if (isConnected && db) {
+		return db;
 	}
 
 	try {
@@ -19,6 +20,9 @@ export async function connect() {
 			console.log("MongoDB error: " + err);
 			process.exit();
 		});
+
+		db = mongoose.connection;
+		return db;
 	} catch (error) {
 		console.log(error);
 		process.exit();
