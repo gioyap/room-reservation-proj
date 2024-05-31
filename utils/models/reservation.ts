@@ -19,9 +19,11 @@ const ReservationSchema = new mongoose.Schema({
 		type: String,
 		required: [true, "Title is required"],
 	},
-	startDate: {
+	fromDate: {
 		type: Date,
-		required: [true, "Start date is required"],
+	},
+	toDate: {
+		type: Date,
 	},
 	status: {
 		type: String,
@@ -29,7 +31,6 @@ const ReservationSchema = new mongoose.Schema({
 	},
 	description: {
 		type: String,
-		required: [true, "Description is required"],
 	},
 });
 

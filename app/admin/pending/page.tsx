@@ -8,18 +8,13 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Sidebar from "@/components/Sidebar"; // Ensure you have this Sidebar component
 
-interface Duration {
-	hours: number;
-	minutes: number;
-}
-
 interface Reservation {
 	_id: string;
 	department: string;
 	name: string;
 	title: string;
-	startDate: string;
-	duration: Duration;
+	fromDate: string;
+	toDate: string;
 	status: string;
 	email: string;
 }
@@ -95,9 +90,8 @@ const PendingPage = () => {
 						Department: ${updatedReservation.department}
 						Name: ${updatedReservation.name}
 						Room: ${updatedReservation.title}
-						Start Date: ${new Date(updatedReservation.startDate).toLocaleString()}
-						Duration (hours): ${updatedReservation.duration.hours}
-						Duration (minutes): ${updatedReservation.duration.minutes}
+						From: ${new Date(updatedReservation.fromDate).toLocaleString()}
+						To: ${new Date(updatedReservation.toDate).toLocaleString()}
 					`,
 				}),
 			});
@@ -159,9 +153,8 @@ const PendingPage = () => {
 						Department: ${updatedReservation.department}
 						Name: ${updatedReservation.name}
 						Room: ${updatedReservation.title}
-						Start Date: ${new Date(updatedReservation.startDate).toLocaleString()}
-						Duration (hours): ${updatedReservation.duration.hours}
-						Duration (minutes): ${updatedReservation.duration.minutes}
+						From: ${new Date(updatedReservation.fromDate).toLocaleString()}
+						To: ${new Date(updatedReservation.toDate).toLocaleString()}
 					`,
 				}),
 			});
@@ -261,13 +254,10 @@ const PendingPage = () => {
 										{reservation.title}
 									</td>
 									<td className="px-8 py-3 whitespace-nowrap">
-										{new Date(reservation.startDate).toLocaleString()}
+										{new Date(reservation.fromDate).toLocaleString()}
 									</td>
 									<td className="px-8 py-3 whitespace-nowrap">
-										{reservation.duration.hours}
-									</td>
-									<td className="px-8 py-3 whitespace-nowrap">
-										{reservation.duration.minutes}
+										{new Date(reservation.toDate).toLocaleString()}
 									</td>
 									<td className="px-8 py-3 whitespace-nowrap">
 										{reservation.status === "Accepted" ||

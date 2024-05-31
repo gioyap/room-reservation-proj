@@ -21,37 +21,30 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
 	try {
-		const { email, department, name, title, startDate, duration, description } =
+		const { email, department, name, title, fromDate, toDate, description } =
 			await request.json();
 
-		if (
-			!email ||
-			!department ||
-			!name ||
-			!title ||
-			!startDate ||
-			!duration ||
-			!duration.hours
-		) {
+		if (!email || !department || !name || !title || !fromDate || !toDate) {
 			return NextResponse.json(
 				{
-					error: "Missing required fields: title, startDate, or duration.hours",
+					error: "Missing required fields",
 				},
 				{ status: 400 }
 			);
 		}
 
 		// Ensure the startDate is in the correct format
-		const formattedStartDate = new Date(startDate);
+		const formattedStartDate = new Date(fromDate);
+		const formattedToDate = new Date(toDate);
 
 		const newReservation = new Reservation({
 			email,
 			department,
 			name,
 			title,
-			startDate: formattedStartDate,
-			duration,
-			description,
+			fromDate: formattedStartDate,
+			toDate: formattedToDate,
+			description: description || "",
 		});
 
 		await newReservation.save();
