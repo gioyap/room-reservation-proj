@@ -8,18 +8,13 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Sidebar from "@/components/Sidebar"; // Ensure you have this Sidebar component
 
-interface Duration {
-	hours: number;
-	minutes: number;
-}
-
 interface Reservation {
 	_id: string;
 	department: string;
 	name: string;
 	title: string;
-	startDate: string;
-	duration: Duration;
+	fromDate: string;
+	toDate: string;
 	status: string;
 	email: string;
 }
@@ -104,13 +99,10 @@ const AcceptedPage = () => {
 									Room
 								</th>
 								<th className="pl-8 py-3 text-left text-xs font-extrabold text-white uppercase tracking-wider">
-									Start Date
+									From
 								</th>
 								<th className="pl-8 py-3 text-left text-xs font-extrabold text-white uppercase tracking-wider">
-									Duration (hours)
-								</th>
-								<th className="pl-8 py-3 text-left text-xs font-extrabold text-white uppercase tracking-wider">
-									Duration (minutes)
+									To
 								</th>
 								<th className="pl-8 py-3 text-left text-xs font-extrabold text-white uppercase tracking-wider">
 									Status
@@ -130,13 +122,10 @@ const AcceptedPage = () => {
 										{reservation.title}
 									</td>
 									<td className="px-8 py-3 whitespace-nowrap">
-										{new Date(reservation.startDate).toLocaleString()}
+										{new Date(reservation.fromDate).toLocaleString()}
 									</td>
 									<td className="px-8 py-3 whitespace-nowrap">
-										{reservation.duration.hours}
-									</td>
-									<td className="px-8 py-3 whitespace-nowrap">
-										{reservation.duration.minutes}
+										{new Date(reservation.toDate).toLocaleString()}
 									</td>
 									<td className="px-8 py-3 whitespace-nowrap">
 										{reservation.status}

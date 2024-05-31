@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from "react";
-import Reservation from "../utils/models/reservation";
-
 import {
 	format,
 	startOfMonth,
@@ -17,11 +15,8 @@ interface Reservation {
 	department: string;
 	name: string;
 	title: string;
-	startDate: Date;
-	duration: {
-		hours: number;
-		minutes: number;
-	};
+	fromDate: Date;
+	toDate: Date;
 	status: string;
 }
 
@@ -30,6 +25,8 @@ interface CalendarProps {
 	selectedTime: Date;
 	onChange: (date: Date) => void;
 	onTimeChange: (time: Date) => void;
+	toSelectedTime: Date;
+	onToTimeChange: (time: Date) => void;
 	reservations: Reservation[];
 }
 
@@ -37,10 +34,12 @@ const Calendar: React.FC<CalendarProps> = ({
 	selectedDate,
 	onChange,
 	onTimeChange,
+	toSelectedTime,
+	onToTimeChange,
 }) => {
 	const monthStart = startOfMonth(selectedDate);
 	const monthEnd = endOfMonth(selectedDate);
-	const startDate = startOfWeek(monthStart);
+	const fromDate = startOfWeek(monthStart);
 	const endDate = endOfWeek(monthEnd);
 
 	const [bookedDates, setBookedDates] = useState<Reservation[]>([]);
@@ -80,7 +79,7 @@ const Calendar: React.FC<CalendarProps> = ({
 	};
 
 	const days: Date[] = [];
-	let day = startDate;
+	let day = fromDate;
 	while (day <= endDate) {
 		days.push(day);
 		day = addDays(day, 1);
@@ -92,11 +91,11 @@ const Calendar: React.FC<CalendarProps> = ({
 	};
 
 	const handleBookedDayClick = (reservation: Reservation) => {
-		const date = new Date(reservation.startDate);
+		const date = new Date(reservation.fromDate);
 		onChange(date);
 
 		const reservationsForDate = bookedDates.filter(
-			(res) => new Date(res.startDate).toDateString() === date.toDateString()
+			(res) => new Date(res.fromDate).toDateString() === date.toDateString()
 		);
 		setSelectedReservation(reservationsForDate);
 	};
@@ -113,10 +112,21 @@ const Calendar: React.FC<CalendarProps> = ({
 		onTimeChange(newSelectedTime);
 	};
 
+	const handleToTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+		const { value } = event.target;
+		const time = parse(value, "HH:mm", new Date());
+		const utcTime =
+			startOfDay(selectedDate).getTime() +
+			time.getHours() * 3600000 +
+			time.getMinutes() * 60000;
+		const newToSelectedTime = new Date(utcTime);
+		onToTimeChange(newToSelectedTime);
+	};
+
 	const isDateBooked = (date: Date) => {
 		return bookedDates.some(
 			(bookedDate) =>
-				new Date(bookedDate.startDate).toDateString() === date.toDateString()
+				new Date(bookedDate.fromDate).toDateString() === date.toDateString()
 		);
 	};
 
@@ -137,7 +147,7 @@ const Calendar: React.FC<CalendarProps> = ({
 					{days.map((day, index) => {
 						const reservation = bookedDates.find(
 							(res) =>
-								new Date(res.startDate).toDateString() === day.toDateString()
+								new Date(res.fromDate).toDateString() === day.toDateString()
 						);
 						return (
 							<div
@@ -164,7 +174,7 @@ const Calendar: React.FC<CalendarProps> = ({
 			<div className="time-table bg-white p-4 rounded shadow">
 				<div className="header text-center mb-4">
 					<span className="text-lg font-extrabold text-[#e61e84]">
-						Select Time
+						Select Start Time
 					</span>
 				</div>
 				<input
@@ -173,11 +183,22 @@ const Calendar: React.FC<CalendarProps> = ({
 					onChange={handleTimeChange}
 					className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
 				/>
+				<div className="header text-center mb-4 mt-4">
+					<span className="text-lg font-extrabold text-[#e61e84]">
+						Select End Time
+					</span>
+				</div>
+				<input
+					type="time"
+					value={format(toSelectedTime, "HH:mm")}
+					onChange={handleToTimeChange}
+					className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+				/>
 			</div>
 			{selectedReservation && selectedReservation.length > 0 && (
 				<div
-					className={`reservation-details bg-white lg:p-2 xl:p-4 rounded shadow absolute lg:ml-[300px] lg:mt-[150px] xl:ml-[485px] xl:mt-[135px] ${
-						selectedReservation.length >= 4 ? "overflow-y-auto max-h-80" : ""
+					className={`reservation-details bg-white lg:p-2 xl:p-4 rounded shadow absolute lg:ml-[300px] lg:mt-[150px] xl:ml-[485px] xl:mt-[250px] ${
+						selectedReservation.length >= 3 ? "overflow-y-auto max-h-80" : ""
 					}`}
 				>
 					<h2 className="lg:text-sm xl:text-lg font-extrabold text-[#e61e84]">
@@ -211,19 +232,18 @@ const Calendar: React.FC<CalendarProps> = ({
 							</p>
 							<p>
 								<span className="font-bold lg:text-sm xl:text-[16px] text-[#e61e84]">
-									Start Date:
+									From:
 								</span>{" "}
 								<span className="lg:text-sm xl:text-[16px]">
-									{new Date(reservation.startDate).toLocaleString()}
+									{new Date(reservation.fromDate).toLocaleString()}
 								</span>
 							</p>
 							<p>
 								<span className="font-bold lg:text-sm xl:text-[16px] text-[#e61e84]">
-									Duration:
+									To:
 								</span>{" "}
 								<span className="lg:text-sm xl:text-[16px]">
-									{reservation.duration.hours} hours{" "}
-									{reservation.duration.minutes} minutes
+									{new Date(reservation.toDate).toLocaleTimeString()}
 								</span>
 							</p>
 							<p>
