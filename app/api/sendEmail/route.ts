@@ -22,12 +22,9 @@ export async function POST(request: NextRequest) {
 			},
 		});
 
-		let durationHours = newData.duration?.hours ?? "N/A";
-		let durationMinutes = newData.duration?.minutes ?? "N/A";
-
 		const descriptionContent = newData.description
 			? `<p>This is from user, he/she have a concern:</p>
-			<p>${newData.description}</p>`
+			<p>"${newData.description}"</p>`
 			: "";
 
 		// Generate HTML content for the email
@@ -40,9 +37,8 @@ export async function POST(request: NextRequest) {
 						<th>Department</th>
 						<th>Name</th>
 						<th>Room</th>
-						<th>Start Date</th>
-						<th>Duration (hours)</th>
-						<th>Duration (minutes)</th>
+						<th>From</th>
+						<th>To</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -50,13 +46,12 @@ export async function POST(request: NextRequest) {
 						<td>${newData.department}</td>
 						<td>${newData.name}</td>
 						<td>${newData.title}</td>
-						<td>${new Date(newData.startDate).toLocaleString()}</td>
-						<td>${durationHours}</td>
-						<td>${durationMinutes}</td>
+						<td>${new Date(newData.fromDate).toLocaleString()}</td>
+						<td>${new Date(newData.toDate).toLocaleString()}</td>
 					</tr>
 				</tbody>
 			</table>
-			${descriptionContent}	
+			${descriptionContent}
 			<p>This is new reservation, please let me know if this is accepted or decline</p>
 			<p>Go to the Admin Dashboard to able to accepted or deny the request. Thank you</p>
 		`;

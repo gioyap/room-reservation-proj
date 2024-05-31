@@ -5,18 +5,13 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Sidebar from "@/components/Sidebar";
 
-interface Duration {
-	hours: number;
-	minutes: number;
-}
-
 interface Reservation {
 	_id: string;
 	department: string;
 	name: string;
 	title: string;
-	startDate: string;
-	duration: Duration;
+	fromDate: string;
+	toDate: string;
 	status: string;
 	email: string;
 }
@@ -98,9 +93,8 @@ const AdminDashboard = () => {
 						Department: ${updatedReservation.department}
 						Name: ${updatedReservation.name}
 						Room: ${updatedReservation.title}
-						Start Date: ${new Date(updatedReservation.startDate).toLocaleString()}
-						Duration (hours): ${updatedReservation.duration.hours}
-						Duration (minutes): ${updatedReservation.duration.minutes}
+						From: ${new Date(updatedReservation.fromDate).toLocaleString()}
+						To: ${new Date(updatedReservation.toDate).toLocaleString()}
 					`,
 				}),
 			});
@@ -162,9 +156,8 @@ const AdminDashboard = () => {
 						Department: ${updatedReservation.department}
 						Name: ${updatedReservation.name}
 						Room: ${updatedReservation.title}
-						Start Date: ${new Date(updatedReservation.startDate).toLocaleString()}
-						Duration (hours): ${updatedReservation.duration.hours}
-						Duration (minutes): ${updatedReservation.duration.minutes}
+						From: ${new Date(updatedReservation.fromDate).toLocaleString()}
+						To: ${new Date(updatedReservation.toDate).toLocaleString()}
 					`,
 				}),
 			});
@@ -241,13 +234,10 @@ const AdminDashboard = () => {
 									Room
 								</th>
 								<th className="pl-8 py-3 text-left text-xs font-extrabold text-white uppercase tracking-wider">
-									Start Date
+									From
 								</th>
 								<th className="pl-8 py-3 text-left text-xs font-extrabold text-white uppercase tracking-wider">
-									Duration (hours)
-								</th>
-								<th className="pl-8 py-3 text-left text-xs font-extrabold text-white uppercase tracking-wider">
-									Duration (minutes)
+									To
 								</th>
 								<th className="pl-8 py-3 text-left text-xs font-extrabold text-white uppercase tracking-wider">
 									Status
@@ -270,13 +260,10 @@ const AdminDashboard = () => {
 										{reservation.title}
 									</td>
 									<td className="px-8 py-3 whitespace-nowrap">
-										{new Date(reservation.startDate).toLocaleString()}
+										{new Date(reservation.fromDate).toLocaleString()}
 									</td>
 									<td className="px-8 py-3 whitespace-nowrap">
-										{reservation.duration.hours}
-									</td>
-									<td className="px-8 py-3 whitespace-nowrap">
-										{reservation.duration.minutes}
+										{new Date(reservation.toDate).toLocaleString()}
 									</td>
 									<td className="px-8 py-3 whitespace-nowrap">
 										{reservation.status === "Accepted" ||
