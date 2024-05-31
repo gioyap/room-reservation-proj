@@ -130,21 +130,49 @@ const Dashboard = () => {
 				(combinedToDateTime.getTime() >= resStartDate.getTime() &&
 					combinedToDateTime.getTime() <= resEndDate.getTime());
 
-			return (
-				reservation.status === "Accepted" &&
+			// Check if the selected room is already reserved for the same date and time
+			// So the user suppose to find another available room
+			const roomConflict =
+				reservation.title === title &&
 				dateConflict &&
-				!(
-					combinedFromDateTime.getHours() === 8 &&
-					combinedToDateTime.getHours() === 9
-				) &&
-				timeConflict
-			);
+				timeConflict &&
+				reservation.status === "Accepted";
+
+			return roomConflict;
 		});
 
 		if (conflict) {
 			toast.error(
-				"The selected date and time are unavailable. Please choose another available time slot and date."
+				"The selected room is already reserved. Please choose another room or select a different date and time."
 			);
+			return;
+		}
+
+		// Check if the selected date and time are within working hours (8:00 AM - 5:00 PM)
+		if (
+			combinedFromDateTime.getHours() < 8 ||
+			combinedFromDateTime.getHours() > 18 ||
+			combinedToDateTime.getHours() < 8 ||
+			combinedToDateTime.getHours() > 18
+		) {
+			toast.error("Reservation can only be made between 8:00 AM and 6:00 PM.");
+			return;
+		}
+
+		// Check if the selected date and time are not on weekends (Saturday or Sunday)
+		if (
+			selectedDate.getDay() === 0 || // Sunday
+			selectedDate.getDay() === 6 // Saturday
+		) {
+			toast.error("Reservation is not available on weekends.");
+			return;
+		}
+
+		// Check if the selected date is in the past
+		const currentDate = new Date();
+		currentDate.setHours(0, 0, 0, 0); // Set current time to midnight
+		if (selectedDate.getTime() < currentDate.getTime()) {
+			toast.error("Reservation date cannot be in the past.");
 			return;
 		}
 
@@ -157,7 +185,7 @@ const Dashboard = () => {
 			toDate: combinedToDateTime,
 			description,
 		};
-
+		//get the reservation data then the system will send it to the admin email
 		try {
 			const response = await fetch("/api/reservationDB", {
 				method: "POST",
