@@ -10,14 +10,13 @@ import "react-toastify/dist/ReactToastify.css";
 const Dashboard = () => {
 	const { data: session } = useSession();
 	const [selectedDate, setSelectedDate] = useState(new Date());
-	const [selectedTime, setSelectedTime] = useState(new Date());
+	const [fromSelectedTime, setFromSelectedTime] = useState(new Date());
+	const [toSelectedTime, setToSelectedTime] = useState(new Date());
 	const [email, setEmail] = useState("");
 	const [department, setDepartment] = useState("");
 	const [name, setName] = useState("");
 	const [title, setTitle] = useState("");
-	const [duration, setDuration] = useState({ hours: "", minutes: "" });
 	const [description, setDescription] = useState("");
-	const [showMinutesInput, setShowMinutesInput] = useState(false);
 	const [reservations, setReservations] = useState<[]>([]);
 	const [showDescription, setShowDescription] = useState(false);
 
@@ -35,14 +34,6 @@ const Dashboard = () => {
 
 	const handletitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setTitle(e.target.value);
-	};
-
-	const handleDurationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const { name, value } = e.target;
-		setDuration((prevDuration) => ({
-			...prevDuration,
-			[name]: value,
-		}));
 	};
 
 	const handleDescriptionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -74,7 +65,14 @@ const Dashboard = () => {
 		fetchReservations();
 	}, []);
 
-	const formattedSelectedTime = selectedTime.toLocaleTimeString([], {
+	const formattedSelectedTime = fromSelectedTime.toLocaleTimeString([], {
+		hour: "2-digit",
+		minute: "2-digit",
+		hour12: true,
+		timeZone: "Asia/Manila",
+	});
+
+	const formattedToSelectedTime = toSelectedTime.toLocaleTimeString([], {
 		hour: "2-digit",
 		minute: "2-digit",
 		hour12: true,
@@ -90,60 +88,64 @@ const Dashboard = () => {
 			!name ||
 			!title ||
 			!selectedDate ||
-			!selectedTime ||
-			!duration.hours
+			!fromSelectedTime ||
+			!toSelectedTime
 		) {
 			toast.error("Please fill out all required fields.");
 			return;
 		}
 
-		const combinedDateTime = new Date(
+		const combinedFromDateTime = new Date(
 			selectedDate.getFullYear(),
 			selectedDate.getMonth(),
 			selectedDate.getDate(),
-			selectedTime.getHours(),
-			selectedTime.getMinutes(),
-			selectedTime.getSeconds()
+			fromSelectedTime.getHours(),
+			fromSelectedTime.getMinutes(),
+			fromSelectedTime.getSeconds()
 		);
 
-		//this is the function for having a restriction in reserved date and time
-		//now the user has no ability to reserve in accepted reservation
-		const newEndTime = new Date(combinedDateTime);
-		newEndTime.setHours(newEndTime.getHours() + Number(duration.hours));
-		newEndTime.setMinutes(
-			newEndTime.getMinutes() + (Number(duration.minutes) || 0)
+		const combinedToDateTime = new Date(
+			selectedDate.getFullYear(),
+			selectedDate.getMonth(),
+			selectedDate.getDate(),
+			toSelectedTime.getHours(),
+			toSelectedTime.getMinutes(),
+			toSelectedTime.getSeconds()
 		);
 
-		for (const reservation of reservations as {
-			_id: string;
-			email: string;
-			department: string;
-			name: string;
-			title: string;
-			startDate: string;
-			duration: {
-				hours: number;
-				minutes: number;
-			};
-			status: string;
-		}[]) {
-			const resStart = new Date(reservation.startDate);
-			const resEnd = new Date(resStart);
-			resEnd.setHours(resEnd.getHours() + reservation.duration.hours);
-			resEnd.setMinutes(resEnd.getMinutes() + reservation.duration.minutes);
+		// Check if the selected date and time conflict with existing reservations
+		const conflict = reservations.some((reservation: any) => {
+			const resStartDate = new Date(reservation.fromDate);
+			const resEndDate = new Date(reservation.toDate);
 
-			if (
-				(combinedDateTime >= resStart && combinedDateTime < resEnd) ||
-				(newEndTime > resStart && newEndTime <= resEnd) ||
-				(combinedDateTime <= resStart && newEndTime >= resEnd)
-			) {
-				if (reservation.status === "Accepted") {
-					toast.error(
-						"This date and time is already reserved and accepted. Please choose another date or time."
-					);
-					return;
-				}
-			}
+			// Check if the selected date conflicts with existing reservation dates
+			const dateConflict =
+				selectedDate.getTime() >= resStartDate.getTime() &&
+				selectedDate.getTime() <= resEndDate.getTime();
+
+			// Check if the selected time conflicts with existing reservation times
+			const timeConflict =
+				(combinedFromDateTime.getTime() >= resStartDate.getTime() &&
+					combinedFromDateTime.getTime() <= resEndDate.getTime()) ||
+				(combinedToDateTime.getTime() >= resStartDate.getTime() &&
+					combinedToDateTime.getTime() <= resEndDate.getTime());
+
+			return (
+				reservation.status === "Accepted" &&
+				dateConflict &&
+				!(
+					combinedFromDateTime.getHours() === 8 &&
+					combinedToDateTime.getHours() === 9
+				) &&
+				timeConflict
+			);
+		});
+
+		if (conflict) {
+			toast.error(
+				"The selected date and time are unavailable. Please choose another available time slot and date."
+			);
+			return;
 		}
 
 		const reservationData = {
@@ -151,11 +153,8 @@ const Dashboard = () => {
 			department,
 			name,
 			title,
-			startDate: combinedDateTime,
-			duration: {
-				hours: Number(duration.hours),
-				minutes: Number(duration.minutes) || 0,
-			},
+			fromDate: combinedFromDateTime,
+			toDate: combinedToDateTime,
 			description,
 		};
 
@@ -196,16 +195,6 @@ const Dashboard = () => {
 		}
 
 		console.log("Reservation Details:", reservationData);
-	};
-
-	const handleShowMinutesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		setShowMinutesInput(e.target.checked);
-		if (!e.target.checked) {
-			setDuration((prevDuration) => ({
-				...prevDuration,
-				minutes: "",
-			}));
-		}
 	};
 
 	return (
@@ -315,32 +304,13 @@ const Dashboard = () => {
 									</label>
 								</div>
 							</div>
-							<div>
-								<label
-									className="text-[16px] xl:text-[20px] text-[#e61e84] tracking-normal font-extrabold"
-									htmlFor="hours"
-								>
-									Duration (hours):
-								</label>
-								<input
-									id="hours"
-									name="hours"
-									type="number"
-									value={duration.hours}
-									onChange={handleDurationChange}
-									className="w-full text-[14px] xl:text-[18px] px-4 py-2 border rounded-md"
-									placeholder="Enter duration in hours"
-									min="0"
-									max="24"
-								/>
-							</div>
 
 							<div className="mt-2">
 								<label
 									className="text-[16px] xl:text-[18px] tracking-normal"
 									htmlFor="showDescription"
 								>
-									Do you have any concern?
+									Is this urgent?
 								</label>
 								<input
 									id="showDescription"
@@ -359,7 +329,7 @@ const Dashboard = () => {
 										className="text-[16px] xl:text-[22px] text-[#e61e84] tracking-normal font-extrabold"
 										htmlFor="description"
 									>
-										Description:
+										Urgent Notes:
 									</label>
 									<input
 										id="description"
@@ -367,47 +337,7 @@ const Dashboard = () => {
 										value={description}
 										onChange={handleDescriptionChange}
 										className="w-full text-[14px] xl:text-[18px] px-4 py-2 border rounded-md"
-										placeholder="Enter reservation title"
-									/>
-								</div>
-							)}
-
-							<div className="mt-2">
-								<label
-									className="text-[16px] xl:text-[18px] tracking-normal"
-									htmlFor="showMinutes"
-								>
-									Include Minutes:
-								</label>
-								<input
-									id="showMinutes"
-									name="showMinutes"
-									type="checkbox"
-									checked={showMinutesInput}
-									onChange={handleShowMinutesChange}
-									className="ml-2"
-								/>
-								<span className="text-[16px] xl:text-[18px] ml-1">Yes</span>
-							</div>
-
-							{showMinutesInput && (
-								<div>
-									<label
-										className="text-[16px] xl:text-[20px] font-extrabold text-[#e61e84] tracking-normal py-2"
-										htmlFor="minutes"
-									>
-										Duration (minutes):
-									</label>
-									<input
-										id="minutes"
-										name="minutes"
-										type="number"
-										value={duration.minutes}
-										onChange={handleDurationChange}
-										className="w-full text-[14px] xl:text-[18px] px-4 py-2 border rounded-md"
-										placeholder="Enter duration in minutes"
-										min="0"
-										max="59"
+										placeholder="Please provide the reason"
 									/>
 								</div>
 							)}
@@ -430,23 +360,27 @@ const Dashboard = () => {
 						<Calendar
 							selectedDate={selectedDate}
 							onChange={setSelectedDate}
-							selectedTime={selectedTime}
-							onTimeChange={setSelectedTime}
+							selectedTime={fromSelectedTime}
+							onTimeChange={setFromSelectedTime}
+							toSelectedTime={toSelectedTime}
+							onToTimeChange={setToSelectedTime}
 							reservations={reservations}
 						/>
 					</div>
 
-					<div className="mt-4">
+					<div className="mt-0">
 						<p className="text-lg font-semibold text-[#e61e84]">
 							Selected Date:
 						</p>
 						<p>{selectedDate.toDateString()}</p>
 					</div>
-					<div className="mt-4 pb-6">
-						<p className="text-lg font-semibold text-[#e61e84]">
-							Selected Time:
-						</p>
+					<div className="mt-1 pb-2">
+						<p className="text-lg font-semibold text-[#e61e84]">From:</p>
 						<p>{formattedSelectedTime}</p>
+					</div>
+					<div className="mt-1 pb-2">
+						<p className="text-lg font-semibold text-[#e61e84]">To:</p>
+						<p>{formattedToSelectedTime}</p>
 					</div>
 
 					<form onSubmit={handleContinue}>
