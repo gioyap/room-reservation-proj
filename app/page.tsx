@@ -77,7 +77,7 @@ const Login = () => {
 						<h1 className="text-4xl font-extrabold mb-4 whitespace-nowrap">
 							Welcome to Login
 						</h1>
-						<p className="mb-2">Don't have an account?</p>
+						<p className="mb-2">Don&apos;t have an account?</p>
 						<div className="pt-6">
 							<a
 								className="p-2 px-6 border-[1px] border-white rounded-full text-white"
