@@ -10,12 +10,12 @@ export async function connect() {
 
 	try {
 		// Check if MONGO_URI environment variable is defined
-		if (!process.env.MONGO_URI) {
+		if (!process.env.NEXT_PUBLIC_MONGO_URI) {
 			throw new Error("MONGO_URI environment variable is not defined");
 		}
 
 		// Connect to MongoDB using Mongoose
-		await mongoose.connect(process.env.MONGO_URI, {});
+		await mongoose.connect(process.env.NEXT_PUBLIC_MONGO_URI, {});
 
 		// Set up event listeners for MongoDB connection
 		mongoose.connection.once("connected", () => {

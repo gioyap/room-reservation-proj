@@ -5,7 +5,7 @@ import User from "@/utils/models/auth";
 import bcryptjs from "bcryptjs";
 import GoogleProvider from "next-auth/providers/google";
 
-const adminEmail = process.env.ADMIN_EMAIL;
+const adminEmail = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
 
 export const authOptions: NextAuthOptions = {
 	providers: [
@@ -41,8 +41,8 @@ export const authOptions: NextAuthOptions = {
 			},
 		}),
 		GoogleProvider({
-			clientId: process.env.GOOGLE_CLIENT_ID as string,
-			clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+			clientId: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID as string,
+			clientSecret: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_SECRET as string,
 		}),
 	],
 	session: {
