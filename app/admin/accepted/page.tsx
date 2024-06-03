@@ -127,8 +127,10 @@ const AcceptedPage = () => {
 									<td className="px-8 py-3 whitespace-nowrap">
 										{new Date(reservation.toDate).toLocaleString()}
 									</td>
-									<td className="px-8 py-3 whitespace-nowrap">
-										{reservation.status}
+									<td className="px-3 py-3 whitespace-nowrap">
+										<span className=" bg-green-600 rounded-full px-4 py-1 text-white font-bold">
+											{reservation.status}
+										</span>
 									</td>
 								</tr>
 							))}
