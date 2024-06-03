@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 "use client";
 
 import { Mail, Lock } from "lucide-react";
@@ -77,8 +78,7 @@ const Login = () => {
 						<h1 className="text-4xl font-extrabold mb-4 whitespace-nowrap">
 							Welcome to Login
 						</h1>
-						<p className="mb-2">Don't have an account?</p>{" "}
-						{/* eslint-disable-line react/no-unescaped-entities */}
+						<p className="mb-2">Don't have an account?</p>
 						<div className="pt-6">
 							<a
 								className="p-2 px-6 border-[1px] border-white rounded-full text-white"
