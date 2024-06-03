@@ -26,7 +26,11 @@ const RedirectComponent = () => {
 				router.push("/dashboard");
 			}
 		} else if (status === "unauthenticated") {
-			router.push("/");
+			const allowedUnauthenticatedPaths = ["/", "/signup"];
+			const currentPath = window.location.pathname;
+			if (!allowedUnauthenticatedPaths.includes(currentPath)) {
+				router.push("/");
+			}
 		}
 	}, [session, status, router]);
 
