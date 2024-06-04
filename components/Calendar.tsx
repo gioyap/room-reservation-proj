@@ -8,10 +8,14 @@ import {
 	addDays,
 	startOfDay,
 	parse,
+	addMonths,
+	setMonth,
+	setYear,
 } from "date-fns";
 
 interface Reservation {
 	_id: string;
+	company: string;
 	department: string;
 	name: string;
 	title: string;
@@ -37,6 +41,7 @@ const Calendar: React.FC<CalendarProps> = ({
 	toSelectedTime,
 	onToTimeChange,
 }) => {
+	const [currentDate, setCurrentDate] = useState(selectedDate);
 	const monthStart = startOfMonth(selectedDate);
 	const monthEnd = endOfMonth(selectedDate);
 	const fromDate = startOfWeek(monthStart);
@@ -46,7 +51,23 @@ const Calendar: React.FC<CalendarProps> = ({
 	const [selectedReservation, setSelectedReservation] = useState<Reservation[]>(
 		[]
 	);
+	const [selectedDateState, setSelectedDateState] = useState<Date | null>(null);
+	const [clickedDate, setClickedDate] = useState<Date | null>(null);
 	const [selectedTime, setSelectedTime] = useState<Date>(new Date());
+	const months = [
+		"January",
+		"February",
+		"March",
+		"April",
+		"May",
+		"June",
+		"July",
+		"August",
+		"September",
+		"October",
+		"November",
+		"December",
+	];
 
 	useEffect(() => {
 		fetchBookedDates().then((data) => {
@@ -88,6 +109,8 @@ const Calendar: React.FC<CalendarProps> = ({
 	const handleDayClick = (date: Date) => {
 		onChange(date);
 		setSelectedReservation([]);
+		setSelectedDateState(date);
+		setClickedDate(date);
 	};
 
 	const handleBookedDayClick = (reservation: Reservation) => {
@@ -98,29 +121,26 @@ const Calendar: React.FC<CalendarProps> = ({
 			(res) => new Date(res.fromDate).toDateString() === date.toDateString()
 		);
 		setSelectedReservation(reservationsForDate);
+		setSelectedDateState(date);
+	};
+
+	const formatTime = (time: Date): string => {
+		const hours = time.getHours().toString().padStart(2, "0");
+		const minutes = time.getMinutes().toString().padStart(2, "0");
+		return `${hours}:${minutes}`;
 	};
 
 	const handleTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const { value } = event.target;
 		const time = parse(value, "HH:mm", new Date());
-		const utcTime =
-			startOfDay(selectedDate).getTime() +
-			time.getHours() * 3600000 +
-			time.getMinutes() * 60000;
-		const newSelectedTime = new Date(utcTime);
-		setSelectedTime(newSelectedTime);
-		onTimeChange(newSelectedTime);
+		setSelectedTime(time);
+		onTimeChange(time);
 	};
 
 	const handleToTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const { value } = event.target;
 		const time = parse(value, "HH:mm", new Date());
-		const utcTime =
-			startOfDay(selectedDate).getTime() +
-			time.getHours() * 3600000 +
-			time.getMinutes() * 60000;
-		const newToSelectedTime = new Date(utcTime);
-		onToTimeChange(newToSelectedTime);
+		onToTimeChange(time);
 	};
 
 	const isDateBooked = (date: Date) => {
@@ -132,18 +152,87 @@ const Calendar: React.FC<CalendarProps> = ({
 
 	const getDayClassName = (day: Date) => {
 		const isBooked = isDateBooked(day);
-		return isBooked ? "booked-day bg-green-300 rounded-lg lg:px-0 xl:px-2" : "";
+		const isClickable = day.getMonth() === currentDate.getMonth();
+		const isSelected = clickedDate
+			? day.toDateString() === clickedDate.toDateString()
+			: false;
+		return `${isBooked ? "booked-day relative" : ""} ${
+			isClickable ? "selectable-day cursor-pointer hover:text-[#e61e84]" : ""
+		} ${isSelected ? "text-[#e61e84] font-extrabold" : ""}`;
+	};
+
+	const handleMonthChange = (increment: number) => {
+		const newDate = addMonths(currentDate, increment);
+		setCurrentDate(newDate);
+		onChange(newDate);
+	};
+
+	const handleMonthSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+		const newDate = setMonth(currentDate, parseInt(e.target.value));
+		setCurrentDate(newDate);
+		onChange(newDate);
+	};
+
+	const handleYearSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+		const newDate = setYear(currentDate, parseInt(e.target.value));
+		setCurrentDate(newDate);
+		onChange(newDate);
+	};
+
+	const renderYearOptions = () => {
+		const startYear = new Date().getFullYear();
+		const yearOptions = [];
+		for (let i = startYear; i <= startYear + 10; i++) {
+			yearOptions.push(
+				<option key={i} value={i}>
+					{i}
+				</option>
+			);
+		}
+		return yearOptions;
+	};
+
+	//the user cant click the backspace in selected time
+	const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+		if (e.key === "Backspace") {
+			e.preventDefault();
+		}
 	};
 
 	return (
 		<div className="flex gap-x-4 items-start">
 			<div className="calendar bg-white p-8 rounded shadow mr-4">
-				<div className="header text-center mb-4">
-					<span className="text-lg font-extrabold text-[#e61e84]">
-						{format(selectedDate, "MMMM yyyy")}
-					</span>
+				<div className="header text-center mb-4 flex justify-between items-center">
+					<button
+						onClick={() => handleMonthChange(-1)}
+						className="arrow-button"
+					>
+						&lt;
+					</button>
+					<div>
+						<select
+							value={currentDate.getMonth()}
+							onChange={handleMonthSelect}
+							className="mr-8"
+						>
+							{months.map((month, index) => (
+								<option key={index} value={index}>
+									{month}
+								</option>
+							))}
+						</select>
+						<select
+							value={currentDate.getFullYear()}
+							onChange={handleYearSelect}
+						>
+							{renderYearOptions()}
+						</select>
+					</div>
+					<button onClick={() => handleMonthChange(1)} className="arrow-button">
+						&gt;
+					</button>
 				</div>
-				<div className="grid grid-cols-7 lg:gap-2 lg:gap-x-4 xl:gap-6">
+				<div className="grid grid-cols-7 w-[400px] h-[350px] -mb-4">
 					{days.map((day, index) => {
 						const reservation = bookedDates.find(
 							(res) =>
@@ -152,7 +241,7 @@ const Calendar: React.FC<CalendarProps> = ({
 						return (
 							<div
 								key={index}
-								className={`day text-center cursor-pointer py-2 ${getDayClassName(
+								className={`day text-center cursor-pointer py-4 ${getDayClassName(
 									day
 								)} ${
 									day.getMonth() !== selectedDate.getMonth()
@@ -166,6 +255,9 @@ const Calendar: React.FC<CalendarProps> = ({
 								}
 							>
 								{format(day, "d")}
+								{isDateBooked(day) && (
+									<span className="absolute w-2 h-2 bg-green-500 rounded-full top-2 right-6"></span>
+								)}
 							</div>
 						);
 					})}
@@ -177,8 +269,9 @@ const Calendar: React.FC<CalendarProps> = ({
 				</div>
 				<input
 					type="time"
-					value={format(selectedTime, "HH:mm")}
+					value={formatTime(selectedTime)}
 					onChange={handleTimeChange}
+					onKeyDown={handleKeyDown}
 					className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
 				/>
 				<div className="header text-center mb-4 mt-4">
@@ -186,8 +279,9 @@ const Calendar: React.FC<CalendarProps> = ({
 				</div>
 				<input
 					type="time"
-					value={format(toSelectedTime, "HH:mm")}
+					value={formatTime(toSelectedTime)}
 					onChange={handleToTimeChange}
+					onKeyDown={handleKeyDown}
 					className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
 				/>
 			</div>
@@ -202,6 +296,14 @@ const Calendar: React.FC<CalendarProps> = ({
 					</h2>
 					{selectedReservation.map((reservation, index) => (
 						<div key={index}>
+							<p>
+								<span className="font-bold lg:text-sm xl:text-[16px] text-[#e61e84]">
+									Company:
+								</span>{" "}
+								<span className="lg:text-sm xl:text-[16px]">
+									{reservation.company}
+								</span>
+							</p>
 							<p>
 								<span className="font-bold lg:text-sm xl:text-[16px] text-[#e61e84]">
 									Department:

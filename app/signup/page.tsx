@@ -1,45 +1,51 @@
 "use client";
 
-import { Mail, Lock, User } from "lucide-react";
-import Image from "next/image";
 import React, { useState } from "react";
-import bg from "../../public/bg-2.png";
-import logo from "../../public/logo.png";
-import google from "../../public/google2.svg";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import { signIn } from "next-auth/react";
 import "react-toastify/dist/ReactToastify.css";
 import { toast, ToastContainer } from "react-toastify";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const Signup = () => {
 	const [loading, setLoading] = useState(false);
+	const [showPassword, setShowPassword] = useState(false);
+	const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 	const router = useRouter();
 	const [error, setError] = useState("");
 	const [user, setUser] = useState({
 		name: "",
 		email: "",
 		password: "",
+		confirmPassword: "",
 	});
 
 	const handleInputChange = (event: any) => {
 		const { name, value } = event.target;
-		return setUser((prevInfo) => ({ ...prevInfo, [name]: value }));
+		setUser((prevInfo) => ({ ...prevInfo, [name]: value }));
 	};
 
 	const handleSubmit = async (e: any) => {
 		e.preventDefault();
 		setLoading(true);
+		setError("");
 		console.log(user);
 		try {
-			if (!user.name || !user.email || !user.password) {
+			if (
+				!user.name ||
+				!user.email ||
+				!user.password ||
+				!user.confirmPassword
+			) {
 				toast.error("Please fill out all required fields.");
+				setLoading(false);
 				return;
 			}
 			const emailRegex = /^([a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/;
 			if (!emailRegex.test(user.email)) {
 				setError("Invalid email address");
 				toast.error("Invalid email address");
+				setLoading(false);
 				return;
 			}
 
@@ -47,10 +53,18 @@ const Signup = () => {
 			const passwordRegex =
 				/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/;
 			if (!passwordRegex.test(user.password)) {
-				setError("invalid password");
+				setError("Invalid password");
 				toast.error(
 					"Password must contain at least one uppercase letter, one lowercase letter, one number, and be at least 8 characters long"
 				);
+				setLoading(false);
+				return;
+			}
+
+			if (user.password !== user.confirmPassword) {
+				setError("Passwords do not match");
+				toast.error("Passwords do not match");
+				setLoading(false);
 				return;
 			}
 
@@ -67,14 +81,18 @@ const Signup = () => {
 			console.error(error);
 			toast.error("An error occurred during registration. Please try again.");
 			setError("");
-		} finally {
 			setLoading(false);
-			setUser({
-				name: "",
-				email: "",
-				password: "",
-			});
+			return;
 		}
+
+		// Reset form fields after successful registration
+		setLoading(false);
+		setUser({
+			name: "",
+			email: "",
+			password: "",
+			confirmPassword: "",
+		});
 	};
 
 	return (
@@ -124,16 +142,39 @@ const Signup = () => {
 							onChange={handleInputChange}
 						/>
 					</div>
-					<div>
+					<div className="relative">
 						<h2 className="font-extrabold mb-1">Password</h2>
 						<input
-							type="password"
+							type={showPassword ? "text" : "password"}
 							name="password"
 							className="w-full bg-slate-100 p-3 rounded-full"
 							placeholder="**********"
 							value={user.password}
 							onChange={handleInputChange}
 						/>
+						<div
+							className="absolute top-11 text-gray-500 right-4 cursor-pointer"
+							onClick={() => setShowPassword(!showPassword)}
+						>
+							{showPassword ? <FaEyeSlash /> : <FaEye />}
+						</div>
+					</div>
+					<div className="relative">
+						<h2 className="font-extrabold mb-1">Confirm Password</h2>
+						<input
+							type={showConfirmPassword ? "text" : "password"}
+							name="confirmPassword"
+							className="w-full bg-slate-100 p-3 rounded-full"
+							placeholder="**********"
+							value={user.confirmPassword}
+							onChange={handleInputChange}
+						/>
+						<div
+							className="absolute top-11 text-gray-500 right-4 cursor-pointer"
+							onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+						>
+							{showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+						</div>
 					</div>
 					<div>
 						<button

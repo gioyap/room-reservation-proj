@@ -21,10 +21,26 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
 	try {
-		const { email, department, name, title, fromDate, toDate, description } =
-			await request.json();
+		const {
+			email,
+			company,
+			department,
+			name,
+			title,
+			fromDate,
+			toDate,
+			description,
+		} = await request.json();
 
-		if (!email || !department || !name || !title || !fromDate || !toDate) {
+		if (
+			!email ||
+			!company ||
+			!department ||
+			!name ||
+			!title ||
+			!fromDate ||
+			!toDate
+		) {
 			return NextResponse.json(
 				{
 					error: "Missing required fields",
@@ -39,6 +55,7 @@ export async function POST(request: NextRequest) {
 
 		const newReservation = new Reservation({
 			email,
+			company,
 			department,
 			name,
 			title,

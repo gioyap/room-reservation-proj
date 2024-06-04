@@ -4,9 +4,11 @@ import { useSession } from "next-auth/react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Sidebar from "@/components/Sidebar";
+import Pagination from "@/components/Pagination";
 
 interface Reservation {
 	_id: string;
+	company: string;
 	department: string;
 	name: string;
 	title: string;
@@ -15,12 +17,6 @@ interface Reservation {
 	status: string;
 	email: string;
 }
-
-// interface ApiResponse {
-// 	message: string;
-// 	reservation: Reservation;
-// 	email: string;
-// }
 
 const AdminDashboard = () => {
 	const { data: session } = useSession();
@@ -225,6 +221,9 @@ const AdminDashboard = () => {
 						<thead className="bg-[#e81e83]">
 							<tr>
 								<th className="pl-8 py-3 text-left text-xs font-extrabold text-white uppercase tracking-wider">
+									Company
+								</th>
+								<th className="pl-8 py-3 text-left text-xs font-extrabold text-white uppercase tracking-wider">
 									Department
 								</th>
 								<th className="pl-8 py-3 text-left text-xs font-extrabold text-white uppercase tracking-wider">
@@ -250,6 +249,9 @@ const AdminDashboard = () => {
 						<tbody className="bg-white divide-y divide-gray-200">
 							{currentReservations.map((reservation) => (
 								<tr key={reservation._id}>
+									<td className="px-8 py-3 whitespace-nowrap">
+										{reservation.company}
+									</td>
 									<td className="px-8 py-3 whitespace-nowrap">
 										{reservation.department}
 									</td>
@@ -294,23 +296,12 @@ const AdminDashboard = () => {
 						</tbody>
 					</table>
 				</div>
-				<div className="flex justify-center mt-4">
-					<nav>
-						<ul className="flex pl-0 rounded list-none flex-wrap">
-							{Array.from({
-								length: Math.ceil(reservations.length / reservationsPerPage),
-							}).map((_, index) => (
-								<li
-									key={index}
-									className="first:ml-0 text-xs font-semibold flex w-8 h-8 mx-1 justify-center items-center cursor-pointer leading-tight relative border rounded-full bg-white text-gray-800 border-gray-300 hover:bg-gray-200"
-									onClick={() => paginate(index + 1)}
-								>
-									{index + 1}
-								</li>
-							))}
-						</ul>
-					</nav>
-				</div>
+				<Pagination
+					reservations={reservations}
+					reservationsPerPage={reservationsPerPage}
+					currentPage={currentPage}
+					paginate={paginate}
+				/>
 			</div>
 		</div>
 	);
