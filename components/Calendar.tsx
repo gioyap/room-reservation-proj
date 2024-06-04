@@ -6,7 +6,6 @@ import {
 	startOfWeek,
 	endOfWeek,
 	addDays,
-	startOfDay,
 	parse,
 	addMonths,
 	setMonth,
@@ -124,12 +123,14 @@ const Calendar: React.FC<CalendarProps> = ({
 		setSelectedDateState(date);
 	};
 
+	//able to use 0 button in selection of time
 	const formatTime = (time: Date): string => {
 		const hours = time.getHours().toString().padStart(2, "0");
 		const minutes = time.getMinutes().toString().padStart(2, "0");
 		return `${hours}:${minutes}`;
 	};
 
+	//from function
 	const handleTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const { value } = event.target;
 		const time = parse(value, "HH:mm", new Date());
@@ -137,6 +138,7 @@ const Calendar: React.FC<CalendarProps> = ({
 		onTimeChange(time);
 	};
 
+	//to function
 	const handleToTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const { value } = event.target;
 		const time = parse(value, "HH:mm", new Date());
@@ -150,17 +152,21 @@ const Calendar: React.FC<CalendarProps> = ({
 		);
 	};
 
+	//this function able to notice the date has green indicator and text-[#e61e84] in selected day
 	const getDayClassName = (day: Date) => {
 		const isBooked = isDateBooked(day);
 		const isClickable = day.getMonth() === currentDate.getMonth();
-		const isSelected = clickedDate
-			? day.toDateString() === clickedDate.toDateString()
+		const isSelected = selectedDateState
+			? day.toDateString() === selectedDateState.toDateString()
 			: false;
-		return `${isBooked ? "booked-day relative" : ""} ${
+		return `${isSelected ? "text-[#e61e84] font-extrabold" : ""} ${
+			isBooked ? "booked-day relative" : ""
+		} ${
 			isClickable ? "selectable-day cursor-pointer hover:text-[#e61e84]" : ""
-		} ${isSelected ? "text-[#e61e84] font-extrabold" : ""}`;
+		} ${day.getMonth() !== selectedDate.getMonth() ? "text-gray-400" : ""}`;
 	};
 
+	//these handles is responsible for the user who will be able to select a months and years faster
 	const handleMonthChange = (increment: number) => {
 		const newDate = addMonths(currentDate, increment);
 		setCurrentDate(newDate);
