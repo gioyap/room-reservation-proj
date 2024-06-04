@@ -6,35 +6,43 @@ import { NextResponse, NextRequest } from "next/server";
 connect();
 
 export async function POST(request: NextRequest) {
-  try {
-    const { name, email, password } = await request.json();
+	try {
+		const { name, email, password, confirmPassword } = await request.json();
 
-    const user = await User.findOne({ email });
+		// Check if the passwords match
+		if (password !== confirmPassword) {
+			return NextResponse.json(
+				{ error: "Passwords do not match" },
+				{ status: 400 }
+			);
+		}
 
-    if (user) {
-      return NextResponse.json(
-        { error: "User already exists" },
-        { status: 400 }
-      );
-    }
+		const user = await User.findOne({ email });
 
-    const salt = await bcryptjs.genSalt(10);
-    const hashedPassword = await bcryptjs.hash(password, salt);
+		if (user) {
+			return NextResponse.json(
+				{ error: "User already exists" },
+				{ status: 400 }
+			);
+		}
 
-    const newUser = new User({
-      name,
-      email,
-      password: hashedPassword,
-    });
+		const salt = await bcryptjs.genSalt(10);
+		const hashedPassword = await bcryptjs.hash(password, salt);
 
-    const savedUser = await newUser.save();
+		const newUser = new User({
+			name,
+			email,
+			password: hashedPassword,
+		});
 
-    return NextResponse.json({
-      message: "User created successfully",
-      success: true,
-      savedUser,
-    });
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  }
+		const savedUser = await newUser.save();
+
+		return NextResponse.json({
+			message: "User created successfully",
+			success: true,
+			savedUser,
+		});
+	} catch (error: any) {
+		return NextResponse.json({ error: error.message }, { status: 500 });
+	}
 }

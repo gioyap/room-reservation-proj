@@ -1,9 +1,7 @@
 /* eslint-disable react/no-unescaped-entities */
 "use client";
 
-import { Mail, Lock } from "lucide-react";
 import Image from "next/image";
-import bg from "../public/bg-2.png";
 import google from "../public/google2.svg";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -22,21 +20,24 @@ const Login = () => {
 
 	const handleInputChange = (event: any) => {
 		const { name, value } = event.target;
-		return setUser((prevInfo) => ({ ...prevInfo, [name]: value }));
+		setUser((prevInfo) => ({ ...prevInfo, [name]: value }));
 	};
 
 	const handleSubmit = async (e: any) => {
 		e.preventDefault();
+		setError("");
 		setLoading(true);
 		try {
 			if (!user.email || !user.password) {
 				toast.error("Please fill out all required fields");
+				setLoading(false);
 				return;
 			}
 			const emailRegex = /^([a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/;
 			if (!emailRegex.test(user.email)) {
 				setError("invalid email id");
 				toast.error("Invalid email address");
+				setLoading(false);
 				return;
 			}
 
@@ -49,23 +50,23 @@ const Login = () => {
 			if (res?.error) {
 				console.log(res);
 				setError("error");
+				toast.error("Invalid email or password");
+				setLoading(false);
+				return;
 			}
 
+			toast.success("Logged in successfully!");
 			setError("");
 			router.push("/dashboard");
 		} catch (error) {
 			console.log(error);
-			toast.error("An error occurred during log in. Please try again.");
+			toast.error("An error occurred during login. Please try again.");
 			setError("");
 		} finally {
 			setLoading(false);
-
-			setUser({
-				email: "",
-				password: "",
-			});
 		}
 	};
+
 	return (
 		<div className="flex justify-center items-center min-h-screen bg-slate-50 p-8">
 			<ToastContainer autoClose={3000} />
@@ -117,8 +118,9 @@ const Login = () => {
 						<button
 							type="submit"
 							className="w-full px-10 py-3 rounded-full bg-[#f93e9e] text-white font-bold"
+							disabled={loading}
 						>
-							Sign in
+							{loading ? "Processing..." : "Sign In"}
 						</button>
 					</div>
 					<div
