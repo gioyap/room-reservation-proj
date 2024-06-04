@@ -1,5 +1,3 @@
-// pages/admin/accepted.tsx
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -7,9 +5,11 @@ import { useSession } from "next-auth/react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Sidebar from "@/components/Sidebar"; // Ensure you have this Sidebar component
+import Pagination from "@/components/Pagination";
 
 interface Reservation {
 	_id: string;
+	company: string;
 	department: string;
 	name: string;
 	title: string;
@@ -19,12 +19,46 @@ interface Reservation {
 	email: string;
 }
 
+type SortColumn = keyof Reservation;
+
 const DeclinedPage = () => {
 	const { data: session, status } = useSession();
 	const [reservations, setReservations] = useState<Reservation[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [currentPage, setCurrentPage] = useState(1);
 	const [reservationsPerPage, setReservationsPerPage] = useState(10);
+	const [sortColumn, setSortColumn] = useState<SortColumn>("department");
+	const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+
+	// Sorting function
+	const sortTable = (column: SortColumn) => {
+		let newSortOrder: "asc" | "desc" = "asc"; // Type annotation for newSortOrder
+		if (column === sortColumn) {
+			newSortOrder = sortOrder === "asc" ? "desc" : "asc";
+		}
+		setSortColumn(column);
+		setSortOrder(newSortOrder);
+	};
+
+	// Sorting logic to apply to reservations
+	let sortedReservations = [...reservations];
+	if (sortColumn && sortOrder) {
+		sortedReservations = sortedReservations.sort((a, b) => {
+			// Compare function based on the sort column
+			let comparison = 0;
+			const valueA = a[sortColumn];
+			const valueB = b[sortColumn];
+
+			if (valueA > valueB) {
+				comparison = 1;
+			} else if (valueA < valueB) {
+				comparison = -1;
+			}
+
+			// Flip the comparison if sorting order is descending
+			return sortOrder === "asc" ? comparison : -comparison;
+		});
+	}
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -46,7 +80,7 @@ const DeclinedPage = () => {
 
 	const indexOfLastReservation = currentPage * reservationsPerPage;
 	const indexOfFirstReservation = indexOfLastReservation - reservationsPerPage;
-	const currentReservations = reservations.slice(
+	const currentReservations = sortedReservations.slice(
 		indexOfFirstReservation,
 		indexOfLastReservation
 	);
@@ -64,8 +98,8 @@ const DeclinedPage = () => {
 			<ToastContainer autoClose={4000} />
 			<Sidebar /> {/* Use the Sidebar component */}
 			<div className="flex-1 p-8 bg-gray-100 min-h-screen">
-				<div className=" pb-6">
-					<h1 className=" text-4xl font-extrabold text-[#e81e83]">
+				<div className="pb-6">
+					<h1 className="text-4xl font-extrabold text-[#e81e83]">
 						Declined Records
 					</h1>
 				</div>
@@ -89,22 +123,61 @@ const DeclinedPage = () => {
 					<table className="min-w-full divide-y divide-gray-200">
 						<thead className="bg-[#e81e83]">
 							<tr>
-								<th className="pl-8 py-3 text-left text-xs font-extrabold text-white uppercase tracking-wider">
-									Department
+								<th
+									className="pl-8 py-3 text-left text-xs font-extrabold text-white uppercase tracking-wider cursor-pointer"
+									onClick={() => sortTable("company")}
+								>
+									Company{" "}
+									{sortColumn === "company" && (
+										<span>{sortOrder === "asc" ? "▲" : "▼"}</span>
+									)}
 								</th>
-								<th className="pl-8 py-3 text-left text-xs font-extrabold text-white uppercase tracking-wider">
-									Name
+								<th
+									className="pl-8 py-3 text-left text-xs font-extrabold text-white uppercase tracking-wider cursor-pointer"
+									onClick={() => sortTable("department")}
+								>
+									Department{" "}
+									{sortColumn === "department" && (
+										<span>{sortOrder === "asc" ? "▲" : "▼"}</span>
+									)}
 								</th>
-								<th className="pl-8 py-3 text-left text-xs font-extrabold text-white uppercase tracking-wider">
-									Room
+								<th
+									className="pl-8 py-3 text-left text-xs font-extrabold text-white uppercase tracking-wider cursor-pointer"
+									onClick={() => sortTable("name")}
+								>
+									Name{" "}
+									{sortColumn === "name" && (
+										<span>{sortOrder === "asc" ? "▲" : "▼"}</span>
+									)}
 								</th>
-								<th className="pl-8 py-3 text-left text-xs font-extrabold text-white uppercase tracking-wider">
-									From
+								<th
+									className="pl-8 py-3 text-left text-xs font-extrabold text-white uppercase tracking-wider cursor-pointer"
+									onClick={() => sortTable("title")}
+								>
+									Room{" "}
+									{sortColumn === "title" && (
+										<span>{sortOrder === "asc" ? "▲" : "▼"}</span>
+									)}
 								</th>
-								<th className="pl-8 py-3 text-left text-xs font-extrabold text-white uppercase tracking-wider">
-									To
+								<th
+									className="pl-8 py-3 text-left text-xs font-extrabold text-white uppercase tracking-wider cursor-pointer"
+									onClick={() => sortTable("fromDate")}
+								>
+									From{" "}
+									{sortColumn === "fromDate" && (
+										<span>{sortOrder === "asc" ? "▲" : "▼"}</span>
+									)}
 								</th>
-								<th className="pl-8 py-3 text-left text-xs font-extrabold text-white uppercase tracking-wider">
+								<th
+									className="pl-8 py-3 text-left text-xs font-extrabold text-white uppercase tracking-wider cursor-pointer"
+									onClick={() => sortTable("toDate")}
+								>
+									To{" "}
+									{sortColumn === "toDate" && (
+										<span>{sortOrder === "asc" ? "▲" : "▼"}</span>
+									)}
+								</th>
+								<th className="pl-8 py-3 text-left text-xs font-extrabold text-white uppercase tracking-wider cursor-pointer">
 									Status
 								</th>
 							</tr>
@@ -112,6 +185,9 @@ const DeclinedPage = () => {
 						<tbody className="bg-white divide-y divide-gray-200">
 							{currentReservations.map((reservation) => (
 								<tr key={reservation._id}>
+									<td className="px-8 py-3 whitespace-nowrap">
+										{reservation.company}
+									</td>
 									<td className="px-8 py-3 whitespace-nowrap">
 										{reservation.department}
 									</td>
@@ -128,7 +204,7 @@ const DeclinedPage = () => {
 										{new Date(reservation.toDate).toLocaleString()}
 									</td>
 									<td className="px-3 py-3 whitespace-nowrap">
-										<span className=" bg-red-600 font-bold rounded-full px-4 py-1 text-white">
+										<span className="bg-red-600 font-bold rounded-full px-4 py-1 text-white">
 											{reservation.status}
 										</span>
 									</td>
@@ -137,23 +213,12 @@ const DeclinedPage = () => {
 						</tbody>
 					</table>
 				</div>
-				<div className="flex justify-center mt-4">
-					<nav>
-						<ul className="flex pl-0 rounded list-none flex-wrap">
-							{Array.from({
-								length: Math.ceil(reservations.length / reservationsPerPage),
-							}).map((_, index) => (
-								<li
-									key={index}
-									className="first:ml-0 text-xs font-semibold flex w-8 h-8 mx-1 justify-center items-center cursor-pointer leading-tight relative border rounded-full bg-white text-gray-800 border-gray-300 hover:bg-gray-200"
-									onClick={() => paginate(index + 1)}
-								>
-									{index + 1}
-								</li>
-							))}
-						</ul>
-					</nav>
-				</div>
+				<Pagination
+					reservations={reservations}
+					reservationsPerPage={reservationsPerPage}
+					currentPage={currentPage}
+					paginate={paginate}
+				/>
 			</div>
 		</div>
 	);

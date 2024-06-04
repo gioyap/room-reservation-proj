@@ -7,6 +7,10 @@ const ReservationSchema = new mongoose.Schema({
 		type: String,
 		required: [true, "Email is required"],
 	},
+	company: {
+		type: String,
+		required: [true, "Company is required"],
+	},
 	department: {
 		type: String,
 		required: [true, "Department is required"],

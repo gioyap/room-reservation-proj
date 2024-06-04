@@ -7,13 +7,30 @@ import "react-datepicker/dist/react-datepicker.css";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+const companies = ["Flawless", "Beauty and Butter", "MTSI", "FINA"];
+
+const departments = [
+	"Executives",
+	"MIS",
+	"Accounting",
+	"SCM",
+	"Procurement",
+	"MART",
+	"HR",
+	"CMRT",
+	"Sales",
+	"Operations",
+	"Audit",
+];
+
 const Dashboard = () => {
 	const { data: session } = useSession();
 	const [selectedDate, setSelectedDate] = useState(new Date());
 	const [fromSelectedTime, setFromSelectedTime] = useState(new Date());
 	const [toSelectedTime, setToSelectedTime] = useState(new Date());
 	const [email, setEmail] = useState("");
-	const [department, setDepartment] = useState("");
+	const [company, setCompany] = useState(companies[0]);
+	const [department, setDepartment] = useState(departments[0]);
 	const [name, setName] = useState("");
 	const [title, setTitle] = useState("");
 	const [description, setDescription] = useState("");
@@ -24,7 +41,11 @@ const Dashboard = () => {
 		setEmail(e.target.value);
 	};
 
-	const handleDepartmentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleCompanyChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+		setCompany(e.target.value);
+	};
+
+	const handleDepartmentChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
 		setDepartment(e.target.value);
 	};
 
@@ -126,9 +147,11 @@ const Dashboard = () => {
 			// Check if the selected time conflicts with existing reservation times
 			const timeConflict =
 				(combinedFromDateTime.getTime() >= resStartDate.getTime() &&
-					combinedFromDateTime.getTime() <= resEndDate.getTime()) ||
-				(combinedToDateTime.getTime() >= resStartDate.getTime() &&
-					combinedToDateTime.getTime() <= resEndDate.getTime());
+					combinedFromDateTime.getTime() < resEndDate.getTime()) ||
+				(combinedToDateTime.getTime() > resStartDate.getTime() &&
+					combinedToDateTime.getTime() <= resEndDate.getTime()) ||
+				(combinedFromDateTime.getTime() <= resStartDate.getTime() &&
+					combinedToDateTime.getTime() >= resEndDate.getTime());
 
 			// Check if the selected room is already reserved for the same date and time
 			// So the user suppose to find another available room
@@ -148,11 +171,12 @@ const Dashboard = () => {
 			return;
 		}
 
-		// Check if the selected date and time are within working hours (8:00 AM - 5:00 PM)
+		// Check if the selected date and time are within working hours (8:00 AM - 6:00 PM)
 		if (
 			combinedFromDateTime.getHours() < 8 ||
-			combinedFromDateTime.getHours() > 18 ||
-			combinedToDateTime.getHours() < 8 ||
+			combinedFromDateTime.getHours() >= 18 ||
+			(combinedToDateTime.getHours() === 18 &&
+				combinedToDateTime.getMinutes() > 0) || // After 6:00 PM
 			combinedToDateTime.getHours() > 18
 		) {
 			toast.error("Reservation can only be made between 8:00 AM and 6:00 PM.");
@@ -178,6 +202,7 @@ const Dashboard = () => {
 
 		const reservationData = {
 			email,
+			company,
 			department,
 			name,
 			title,
@@ -231,7 +256,7 @@ const Dashboard = () => {
 			{session && (
 				<div className="flex flex-col gap-2 bg-[#e61e84] py-2 items-center">
 					<h1 className="text-2xl font-bold text-white mb-2">
-						Welcome {session.user?.name}
+						Welcome, {session.user?.name}
 					</h1>
 				</div>
 			)}
@@ -263,18 +288,42 @@ const Dashboard = () => {
 							<div>
 								<label
 									className="text-[16px] xl:text-[22px] text-[#e61e84] tracking-normal font-extrabold"
+									htmlFor="company"
+								>
+									Company:
+								</label>
+								<select
+									id="company"
+									value={company}
+									onChange={handleCompanyChange}
+									className="w-full text-[14px] xl:text-[18px] px-4 py-2 border rounded-md"
+								>
+									{companies.map((comp) => (
+										<option key={comp} value={comp}>
+											{comp}
+										</option>
+									))}
+								</select>
+							</div>
+							<div>
+								<label
+									className="text-[16px] xl:text-[22px] text-[#e61e84] tracking-normal font-extrabold"
 									htmlFor="department"
 								>
 									Department:
 								</label>
-								<input
+								<select
 									id="department"
-									type="text"
 									value={department}
 									onChange={handleDepartmentChange}
 									className="w-full text-[14px] xl:text-[18px] px-4 py-2 border rounded-md"
-									placeholder="Enter your Department"
-								/>
+								>
+									{departments.map((dept) => (
+										<option key={dept} value={dept}>
+											{dept}
+										</option>
+									))}
+								</select>
 							</div>
 							<div>
 								<label
