@@ -121,7 +121,7 @@ const Signup = () => {
 				<div className="p-12 flex flex-col gap-6 w-[500px]">
 					<h1 className="text-4xl font-bold mb-4">Sign Up</h1>
 					<div>
-						<h2 className="font-extrabold mb-1">Fullname</h2>
+						<h2 className="font-extrabold mb-1">Full Name</h2>
 						<input
 							type="text"
 							name="name"

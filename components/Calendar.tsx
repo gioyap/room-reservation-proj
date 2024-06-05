@@ -12,17 +12,19 @@ import {
 	setYear,
 } from "date-fns";
 
+// Define the Reservation interface
 interface Reservation {
 	_id: string;
 	company: string;
 	department: string;
 	name: string;
-	title: string;
+	title: string; // This field will hold the category like "Energy", "Focus", "Lecture"
 	fromDate: Date;
 	toDate: Date;
 	status: string;
 }
 
+// Define the CalendarProps interface
 interface CalendarProps {
 	selectedDate: Date;
 	selectedTime: Date;
@@ -33,6 +35,7 @@ interface CalendarProps {
 	reservations: Reservation[];
 }
 
+// Define the Calendar component
 const Calendar: React.FC<CalendarProps> = ({
 	selectedDate,
 	onChange,
@@ -45,7 +48,6 @@ const Calendar: React.FC<CalendarProps> = ({
 	const monthEnd = endOfMonth(selectedDate);
 	const fromDate = startOfWeek(monthStart);
 	const endDate = endOfWeek(monthEnd);
-
 	const [bookedDates, setBookedDates] = useState<Reservation[]>([]);
 	const [selectedReservation, setSelectedReservation] = useState<Reservation[]>(
 		[]
@@ -53,6 +55,11 @@ const Calendar: React.FC<CalendarProps> = ({
 	const [selectedDateState, setSelectedDateState] = useState<Date | null>(null);
 	const [clickedDate, setClickedDate] = useState<Date | null>(null);
 	const [selectedTime, setSelectedTime] = useState<Date>(new Date());
+	const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+	const [selectedAvailableCategory, setSelectedAvailableCategory] = useState<
+		string | null
+	>(null);
+
 	const months = [
 		"January",
 		"February",
@@ -68,12 +75,14 @@ const Calendar: React.FC<CalendarProps> = ({
 		"December",
 	];
 
+	// Fetch booked dates on component mount
 	useEffect(() => {
 		fetchBookedDates().then((data) => {
 			setBookedDates(data);
 		});
 	}, []);
 
+	// Fetch booked dates from the API
 	const fetchBookedDates = async () => {
 		try {
 			const response = await fetch("/api/reservationDB");
@@ -105,46 +114,46 @@ const Calendar: React.FC<CalendarProps> = ({
 		day = addDays(day, 1);
 	}
 
+	// Handle day click
 	const handleDayClick = (date: Date) => {
 		onChange(date);
 		setSelectedReservation([]);
 		setSelectedDateState(date);
 		setClickedDate(date);
+		setSelectedCategory(null); // Reset category when day is clicked
+		setSelectedAvailableCategory(null); // Reset available category when day is clicked
 	};
 
+	// Handle booked day click
 	const handleBookedDayClick = (reservation: Reservation) => {
 		const date = new Date(reservation.fromDate);
 		onChange(date);
-
 		const reservationsForDate = bookedDates.filter(
 			(res) => new Date(res.fromDate).toDateString() === date.toDateString()
 		);
 		setSelectedReservation(reservationsForDate);
 		setSelectedDateState(date);
+		setClickedDate(date);
+		setSelectedCategory(null); // Reset category when day is clicked
+		setSelectedAvailableCategory(null); // Reset available category when day is clicked
 	};
 
-	//able to use 0 button in selection of time
-	const formatTime = (time: Date): string => {
-		const hours = time.getHours().toString().padStart(2, "0");
-		const minutes = time.getMinutes().toString().padStart(2, "0");
-		return `${hours}:${minutes}`;
-	};
-
-	//from function
-	const handleTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-		const { value } = event.target;
-		const time = parse(value, "HH:mm", new Date());
+	// Handle time change
+	const handleTimeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+		const value = event.target.value;
+		const time = parse(value, "hh:mm aa", new Date());
 		setSelectedTime(time);
 		onTimeChange(time);
 	};
 
-	//to function
-	const handleToTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-		const { value } = event.target;
-		const time = parse(value, "HH:mm", new Date());
+	// Handle "to" time change
+	const handleToTimeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+		const value = event.target.value;
+		const time = parse(value, "hh:mm aa", new Date());
 		onToTimeChange(time);
 	};
 
+	// Check if date is booked
 	const isDateBooked = (date: Date) => {
 		return bookedDates.some(
 			(bookedDate) =>
@@ -152,21 +161,65 @@ const Calendar: React.FC<CalendarProps> = ({
 		);
 	};
 
-	//this function able to notice the date has green indicator and text-[#e61e84] in selected day
+	// Check if a date is fully booked
+	const isFullyBooked = (date: Date) => {
+		const categories = ["Energy", "Focus", "Lecture"];
+		const reservationsForDate = bookedDates.filter(
+			(reservation) =>
+				new Date(reservation.fromDate).toDateString() === date.toDateString() &&
+				reservation.status === "Accepted"
+		);
+
+		// Check if all categories are booked
+		const categoriesBooked = categories.every((category) =>
+			reservationsForDate.some((res) => res.title === category)
+		);
+
+		if (!categoriesBooked) {
+			return false;
+		}
+
+		// Check if the time slots from 8 AM to 6 PM are fully booked for each category
+		const workingHours = {
+			start: new Date(date.setHours(8, 0, 0, 0)),
+			end: new Date(date.setHours(18, 0, 0, 0)),
+		};
+
+		const isTimeFullyBooked = (category: string) => {
+			const reservationsForCategory = reservationsForDate.filter(
+				(res) => res.title === category
+			);
+
+			let totalBookedTime = 0;
+			reservationsForCategory.forEach((reservation) => {
+				const from = new Date(reservation.fromDate);
+				const to = new Date(reservation.toDate);
+				if (from >= workingHours.start && to <= workingHours.end) {
+					totalBookedTime += (to.getTime() - from.getTime()) / (1000 * 60 * 60); // Calculate total booked time in hours
+				}
+			});
+
+			return totalBookedTime >= 10; // 8 AM to 6 PM is 10 hours
+		};
+
+		return categories.every((category) => isTimeFullyBooked(category));
+	};
+
+	// through this condition the user can see if the date is fully booked, have a reservation details and interactive to the user
 	const getDayClassName = (day: Date) => {
 		const isBooked = isDateBooked(day);
+		const isFullyBookedDay = isFullyBooked(day);
 		const isClickable = day.getMonth() === currentDate.getMonth();
 		const isSelected = selectedDateState
 			? day.toDateString() === selectedDateState.toDateString()
 			: false;
 		return `${isSelected ? "text-[#e61e84] font-extrabold" : ""} ${
-			isBooked ? "booked-day relative" : ""
-		} ${
+			isFullyBookedDay ? "text-red-500 font-extrabold" : ""
+		} ${isBooked && !isFullyBookedDay ? "booked-day relative" : ""} ${
 			isClickable ? "selectable-day cursor-pointer hover:text-[#e61e84]" : ""
 		} ${day.getMonth() !== selectedDate.getMonth() ? "text-gray-400" : ""}`;
 	};
 
-	//these handles is responsible for the user who will be able to select a months and years faster
 	const handleMonthChange = (increment: number) => {
 		const newDate = addMonths(currentDate, increment);
 		setCurrentDate(newDate);
@@ -198,16 +251,91 @@ const Calendar: React.FC<CalendarProps> = ({
 		return yearOptions;
 	};
 
-	//the user cant click the backspace in selected time
-	const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-		if (e.key === "Backspace") {
-			e.preventDefault();
+	// Handle category click
+	const handleCategoryClick = (category: string) => {
+		setSelectedCategory(selectedCategory === category ? null : category);
+	};
+
+	// Handle available category click
+	const handleAvailableCategoryClick = (category: string) => {
+		setSelectedAvailableCategory(
+			selectedAvailableCategory === category ? null : category
+		);
+	};
+
+	// Get available times for the selected category
+	const getAvailableTimes = (category: string): { from: Date; to: Date }[] => {
+		if (!clickedDate) {
+			return []; // Return empty array if clickedDate is null
 		}
+
+		// Filter booked dates for the selected category and date
+		const bookedTimes = bookedDates
+			.filter(
+				(reservation) =>
+					reservation.title === category &&
+					new Date(reservation.fromDate).toDateString() ===
+						clickedDate.toDateString() &&
+					reservation.status === "Accepted" // Include only accepted reservations
+			)
+			.map((reservation) => ({
+				from: new Date(reservation.fromDate),
+				to: new Date(reservation.toDate),
+			}));
+
+		// Sort booked times by start time
+		bookedTimes.sort((a, b) => a.from.getTime() - b.from.getTime());
+
+		const workingHours: { from: Date; to: Date }[] = [];
+		let lastEndTime = new Date(clickedDate);
+		lastEndTime.setHours(8, 0, 0, 0); // Set initial end time to 8:00 AM
+
+		// Loop through booked times to determine available times
+		bookedTimes.forEach((bookedTime) => {
+			// Check if there's a gap between last end time and current start time
+			if (bookedTime.from.getTime() > lastEndTime.getTime()) {
+				// Add available time from last end time to current start time
+				workingHours.push({
+					from: new Date(lastEndTime),
+					to: new Date(bookedTime.from),
+				});
+			}
+			// Update last end time to current end time
+			lastEndTime = bookedTime.to;
+		});
+
+		// Add available time after the last booked time until 6:00 PM
+		const endWorkingTime = new Date(clickedDate);
+		endWorkingTime.setHours(18, 0, 0, 0); // Set end time to 6:00 PM
+		if (lastEndTime.getTime() < endWorkingTime.getTime()) {
+			workingHours.push({
+				from: new Date(lastEndTime),
+				to: new Date(endWorkingTime),
+			});
+		}
+
+		return workingHours;
+	};
+
+	// Function to generate time options in standard format (AM/PM)
+	const generateTimeOptions = (): string[] => {
+		const options: string[] = [];
+		for (let i = 8; i <= 18; i++) {
+			for (let j = 0; j < 60; j += 30) {
+				const hour = i > 12 ? i - 12 : i;
+				const ampm = i >= 12 ? "PM" : "AM";
+				const hourString = hour.toString().padStart(2, "0");
+				const minuteString = j.toString().padStart(2, "0");
+				options.push(`${hourString}:${minuteString} ${ampm}`);
+			}
+		}
+		return options;
 	};
 
 	return (
-		<div className="flex gap-x-4 items-start">
-			<div className="calendar bg-white p-8 rounded shadow mr-4">
+		<div className="flex gap-x-3 items-start">
+			{/* this is responsible for calendar */}
+			<div className="calendar bg-white p-6 rounded shadow mr-2">
 				<div className="header text-center mb-4 flex justify-between items-center">
 					<button
 						onClick={() => handleMonthChange(-1)}
@@ -238,6 +366,13 @@ const Calendar: React.FC<CalendarProps> = ({
 						&gt;
 					</button>
 				</div>
+				<div className="weekdays grid grid-cols-7 gap-1 text-center">
+					{["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
+						<div key={day} className="font-bold">
+							{day}
+						</div>
+					))}
+				</div>
 				<div className="grid grid-cols-7 w-[400px] h-[350px] -mb-4">
 					{days.map((day, index) => {
 						const reservation = bookedDates.find(
@@ -247,7 +382,7 @@ const Calendar: React.FC<CalendarProps> = ({
 						return (
 							<div
 								key={index}
-								className={`day text-center cursor-pointer py-4 ${getDayClassName(
+								className={`day text-center cursor-pointer pt-4 ${getDayClassName(
 									day
 								)} ${
 									day.getMonth() !== selectedDate.getMonth()
@@ -269,109 +404,152 @@ const Calendar: React.FC<CalendarProps> = ({
 					})}
 				</div>
 			</div>
-			<div className="time-table bg-white p-4 rounded shadow">
-				<div className="header text-center mb-4">
+			{/* Choose the desired time */}
+			<div className="time-table bg-white p-4 w-[250px] rounded shadow">
+				<div className="header text-left mb-0">
 					<span className="text-lg font-extrabold text-[#e61e84]">From:</span>
 				</div>
-				<input
-					type="time"
-					value={formatTime(selectedTime)}
+				<select
+					value={format(selectedTime, "hh:mm aa")}
 					onChange={handleTimeChange}
-					onKeyDown={handleKeyDown}
 					className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-				/>
-				<div className="header text-center mb-4 mt-4">
-					<span className="text-lg font-extrabold text-[#e61e84]">To:</span>
-				</div>
-				<input
-					type="time"
-					value={formatTime(toSelectedTime)}
-					onChange={handleToTimeChange}
-					onKeyDown={handleKeyDown}
-					className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-				/>
-			</div>
-			{selectedReservation && selectedReservation.length > 0 && (
-				<div
-					className={`reservation-details bg-white lg:p-2 xl:p-4 rounded shadow absolute lg:ml-[300px] lg:mt-[150px] xl:ml-[485px] xl:mt-[250px] ${
-						selectedReservation.length >= 3 ? "overflow-y-auto max-h-80" : ""
-					}`}
 				>
-					<h2 className="lg:text-sm xl:text-lg font-extrabold text-[#e61e84]">
-						Reservation Details
-					</h2>
-					{selectedReservation.map((reservation, index) => (
-						<div key={index}>
-							<p>
-								<span className="font-bold lg:text-sm xl:text-[16px] text-[#e61e84]">
-									Company:
-								</span>{" "}
-								<span className="lg:text-sm xl:text-[16px]">
-									{reservation.company}
-								</span>
-							</p>
-							<p>
-								<span className="font-bold lg:text-sm xl:text-[16px] text-[#e61e84]">
-									Department:
-								</span>{" "}
-								<span className="lg:text-sm xl:text-[16px]">
-									{reservation.department}
-								</span>
-							</p>
-							<p>
-								<span className="font-bold lg:text-sm xl:text-[16px] text-[#e61e84]">
-									Name:
-								</span>{" "}
-								<span className="lg:text-sm xl:text-[16px]">
-									{reservation.name}
-								</span>
-							</p>
-							<p>
-								<span className="font-bold lg:text-sm xl:text-[16px] text-[#e61e84]">
-									Room:
-								</span>{" "}
-								<span className="lg:text-sm xl:text-[16px]">
-									{reservation.title}
-								</span>
-							</p>
-							<p>
-								<span className="font-bold lg:text-sm xl:text-[16px] text-[#e61e84]">
-									From:
-								</span>{" "}
-								<span className="lg:text-sm xl:text-[16px]">
-									{new Date(reservation.fromDate).toLocaleString()}
-								</span>
-							</p>
-							<p>
-								<span className="font-bold lg:text-sm xl:text-[16px] text-[#e61e84]">
-									To:
-								</span>{" "}
-								<span className="lg:text-sm xl:text-[16px]">
-									{new Date(reservation.toDate).toLocaleTimeString()}
-								</span>
-							</p>
-							<p>
-								<span className="font-bold lg:text-sm xl:text-[16px] text-[#e61e84]">
-									Status:
-								</span>{" "}
-								<span
-									className={`lg:text-sm xl:text-[16px] rounded-full px-2 py-[1px] text-white ${
-										reservation.status === "Accepted"
-											? "bg-green-600"
-											: reservation.status === "Declined"
-											? "bg-red-600 "
-											: "bg-yellow-500"
-									}`}
-								>
-									{reservation.status || "Pending"}
-								</span>
-							</p>
-
-							<hr className="my-4" />
+					{generateTimeOptions().map((time) => (
+						<option key={time} value={time}>
+							{time}
+						</option>
+					))}
+				</select>
+				<div className="header text-left mb-2 mt-2">
+					<span className="text-lg font-extrabold text-[#e61e84]">To:</span>
+					<select
+						value={format(toSelectedTime, "hh:mm aa")}
+						onChange={handleToTimeChange}
+						className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+					>
+						{generateTimeOptions().map((time) => (
+							<option key={time} value={time}>
+								{time}
+							</option>
+						))}
+					</select>
+				</div>
+			</div>
+			{/* able to see the availability of time */}
+			<div className="availability bg-white p-4 w-[300px] absolute right-14 rounded shadow">
+				<h2 className="text-lg font-extrabold text-[#e61e84] mb-2">
+					Unavailable Time
+				</h2>
+				<div>
+					{["Energy", "Focus", "Lecture"].map((category) => (
+						<div key={category}>
+							<button
+								onClick={() => handleCategoryClick(category)}
+								className="category-button mb-2 font-bold w-[100px] text-left hover:bg-[#e61e84] hover:text-white hover:rounded-full pl-4"
+							>
+								{category}
+							</button>
+							{selectedCategory === category && (
+								<div className="overflow-y-auto max-h-[200px]">
+									{bookedDates
+										.filter(
+											(reservation) =>
+												reservation.title === category &&
+												clickedDate &&
+												new Date(reservation.fromDate).toDateString() ===
+													clickedDate.toDateString()
+										)
+										.map((reservation, index) => (
+											<div key={index} className="pl-4">
+												<p>
+													<span className="font-bold text-[#e61e84]">
+														Company:
+													</span>{" "}
+													{reservation.company}
+												</p>
+												<p>
+													<span className="font-bold text-[#e61e84]">
+														Department:
+													</span>{" "}
+													{reservation.department}
+												</p>
+												<p>
+													<span className="font-bold text-[#e61e84]">
+														Name:
+													</span>{" "}
+													{reservation.name}
+												</p>
+												<p>
+													<span className="font-bold text-[#e61e84]">
+														Room:
+													</span>{" "}
+													{reservation.title}
+												</p>
+												<p>
+													<span className="font-bold text-[#e61e84]">
+														From:
+													</span>{" "}
+													{new Date(reservation.fromDate).toLocaleString()}
+												</p>
+												<p>
+													<span className="font-bold text-[#e61e84]">To:</span>{" "}
+													{new Date(reservation.toDate).toLocaleTimeString()}
+												</p>
+												<p>
+													<span className="font-bold text-[#e61e84]">
+														Status:
+													</span>{" "}
+													<span
+														className={`rounded-full px-2 py-[1px] text-white ${
+															reservation.status === "Accepted"
+																? "bg-green-600"
+																: reservation.status === "Declined"
+																? "bg-red-600 "
+																: "bg-yellow-500"
+														}`}
+													>
+														{reservation.status || "Pending"}
+													</span>
+												</p>
+												<hr className="my-2" />
+											</div>
+										))}
+								</div>
+							)}
 						</div>
 					))}
 				</div>
-			)}
+
+				<h2 className="text-lg font-extrabold text-[#e61e84] mt-2 mb-2">
+					Available Time
+				</h2>
+				<div>
+					{["Energy", "Focus", "Lecture"].map((category) => (
+						<div key={category}>
+							<button
+								onClick={() => handleAvailableCategoryClick(category)}
+								className="category-button mb-2 font-bold w-[100px] text-left hover:bg-[#e61e84] hover:text-white hover:rounded-full pl-4"
+							>
+								{category}
+							</button>
+							{selectedAvailableCategory === category &&
+								getAvailableTimes(category).map((time, index) => (
+									<div key={index} className="pl-4">
+										<p>
+											<span className="font-bold text-[#e61e84]">From:</span>{" "}
+											{time.from.toLocaleTimeString()}
+										</p>
+										<p>
+											<span className="font-bold text-[#e61e84]">To:</span>{" "}
+											{time.to.toLocaleTimeString()}
+										</p>
+										<hr className="my-2" />
+									</div>
+								))}
+						</div>
+					))}
+				</div>
+			</div>
 		</div>
 	);
 };

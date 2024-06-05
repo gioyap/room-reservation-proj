@@ -6,8 +6,8 @@ import Calendar from "@/components/Calendar"; // Import Calendar component
 import "react-datepicker/dist/react-datepicker.css";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
-const companies = ["Flawless", "Beauty and Butter", "MTSI", "FINA"];
+import { FaUser } from "react-icons/fa";
+const companies = ["Flawless", "MTSI", "FINA", "Beauty and Butter"];
 
 const departments = [
 	"Executives",
@@ -23,6 +23,8 @@ const departments = [
 	"Audit",
 ];
 
+const sortedDepartments = departments.sort((a, b) => a.localeCompare(b));
+
 const Dashboard = () => {
 	const { data: session } = useSession();
 	const [selectedDate, setSelectedDate] = useState(new Date());
@@ -36,6 +38,7 @@ const Dashboard = () => {
 	const [description, setDescription] = useState("");
 	const [reservations, setReservations] = useState<[]>([]);
 	const [showDescription, setShowDescription] = useState(false);
+	const [dropdownVisible, setDropdownVisible] = useState(false);
 
 	const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setEmail(e.target.value);
@@ -254,13 +257,33 @@ const Dashboard = () => {
 		<div className="min-h-screen py-0">
 			<ToastContainer autoClose={5000} />
 			{session && (
-				<div className="flex flex-col gap-2 bg-[#e61e84] py-2 items-center">
-					<h1 className="text-2xl font-bold text-white mb-2">
-						Welcome, {session.user?.name}
-					</h1>
+				<div className="flex pl-[850px] gap-2 bg-[#e61e84] py-2 items-center justify-between relative">
+					<div>
+						<h1 className="text-2xl font-bold text-white mb-2">
+							Welcome, {session.user?.name}
+						</h1>
+					</div>
+					<div className="relative mr-4">
+						<div className="rounded-full bg-white p-2">
+							<FaUser
+								className="text-[#e61e84] text-2xl cursor-pointer"
+								onClick={() => setDropdownVisible(!dropdownVisible)}
+							/>
+						</div>
+						{dropdownVisible && (
+							<div className="absolute right-0 mt-2 w-48 bg-white border rounded-md shadow-lg">
+								<button
+									onClick={() => signOut()}
+									className="w-full px-4 py-2 text-left text-black hover:bg-gray-200"
+								>
+									Logout
+								</button>
+							</div>
+						)}
+					</div>
 				</div>
 			)}
-			<div className="grid grid-col-1 col-span-1 md:grid-cols-2 mx-5 px-6 lg:w-full lg:h-[750px] lg:ml-0 xl:w-full xl:ml-0 xl:mt-0 xl:h-[860px] xl:pl-24 xl:pt-16 bg-slate-100 py-8 rounded-md shadow-md">
+			<div className="grid grid-col-1 col-span-1 md:grid-cols-2 mx-5 px-[330px] lg:w-full lg:h-[750px] lg:ml-0 xl:w-full xl:ml-0 xl:mt-0 xl:h-[860px] xl:pl-14 xl:pt-16 bg-slate-100 py-8 rounded-md shadow-md">
 				<div className="flex flex-col items-start gap-6">
 					<div className="ml-2 md:0 xl:ml-0">
 						<span className="text-2xl xl:text-4xl tracking-wide font-black font-sans text-[#e61e84]">
@@ -318,7 +341,7 @@ const Dashboard = () => {
 									onChange={handleDepartmentChange}
 									className="w-full text-[14px] xl:text-[18px] px-4 py-2 border rounded-md"
 								>
-									{departments.map((dept) => (
+									{sortedDepartments.map((dept) => (
 										<option key={dept} value={dept}>
 											{dept}
 										</option>
@@ -420,12 +443,6 @@ const Dashboard = () => {
 							)}
 						</div>
 					)}
-					<button
-						onClick={() => signOut()}
-						className="bg-[#e61e84] hover:bg-[#3fa8ee] text-white rounded text-[12px] xl:text-[18px] w-auto p-2 uppercase font-extrabold"
-					>
-						Logout
-					</button>
 				</div>
 				<div className="col-span-1">
 					<div className="ml-2">
@@ -444,30 +461,31 @@ const Dashboard = () => {
 							reservations={reservations}
 						/>
 					</div>
-
-					<div className="mt-0">
-						<p className="text-lg font-semibold text-[#e61e84]">
-							Selected Date:
-						</p>
-						<p>{selectedDate.toDateString()}</p>
+					{/* reflected data */}
+					<div className="absolute top-[655px]">
+						<div className="mt-0">
+							<p className="text-lg font-semibold text-[#e61e84]">
+								Selected Date:
+							</p>
+							<p>{selectedDate.toDateString()}</p>
+						</div>
+						<div className="mt-1 pb-2">
+							<p className="text-lg font-semibold text-[#e61e84]">From:</p>
+							<p>{formattedSelectedTime}</p>
+						</div>
+						<div className="mt-1 pb-2">
+							<p className="text-lg font-semibold text-[#e61e84]">To:</p>
+							<p>{formattedToSelectedTime}</p>
+						</div>
+						<form onSubmit={handleContinue}>
+							<button
+								type="submit"
+								className="bg-[#e61e84] mt-2 hover:bg-[#3fa8ee] xl:text-[18px] font-extrabold text-white rounded text-[12px] w-auto p-2 uppercase"
+							>
+								Submit
+							</button>
+						</form>
 					</div>
-					<div className="mt-1 pb-2">
-						<p className="text-lg font-semibold text-[#e61e84]">From:</p>
-						<p>{formattedSelectedTime}</p>
-					</div>
-					<div className="mt-1 pb-2">
-						<p className="text-lg font-semibold text-[#e61e84]">To:</p>
-						<p>{formattedToSelectedTime}</p>
-					</div>
-
-					<form onSubmit={handleContinue}>
-						<button
-							type="submit"
-							className="bg-[#e61e84] mt-2 hover:bg-[#3fa8ee] xl:text-[18px] font-extrabold text-white rounded text-[12px] w-auto p-2 uppercase"
-						>
-							Submit
-						</button>
-					</form>
 				</div>
 			</div>
 		</div>
