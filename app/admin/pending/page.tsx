@@ -96,6 +96,10 @@ const PendingPage = () => {
 				(reservation) => reservation._id === id
 			);
 
+			if (!updatedReservation) {
+				throw new Error("Reservation not found");
+			}
+
 			setReservations((prevReservations) =>
 				prevReservations.map((reservation) =>
 					reservation._id === id
@@ -106,10 +110,6 @@ const PendingPage = () => {
 
 			toast.success("Reservation accepted successfully!");
 
-			if (!updatedReservation) {
-				throw new Error("Reservation not found");
-			}
-
 			// Send notification email
 			const emailResponse = await fetch("/api/sendEmail/adminEmail", {
 				method: "POST",
@@ -119,20 +119,16 @@ const PendingPage = () => {
 				body: JSON.stringify({
 					email,
 					subject: "Reservation Accepted",
-					message: `
-						Your reservation has been accepted.
-						Department: ${updatedReservation.department}
-						Name: ${updatedReservation.name}
-						Room: ${updatedReservation.title}
-						From: ${new Date(updatedReservation.fromDate).toLocaleString()}
-						To: ${new Date(updatedReservation.toDate).toLocaleString()}
-					`,
+					updatedReservation,
+					status: "Accepted",
 				}),
 			});
 
 			if (emailResponse.ok) {
 				toast.success("Email sent successfully");
 			} else {
+				const errorData = await emailResponse.json();
+				console.error("Email error:", errorData);
 				toast.error("Failed to send email");
 			}
 			setTimeout(() => {
@@ -162,6 +158,10 @@ const PendingPage = () => {
 				(reservation) => reservation._id === id
 			);
 
+			if (!updatedReservation) {
+				throw new Error("Reservation not found");
+			}
+
 			setReservations((prevReservations) =>
 				prevReservations.map((reservation) =>
 					reservation._id === id
@@ -172,10 +172,6 @@ const PendingPage = () => {
 
 			toast.success("Reservation declined successfully!");
 
-			if (!updatedReservation) {
-				throw new Error("Reservation not found");
-			}
-
 			// Send notification email
 			const emailResponse = await fetch("/api/sendEmail/adminEmail", {
 				method: "POST",
@@ -185,20 +181,16 @@ const PendingPage = () => {
 				body: JSON.stringify({
 					email,
 					subject: "Reservation Declined",
-					message: `
-						Your reservation has been declined.
-						Department: ${updatedReservation.department}
-						Name: ${updatedReservation.name}
-						Room: ${updatedReservation.title}
-						From: ${new Date(updatedReservation.fromDate).toLocaleString()}
-						To: ${new Date(updatedReservation.toDate).toLocaleString()}
-					`,
+					updatedReservation,
+					status: "Declined",
 				}),
 			});
 
 			if (emailResponse.ok) {
 				toast.success("Email sent successfully");
 			} else {
+				const errorData = await emailResponse.json();
+				console.error("Email error:", errorData);
 				toast.error("Failed to send email");
 			}
 			setTimeout(() => {
