@@ -23,40 +23,42 @@ export async function POST(request: NextRequest) {
 		});
 
 		const descriptionContent = newData.description
-			? `<p>This is from user, he/she have a concern:</p>
-			<p>"${newData.description}"</p>`
+			? `<p style="text-align: center; color: #e61e84; font-size: 20px;">This is from user, he/she has a concern:</p>
+		   <p style="text-align: center; color: #e61e84; font-size: 18px;">"${newData.description}"</p>`
 			: "";
 
 		// Generate HTML content for the email
 		const htmlContent = `
-			<h1>New Reservation</h1>
-			<p>Here is the new reservation:</p>
-			<table border="1" cellpadding="10" cellspacing="0" style="border-collapse: collapse;">
-				<thead>
-					<tr>
-						<th>Company</th>
-						<th>Department</th>
-						<th>Name</th>
-						<th>Room</th>
-						<th>From</th>
-						<th>To</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td>${newData.company}</td>
-						<td>${newData.department}</td>
-						<td>${newData.name}</td>
-						<td>${newData.title}</td>
-						<td>${new Date(newData.fromDate).toLocaleString()}</td>
-						<td>${new Date(newData.toDate).toLocaleString()}</td>
-					</tr>
-				</tbody>
-			</table>
-			${descriptionContent}
-			<p>This is new reservation, please let me know if this is accepted or decline</p>
-			<p>Go to the Admin Dashboard to able to accepted or deny the request. Thank you</p>
-		`;
+	<div style="background-color: white; padding-top: 8px; padding-bottom: 8px; border-radius: 10px;">
+    <h1 style="text-align: center; color: #e61e84; font-size: 42px;">New Reservation</h1>
+    <p style="text-align: center; color: #e61e84; font-size: 20px;">Here is the new reservation:</p>
+    <table border="1" cellpadding="10" cellspacing="0">
+        <thead>
+		<tr style="background-color: #e61e84; color: white; font-size: 18px; text-align: center;">
+                <th>Company</th>
+                <th>Department</th>
+                <th>Name</th>
+                <th>Room</th>
+                <th>From</th>
+                <th>To</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr style="text-align: center; color: #e61e84; font-size: 18px;">
+                <td>${newData.company}</td>
+                <td>${newData.department}</td>
+                <td>${newData.name}</td>
+                <td>${newData.title}</td>
+                <td>${new Date(newData.fromDate).toLocaleString()}</td>
+                <td>${new Date(newData.toDate).toLocaleString()}</td>
+            </tr>
+        </tbody>
+    </table>
+    ${descriptionContent}
+    <p style="text-align: center; color: #e61e84; font-size: 18px;">This is new reservation, please let me know if this is accepted or decline</p>
+    <p style="text-align: center; color: #e61e84; font-size: 18px; ">Go to the Admin Dashboard to able to accepted or deny the request. Thank you</p>
+		</div>
+	`;
 
 		// the user able to notify the admin
 		const adminMailOptions = {
