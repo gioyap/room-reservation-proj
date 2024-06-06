@@ -80,38 +80,38 @@ const AcceptedPage = () => {
 
 	const handleCancel = async (id: string, email: string) => {
 		try {
-			const response = await fetch(`/api/reservationDB/`, {
+			const response = await fetch(`/api/reservationDB`, {
 				method: "PUT",
 				headers: {
 					"Content-Type": "application/json",
 				},
-				body: JSON.stringify({ id, status: "Declined" }),
+				body: JSON.stringify({ id, status: "Accepted" }),
 			});
 
 			if (!response.ok) {
-				throw new Error("Failed to decline reservation");
+				throw new Error("Failed to cancel reservation");
 			}
 
 			const updatedReservation = reservations.find(
 				(reservation) => reservation._id === id
 			);
 
-			setReservations((prevReservations) =>
-				prevReservations.map((reservation) =>
-					reservation._id === id
-						? { ...reservation, status: "Declined" }
-						: reservation
-				)
-			);
-
-			toast.success("Reservation declined successfully!");
-
 			if (!updatedReservation) {
 				throw new Error("Reservation not found");
 			}
 
+			setReservations((prevReservations) =>
+				prevReservations.map((reservation) =>
+					reservation._id === id
+						? { ...reservation, status: "Accepted" }
+						: reservation
+				)
+			);
+
+			toast.success("Reservation Canceled successfully!");
+
 			// Send notification email
-			const emailResponse = await fetch("/api/sendEmail/adminEmail", {
+			const emailResponse = await fetch("/api/sendEmail/cancelAdmin", {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
@@ -119,14 +119,8 @@ const AcceptedPage = () => {
 				body: JSON.stringify({
 					email,
 					subject: "Reservation Canceled",
-					message: `
-						Your reservation has been canceled.
-						Department: ${updatedReservation.department}
-						Name: ${updatedReservation.name}
-						Room: ${updatedReservation.title}
-						From: ${new Date(updatedReservation.fromDate).toLocaleString()}
-						To: ${new Date(updatedReservation.toDate).toLocaleString()}
-					`,
+					updatedReservation, // Ensure this object includes all necessary details
+					status: "Accepted",
 				}),
 			});
 
