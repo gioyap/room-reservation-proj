@@ -78,6 +78,72 @@ const AcceptedPage = () => {
 		}
 	}, [session]);
 
+	const handleCancel = async (id: string, email: string) => {
+		try {
+			const response = await fetch(`/api/reservationDB/`, {
+				method: "PUT",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ id, status: "Declined" }),
+			});
+
+			if (!response.ok) {
+				throw new Error("Failed to decline reservation");
+			}
+
+			const updatedReservation = reservations.find(
+				(reservation) => reservation._id === id
+			);
+
+			setReservations((prevReservations) =>
+				prevReservations.map((reservation) =>
+					reservation._id === id
+						? { ...reservation, status: "Declined" }
+						: reservation
+				)
+			);
+
+			toast.success("Reservation declined successfully!");
+
+			if (!updatedReservation) {
+				throw new Error("Reservation not found");
+			}
+
+			// Send notification email
+			const emailResponse = await fetch("/api/sendEmail/adminEmail", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					email,
+					subject: "Reservation Canceled",
+					message: `
+						Your reservation has been canceled.
+						Department: ${updatedReservation.department}
+						Name: ${updatedReservation.name}
+						Room: ${updatedReservation.title}
+						From: ${new Date(updatedReservation.fromDate).toLocaleString()}
+						To: ${new Date(updatedReservation.toDate).toLocaleString()}
+					`,
+				}),
+			});
+
+			if (emailResponse.ok) {
+				toast.success("Email sent successfully");
+			} else {
+				toast.error("Failed to send email");
+			}
+			setTimeout(() => {
+				window.location.reload();
+			}, 5000);
+		} catch (error) {
+			console.error("Error declining reservation:", error);
+			toast.error("Failed to decline reservation.");
+		}
+	};
+
 	const indexOfLastReservation = currentPage * reservationsPerPage;
 	const indexOfFirstReservation = indexOfLastReservation - reservationsPerPage;
 	const currentReservations = sortedReservations.slice(
@@ -180,6 +246,9 @@ const AcceptedPage = () => {
 								<th className="pl-8 py-3 text-left text-xs font-extrabold text-white uppercase tracking-wider">
 									Status
 								</th>
+								<th className="pl-8 py-3 text-left text-xs font-extrabold text-white uppercase tracking-wider">
+									Action
+								</th>
 							</tr>
 						</thead>
 						<tbody className="bg-white divide-y divide-gray-200">
@@ -207,6 +276,16 @@ const AcceptedPage = () => {
 										<span className="bg-green-600 rounded-full px-4 py-1 text-white font-bold">
 											{reservation.status}
 										</span>
+									</td>
+									<td className="px-3 py-3 whitespace-nowrap">
+										<button
+											className="bg-[#ff7b00] hover:bg-red-700 text-white font-bold py-1 px-6 rounded-full"
+											onClick={() =>
+												handleCancel(reservation._id, reservation.email)
+											}
+										>
+											Cancel
+										</button>
 									</td>
 								</tr>
 							))}

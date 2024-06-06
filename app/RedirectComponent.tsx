@@ -23,7 +23,10 @@ const RedirectComponent = () => {
 					router.push("/admin");
 				}
 			} else {
-				router.push("/dashboard");
+				const allowedPaths = ["/dashboard", "/dashboard/records"];
+				if (!allowedPaths.includes(currentPath)) {
+					router.push("/dashboard");
+				}
 			}
 		} else if (status === "unauthenticated") {
 			const allowedUnauthenticatedPaths = ["/", "/signup"];
