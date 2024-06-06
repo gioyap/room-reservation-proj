@@ -66,17 +66,8 @@ export async function POST(request: NextRequest) {
 			html: htmlContent,
 		};
 
-		// the admin able to notify the user
-		const userMailOption = {
-			from: process.env.NEXT_PUBLIC_EMAIL_USER,
-			to: newData.email,
-			subject: newData.subject,
-			text: newData.message,
-		};
-
 		// Send the email
 		await transporter.sendMail(adminMailOptions);
-		await transporter.sendMail(userMailOption);
 
 		return NextResponse.json(
 			{

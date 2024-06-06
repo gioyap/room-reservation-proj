@@ -7,6 +7,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FaUser } from "react-icons/fa";
+import SidebarClient from "@/components/SidebarClient";
 const companies = ["Flawless", "MTSI", "FINA", "Beauty and Butter"];
 
 const departments = [
@@ -239,6 +240,9 @@ const Dashboard = () => {
 				} else {
 					toast.error("Failed to send email");
 				}
+				setTimeout(() => {
+					window.location.reload();
+				}, 5000);
 			} else {
 				toast.error("Failed to save reservation: " + response.statusText);
 			}
@@ -255,9 +259,10 @@ const Dashboard = () => {
 
 	return (
 		<div className="min-h-screen py-0">
+			<SidebarClient />
 			<ToastContainer autoClose={5000} />
 			{session && (
-				<div className="flex pl-[850px] gap-2 bg-[#e61e84] py-2 items-center justify-between relative">
+				<div className="flex pl-[850px] gap-2 bg-[#e81e83] py-2 items-center justify-between">
 					<div>
 						<h1 className="text-2xl font-bold text-white mb-2">
 							Welcome, {session.user?.name}
@@ -283,15 +288,16 @@ const Dashboard = () => {
 					</div>
 				</div>
 			)}
+
 			<div className="grid grid-col-1 col-span-1 md:grid-cols-2 mx-5 px-[330px] lg:w-full lg:h-[750px] lg:ml-0 xl:w-full xl:ml-0 xl:mt-0 xl:h-[860px] xl:pl-14 xl:pt-16 bg-slate-100 py-8 rounded-md shadow-md">
 				<div className="flex flex-col items-start gap-6">
-					<div className="ml-2 md:0 xl:ml-0">
+					<div className="ml-2 md:0 xl:ml-20">
 						<span className="text-2xl xl:text-4xl tracking-wide font-black font-sans text-[#e61e84]">
 							Calendar Reservation
 						</span>
 					</div>
 					{session && (
-						<div className="flex flex-col w-[400px] xl:w-[600px] gap-4">
+						<div className="flex flex-col w-[400px] xl:w-[600px] gap-4 xl:ml-20">
 							<div>
 								<label
 									className="text-[16px] xl:text-[22px] text-[#e61e84] tracking-normal font-extrabold"

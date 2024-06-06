@@ -1,7 +1,5 @@
 // pages/admin/pending.tsx
-
 "use client";
-
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { toast, ToastContainer } from "react-toastify";
@@ -113,7 +111,7 @@ const PendingPage = () => {
 			}
 
 			// Send notification email
-			const emailResponse = await fetch("/api/sendEmail", {
+			const emailResponse = await fetch("/api/sendEmail/adminEmail", {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
@@ -137,6 +135,9 @@ const PendingPage = () => {
 			} else {
 				toast.error("Failed to send email");
 			}
+			setTimeout(() => {
+				window.location.reload();
+			}, 5000);
 		} catch (error) {
 			console.error("Error accepting reservation:", error);
 			toast.error("Failed to accept reservation.");
@@ -176,7 +177,7 @@ const PendingPage = () => {
 			}
 
 			// Send notification email
-			const emailResponse = await fetch("/api/sendEmail", {
+			const emailResponse = await fetch("/api/sendEmail/adminEmail", {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
@@ -200,6 +201,9 @@ const PendingPage = () => {
 			} else {
 				toast.error("Failed to send email");
 			}
+			setTimeout(() => {
+				window.location.reload();
+			}, 5000);
 		} catch (error) {
 			console.error("Error declining reservation:", error);
 			toast.error("Failed to decline reservation.");

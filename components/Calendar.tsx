@@ -161,6 +161,26 @@ const Calendar: React.FC<CalendarProps> = ({
 		);
 	};
 
+	// Condition color indicator
+	const getBookingStatusColor = (date: Date) => {
+		const reservations = bookedDates.filter(
+			(res) => new Date(res.fromDate).toDateString() === date.toDateString()
+		);
+
+		const hasAccepted = reservations.some((res) => res.status === "Accepted");
+		const hasPending = reservations.some((res) => res.status === "Pending");
+
+		if (hasAccepted && hasPending) {
+			// If both "Accepted" and "Pending" reservations exist
+			return "bg-[#65fe08]"; // Apply both colors
+		} else if (hasAccepted) {
+			return "bg-green-500";
+		} else if (hasPending) {
+			return "bg-[#ffca1a]";
+		}
+		return ""; // Default color if not booked
+	};
+
 	// Check if a date is fully booked
 	const isFullyBooked = (date: Date) => {
 		const categories = ["Energy", "Focus", "Lecture"];
@@ -397,7 +417,11 @@ const Calendar: React.FC<CalendarProps> = ({
 							>
 								{format(day, "d")}
 								{isDateBooked(day) && (
-									<span className="absolute w-2 h-2 bg-green-500 rounded-full top-2 right-6"></span>
+									<span
+										className={`absolute w-2 h-2 rounded-full top-2 right-6 ${getBookingStatusColor(
+											day
+										)}`}
+									></span>
 								)}
 							</div>
 						);
@@ -457,7 +481,9 @@ const Calendar: React.FC<CalendarProps> = ({
 												reservation.title === category &&
 												clickedDate &&
 												new Date(reservation.fromDate).toDateString() ===
-													clickedDate.toDateString()
+													clickedDate.toDateString() &&
+												(reservation.status === "Accepted" ||
+													reservation.status === "Pending")
 										)
 										.map((reservation, index) => (
 											<div key={index} className="pl-4">
@@ -503,8 +529,6 @@ const Calendar: React.FC<CalendarProps> = ({
 														className={`rounded-full px-2 py-[1px] text-white ${
 															reservation.status === "Accepted"
 																? "bg-green-600"
-																: reservation.status === "Declined"
-																? "bg-red-600 "
 																: "bg-yellow-500"
 														}`}
 													>
