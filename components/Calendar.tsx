@@ -355,11 +355,11 @@ const Calendar: React.FC<CalendarProps> = ({
 	return (
 		<div className="flex gap-x-3 items-start">
 			{/* this is responsible for calendar */}
-			<div className="calendar bg-white p-6 rounded shadow mr-2">
-				<div className="header text-center mb-4 flex justify-between items-center">
+			<div className="calendar bg-white lg:p-2 xl:p-6 rounded shadow mr-2">
+				<div className="header text-center lg:mb-1 xl:mb-4 flex justify-between items-center">
 					<button
 						onClick={() => handleMonthChange(-1)}
-						className="arrow-button"
+						className="arrow-button lg:text-[12px] xl:text-[16px]"
 					>
 						&lt;
 					</button>
@@ -367,7 +367,7 @@ const Calendar: React.FC<CalendarProps> = ({
 						<select
 							value={currentDate.getMonth()}
 							onChange={handleMonthSelect}
-							className="mr-8"
+							className="mr-8 lg:text-[12px] xl:text-[16px]"
 						>
 							{months.map((month, index) => (
 								<option key={index} value={index}>
@@ -378,22 +378,26 @@ const Calendar: React.FC<CalendarProps> = ({
 						<select
 							value={currentDate.getFullYear()}
 							onChange={handleYearSelect}
+							className="lg:text-[12px] xl:text-[16px]"
 						>
 							{renderYearOptions()}
 						</select>
 					</div>
-					<button onClick={() => handleMonthChange(1)} className="arrow-button">
+					<button
+						onClick={() => handleMonthChange(1)}
+						className="arrow-button lg:text-[12px] xl:text-[16px]"
+					>
 						&gt;
 					</button>
 				</div>
-				<div className="weekdays grid grid-cols-7 gap-1 text-center">
+				<div className="weekdays grid grid-cols-7 gap-1 text-center lg:text-[12px] xl:text-[16px]">
 					{["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
 						<div key={day} className="font-bold">
 							{day}
 						</div>
 					))}
 				</div>
-				<div className="grid grid-cols-7 w-[400px] h-[350px] -mb-4">
+				<div className="grid grid-cols-7 gap-[-4px] lg:w-[350px] xl:w-[400px] lg:h-[250px] xl:h-[350px] lg:mb-0 xl:-mb-4 lg:text-[12px] xl:text-[16px]">
 					{days.map((day, index) => {
 						const reservation = bookedDates.find(
 							(res) =>
@@ -414,11 +418,12 @@ const Calendar: React.FC<CalendarProps> = ({
 										? handleBookedDayClick(reservation)
 										: handleDayClick(day)
 								}
+								style={{ margin: "-2px" }} // Adjust this value to achieve the desired gap
 							>
 								{format(day, "d")}
 								{isDateBooked(day) && (
 									<span
-										className={`absolute w-2 h-2 rounded-full top-2 right-6 ${getBookingStatusColor(
+										className={`absolute lg:w-1.5 lg:h-1.5 xl:w-2 xl:h-2 rounded-full top-2 lg:right-6 ${getBookingStatusColor(
 											day
 										)}`}
 									></span>
@@ -429,14 +434,16 @@ const Calendar: React.FC<CalendarProps> = ({
 				</div>
 			</div>
 			{/* Choose the desired time */}
-			<div className="time-table bg-white p-4 w-[250px] rounded shadow">
+			<div className="time-table bg-white p-4 lg:w-[150px] xl:w-[250px] rounded shadow">
 				<div className="header text-left mb-0">
-					<span className="text-lg font-extrabold text-[#e61e84]">From:</span>
+					<span className="lg:text-md xl:text-lg font-extrabold text-[#e61e84]">
+						From:
+					</span>
 				</div>
 				<select
 					value={format(selectedTime, "hh:mm aa")}
 					onChange={handleTimeChange}
-					className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+					className="w-full lg:px-1 lg:py-1 xl:px-3 xl:py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 lg:text-[12px] xl:text-[16px]"
 				>
 					{generateTimeOptions().map((time) => (
 						<option key={time} value={time}>
@@ -445,11 +452,13 @@ const Calendar: React.FC<CalendarProps> = ({
 					))}
 				</select>
 				<div className="header text-left mb-2 mt-2">
-					<span className="text-lg font-extrabold text-[#e61e84]">To:</span>
+					<span className="lg:text-md xl:text-lg font-extrabold text-[#e61e84]">
+						To:
+					</span>
 					<select
 						value={format(toSelectedTime, "hh:mm aa")}
 						onChange={handleToTimeChange}
-						className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+						className="w-full lg:px-1 lg:py-1 xl:px-3 xl:py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 lg:text-[12px] xl:text-[16px]"
 					>
 						{generateTimeOptions().map((time) => (
 							<option key={time} value={time}>
@@ -460,8 +469,8 @@ const Calendar: React.FC<CalendarProps> = ({
 				</div>
 			</div>
 			{/* able to see the availability of time */}
-			<div className="availability bg-white p-4 w-[300px] absolute right-14 rounded shadow">
-				<h2 className="text-lg font-extrabold text-[#e61e84] mb-2">
+			<div className="availability bg-white lg:p-2 xl:p-4 lg:w-[200px] xl:w-[300px] lg:top-[200px] xl:top-[20px] absolute lg:left-[385px] xl:left-[740px] rounded shadow overflow-y-auto max-h-[400px] lg:h-[215px] xl:h-[500px]">
+				<h2 className="lg:text-[14px] xl:text-lg font-extrabold text-[#e61e84] lg:mt-1 xl:mt-2 lg:mb-0 xl:mb-2">
 					Unavailable Time
 				</h2>
 				<div>
@@ -469,12 +478,12 @@ const Calendar: React.FC<CalendarProps> = ({
 						<div key={category}>
 							<button
 								onClick={() => handleCategoryClick(category)}
-								className="category-button mb-2 font-bold w-[100px] text-left hover:bg-[#e61e84] hover:text-white hover:rounded-full pl-4"
+								className="category-button lg:mb-0 xl:mb-2 font-bold w-[100px] text-left hover:bg-[#e61e84] hover:text-white hover:rounded-full pl-4 lg:text-[12px] xl:text-[16px] "
 							>
 								{category}
 							</button>
 							{selectedCategory === category && (
-								<div className="overflow-y-auto max-h-[200px]">
+								<div className="overflow-y-auto max-h-[200px] lg:text-[12px] xl:text-[16px]">
 									{bookedDates
 										.filter(
 											(reservation) =>
@@ -544,7 +553,7 @@ const Calendar: React.FC<CalendarProps> = ({
 					))}
 				</div>
 
-				<h2 className="text-lg font-extrabold text-[#e61e84] mt-2 mb-2">
+				<h2 className="lg:text-[14px] xl:text-lg font-extrabold text-[#e61e84] lg:mt-1 xl:mt-2 lg:mb-0 xl:mb-2">
 					Available Time
 				</h2>
 				<div>
@@ -552,13 +561,16 @@ const Calendar: React.FC<CalendarProps> = ({
 						<div key={category}>
 							<button
 								onClick={() => handleAvailableCategoryClick(category)}
-								className="category-button mb-2 font-bold w-[100px] text-left hover:bg-[#e61e84] hover:text-white hover:rounded-full pl-4"
+								className="category-button lg:mb-0 xl:mb-2 font-bold w-[100px] text-left hover:bg-[#e61e84] hover:text-white hover:rounded-full pl-4 lg:text-[12px] xl:text-[16px]"
 							>
 								{category}
 							</button>
 							{selectedAvailableCategory === category &&
 								getAvailableTimes(category).map((time, index) => (
-									<div key={index} className="pl-4">
+									<div
+										key={index}
+										className="pl-4 lg:text-[12px] xl:text-[16px]"
+									>
 										<p>
 											<span className="font-bold text-[#e61e84]">From:</span>{" "}
 											{time.from.toLocaleTimeString()}
