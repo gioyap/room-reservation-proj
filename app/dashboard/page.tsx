@@ -262,16 +262,16 @@ const Dashboard = () => {
 			<SidebarClient />
 			<ToastContainer autoClose={5000} />
 			{session && (
-				<div className="flex pl-[850px] gap-2 bg-[#e81e83] py-2 items-center justify-between">
+				<div className="flex lg:pl-[400px] xl:pl-[550px] 2xl:pl-[850px] gap-2 bg-[#e81e83] lg:py-1 2xl:py-2 items-center justify-between">
 					<div>
-						<h1 className="text-2xl font-bold text-white mb-2">
+						<h1 className="lg:text-xl 2xl:text-2xl font-bold text-white">
 							Welcome, {session.user?.name}
 						</h1>
 					</div>
 					<div className="relative mr-4">
 						<div className="rounded-full bg-white p-2">
 							<FaUser
-								className="text-[#e61e84] text-2xl cursor-pointer"
+								className="text-[#e61e84] lg:text-lg 2xl:text-2xl cursor-pointer"
 								onClick={() => setDropdownVisible(!dropdownVisible)}
 							/>
 						</div>
@@ -289,18 +289,18 @@ const Dashboard = () => {
 				</div>
 			)}
 
-			<div className="grid grid-col-1 col-span-1 md:grid-cols-2 mx-5 px-[330px] lg:w-full lg:h-[750px] lg:ml-0 xl:w-full xl:ml-0 xl:mt-0 xl:h-[860px] xl:pl-14 xl:pt-16 bg-slate-100 py-8 rounded-md shadow-md">
-				<div className="flex flex-col items-start gap-6">
-					<div className="ml-2 md:0 xl:ml-20">
-						<span className="text-2xl xl:text-4xl tracking-wide font-black font-sans text-[#e61e84]">
+			<div className="grid grid-cols-1 md:grid-cols-2 mx-5 lg:px-[80px] xl:px-[330px] lg:w-full lg:h-[557px] lg:ml-0 xl:w-full xl:ml-0 xl:mt-0 xl:h-[860px] xl:pl-14 xl:pt-16 bg-slate-100 py-8 shadow-md">
+				<div className="flex flex-col items-start gap-6 lg:gap-8 px-5 lg:px-10 xl:px-14">
+					<div className="lg:-ml-10 xl:ml-6">
+						<span className="lg:text-xl 2xl:text-4xl tracking-wide font-black font-sans text-[#e61e84]">
 							Calendar Reservation
 						</span>
 					</div>
 					{session && (
-						<div className="flex flex-col w-[400px] xl:w-[600px] gap-4 xl:ml-20">
+						<div className="flex flex-col w-full gap-4 lg:w-[300px] xl:w-[600px] lg:-ml-10  xl:ml-6">
 							<div>
 								<label
-									className="text-[16px] xl:text-[22px] text-[#e61e84] tracking-normal font-extrabold"
+									className="lg:text-[14px] xl:text-[22px] text-[#e61e84] tracking-normal font-extrabold"
 									htmlFor="email"
 								>
 									Email:
@@ -310,13 +310,13 @@ const Dashboard = () => {
 									type="text"
 									value={email}
 									onChange={handleEmailChange}
-									className="w-full text-[14px] xl:text-[18px] px-4 py-2 border rounded-md"
+									className="w-full lg:text-[12px] xl:text-[18px] lg:px-4 lg:py-1 xl:py-2 border rounded-md"
 									placeholder="example123@gmail.com"
 								/>
 							</div>
 							<div>
 								<label
-									className="text-[16px] xl:text-[22px] text-[#e61e84] tracking-normal font-extrabold"
+									className="lg:text-[14px] xl:text-[22px] text-[#e61e84] tracking-normal font-extrabold"
 									htmlFor="company"
 								>
 									Company:
@@ -325,7 +325,7 @@ const Dashboard = () => {
 									id="company"
 									value={company}
 									onChange={handleCompanyChange}
-									className="w-full text-[14px] xl:text-[18px] px-4 py-2 border rounded-md"
+									className="w-full lg:text-[12px] xl:text-[18px] lg:px-4 lg:py-1 xl:py-2 border rounded-md"
 								>
 									{companies.map((comp) => (
 										<option key={comp} value={comp}>
@@ -336,7 +336,7 @@ const Dashboard = () => {
 							</div>
 							<div>
 								<label
-									className="text-[16px] xl:text-[22px] text-[#e61e84] tracking-normal font-extrabold"
+									className="lg:text-[14px] xl:text-[22px] text-[#e61e84] tracking-normal font-extrabold"
 									htmlFor="department"
 								>
 									Department:
@@ -345,7 +345,7 @@ const Dashboard = () => {
 									id="department"
 									value={department}
 									onChange={handleDepartmentChange}
-									className="w-full text-[14px] xl:text-[18px] px-4 py-2 border rounded-md"
+									className="w-full lg:text-[12px] xl:text-[18px] lg:px-4 lg:py-1 xl:py-2 border rounded-md"
 								>
 									{sortedDepartments.map((dept) => (
 										<option key={dept} value={dept}>
@@ -356,7 +356,7 @@ const Dashboard = () => {
 							</div>
 							<div>
 								<label
-									className="text-[16px] xl:text-[22px] text-[#e61e84] tracking-normal font-extrabold"
+									className="lg:text-[14px] xl:text-[22px] text-[#e61e84] tracking-normal font-extrabold"
 									htmlFor="name"
 								>
 									Full Name:
@@ -366,19 +366,19 @@ const Dashboard = () => {
 									type="text"
 									value={name}
 									onChange={handleNameChange}
-									className="w-full text-[14px] xl:text-[18px] px-4 py-2 border rounded-md"
+									className="w-full lg:text-[12px] xl:text-[18px] lg:px-4 lg:py-1 xl:py-2 border rounded-md"
 									placeholder="Please enter your full name"
 								/>
 							</div>
 							<div>
 								<label
-									className="text-[16px] xl:text-[22px] text-[#e61e84] tracking-normal font-extrabold"
+									className="lg:text-[14px] xl:text-[22px] text-[#e61e84] tracking-normal font-extrabold"
 									htmlFor="title"
 								>
 									Room:
 								</label>
 								<div className="flex gap-2 pt-2">
-									<label className="text-[#e61e84]">
+									<label className="text-[#e61e84] lg:text-[12px] 2xl:text-[15px]">
 										<input
 											type="radio"
 											value="Energy"
@@ -388,7 +388,7 @@ const Dashboard = () => {
 										/>
 										Energy
 									</label>
-									<label className="text-[#e61e84]">
+									<label className="text-[#e61e84] lg:text-[12px] 2xl:text-[15px]">
 										<input
 											type="radio"
 											value="Focus"
@@ -398,7 +398,7 @@ const Dashboard = () => {
 										/>
 										Focus
 									</label>
-									<label className="text-[#e61e84]">
+									<label className="text-[#e61e84] lg:text-[12px] 2xl:text-[15px]">
 										<input
 											type="radio"
 											value="Lecture"
@@ -410,10 +410,9 @@ const Dashboard = () => {
 									</label>
 								</div>
 							</div>
-
-							<div className="mt-2">
+							<div>
 								<label
-									className="text-[16px] xl:text-[18px] tracking-normal"
+									className="lg:text-[14px] xl:text-[18px] tracking-normal"
 									htmlFor="showDescription"
 								>
 									Is this urgent?
@@ -426,13 +425,12 @@ const Dashboard = () => {
 									onChange={handleShowDescriptionChange}
 									className="ml-2"
 								/>
-								<span className="text-[16px] xl:text-[18px] ml-1">Yes</span>
+								<span className="lg:text-[14px] xl:text-[18px] ml-1">Yes</span>
 							</div>
-
 							{showDescription && (
 								<div>
 									<label
-										className="text-[16px] xl:text-[22px] text-[#e61e84] tracking-normal font-extrabold"
+										className="lg:text-[14px] xl:text-[22px] text-[#e61e84] tracking-normal font-extrabold"
 										htmlFor="description"
 									>
 										Urgent Notes:
@@ -442,7 +440,7 @@ const Dashboard = () => {
 										type="description"
 										value={description}
 										onChange={handleDescriptionChange}
-										className="w-full text-[14px] xl:text-[18px] px-4 py-2 border rounded-md"
+										className="w-full lg:text-[12px] xl:text-[18px] px-4 lg:py-1 xl:py-2 border rounded-md"
 										placeholder="Please provide the reason"
 									/>
 								</div>
@@ -450,13 +448,13 @@ const Dashboard = () => {
 						</div>
 					)}
 				</div>
-				<div className="col-span-1">
-					<div className="ml-2">
-						<span className="text-[22px] text-[#e61e84] xl:text-[35px] mt-4 font-sans tracking-wide font-extrabold">
+				<div className="col-span-1 ">
+					<div className="lg:-ml-28 xl:ml-0">
+						<span className="text-[20px] text-[#e61e84] xl:text-[35px] mt-4 font-sans tracking-wide font-extrabold">
 							Select Reservation Date
 						</span>
 					</div>
-					<div className="py-5">
+					<div className="py-5 lg:absolute lg:left-[400px] xl:relative xl:left-0">
 						<Calendar
 							selectedDate={selectedDate}
 							onChange={setSelectedDate}
@@ -468,29 +466,41 @@ const Dashboard = () => {
 						/>
 					</div>
 					{/* reflected data */}
-					<div className="absolute top-[655px]">
+					<div className="absolute lg:top-[450px] xl:top-[655px] lg:flex justify-between gap-x-10 lg:left-[400px] items-center xl:block xl:left-[820px]">
 						<div className="mt-0">
-							<p className="text-lg font-semibold text-[#e61e84]">
+							<p className="lg:text-[14px] xl:text-[22px] font-semibold text-[#e61e84]">
 								Selected Date:
 							</p>
-							<p>{selectedDate.toDateString()}</p>
+							<p className="lg:text-[12px] xl:text-[18px]">
+								{selectedDate.toDateString()}
+							</p>
 						</div>
 						<div className="mt-1 pb-2">
-							<p className="text-lg font-semibold text-[#e61e84]">From:</p>
-							<p>{formattedSelectedTime}</p>
+							<p className="lg:text-[14px] xl:text-[22px] font-semibold text-[#e61e84]">
+								From:
+							</p>
+							<p className="lg:text-[12px] xl:text-[18px]">
+								{formattedSelectedTime}
+							</p>
 						</div>
 						<div className="mt-1 pb-2">
-							<p className="text-lg font-semibold text-[#e61e84]">To:</p>
-							<p>{formattedToSelectedTime}</p>
+							<p className="lg:text-[14px] xl:text-[22px] font-semibold text-[#e61e84]">
+								To:
+							</p>
+							<p className="lg:text-[12px] xl:text-[18px]">
+								{formattedToSelectedTime}
+							</p>
 						</div>
-						<form onSubmit={handleContinue}>
-							<button
-								type="submit"
-								className="bg-[#e61e84] mt-2 hover:bg-[#3fa8ee] xl:text-[18px] font-extrabold text-white rounded text-[12px] w-auto p-2 uppercase"
-							>
-								Submit
-							</button>
-						</form>
+						<div className="absolute lg:top-[50px] xl:top-0 xl:relative">
+							<form onSubmit={handleContinue}>
+								<button
+									type="submit"
+									className="bg-[#e61e84] mt-2 hover:bg-[#3fa8ee] xl:text-[18px] font-extrabold text-white rounded text-[12px] w-auto p-2 uppercase"
+								>
+									Submit
+								</button>
+							</form>
+						</div>
 					</div>
 				</div>
 			</div>
