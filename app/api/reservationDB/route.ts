@@ -5,11 +5,29 @@ import Reservation from "@/utils/models/reservation";
 
 connect();
 
+// Function to convert UTC date to local date string
+const convertUTCToLocalDate = (utcDateString: string, timeZone: string) => {
+	const utcDate = new Date(utcDateString);
+	return utcDate.toLocaleString("en-US", { timeZone });
+};
+
 export async function GET(request: NextRequest) {
 	try {
 		// Fetch reservation data from the database
 		const reservations = await Reservation.find();
-		return NextResponse.json({ reservations }, { status: 200 });
+
+		// Convert UTC dates to local dates
+		const timeZone = "Asia/Manila"; // Set the desired time zone
+		const convertedReservations = reservations.map((reservation) => ({
+			...reservation.toObject(),
+			fromDate: convertUTCToLocalDate(reservation.fromDate, timeZone),
+			toDate: convertUTCToLocalDate(reservation.toDate, timeZone),
+		}));
+
+		return NextResponse.json(
+			{ reservations: convertedReservations },
+			{ status: 200 }
+		);
 	} catch (error: any) {
 		console.error("Error fetching reservations:", error);
 		return NextResponse.json(
@@ -49,32 +67,10 @@ export async function POST(request: NextRequest) {
 			);
 		}
 
-		// Ensure the startDate is in the correct format
-		const formattedStartDate = new Date(fromDate);
-		const formattedToDate = new Date(toDate);
-
 		// Use UTC methods to get UTC values
-		const utcStartDate = new Date(
-			Date.UTC(
-				formattedStartDate.getUTCFullYear(),
-				formattedStartDate.getUTCMonth(),
-				formattedStartDate.getUTCDate(),
-				formattedStartDate.getUTCHours(),
-				formattedStartDate.getUTCMinutes(),
-				formattedStartDate.getUTCSeconds()
-			)
-		).toISOString();
+		const utcStartDate = new Date(fromDate).toISOString();
 
-		const utcToDate = new Date(
-			Date.UTC(
-				formattedToDate.getUTCFullYear(),
-				formattedToDate.getUTCMonth(),
-				formattedToDate.getUTCDate(),
-				formattedToDate.getUTCHours(),
-				formattedToDate.getUTCMinutes(),
-				formattedToDate.getUTCSeconds()
-			)
-		).toISOString();
+		const utcToDate = new Date(toDate).toISOString();
 
 		const newReservation = new Reservation({
 			email,
