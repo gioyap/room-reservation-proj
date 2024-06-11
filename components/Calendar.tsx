@@ -82,15 +82,6 @@ const Calendar: React.FC<CalendarProps> = ({
 		});
 	}, []);
 
-	// Function to convert UTC date string to local date string
-	const convertUTCToLocalDate = (utcDateString: string | number | Date) => {
-		const utcDate = new Date(utcDateString);
-		const localDate = new Date(
-			utcDate.getTime() + utcDate.getTimezoneOffset() * 60000
-		);
-		return localDate.toLocaleString();
-	};
-
 	// Fetch booked dates from the API
 	const fetchBookedDates = async () => {
 		try {
@@ -98,15 +89,7 @@ const Calendar: React.FC<CalendarProps> = ({
 			if (response.ok) {
 				const data = await response.json();
 				if (Array.isArray(data.reservations)) {
-					// Convert UTC dates to local dates
-					const bookedDates = data.reservations.map(
-						(reservation: { fromDate: any; toDate: any }) => ({
-							...reservation,
-							fromDate: convertUTCToLocalDate(reservation.fromDate),
-							toDate: convertUTCToLocalDate(reservation.toDate),
-						})
-					);
-					return bookedDates;
+					return data.reservations;
 				} else {
 					console.error(
 						"Data.reservations is not an array:",
