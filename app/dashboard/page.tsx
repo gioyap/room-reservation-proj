@@ -122,21 +122,25 @@ const Dashboard = () => {
 		}
 
 		const combinedFromDateTime = new Date(
-			selectedDate.getFullYear(),
-			selectedDate.getMonth(),
-			selectedDate.getDate(),
-			fromSelectedTime.getHours(),
-			fromSelectedTime.getMinutes(),
-			fromSelectedTime.getSeconds()
+			Date.UTC(
+				selectedDate.getUTCFullYear(),
+				selectedDate.getUTCMonth(),
+				selectedDate.getUTCDate(),
+				fromSelectedTime.getUTCHours(),
+				fromSelectedTime.getUTCMinutes(),
+				fromSelectedTime.getSeconds()
+			)
 		);
 
 		const combinedToDateTime = new Date(
-			selectedDate.getFullYear(),
-			selectedDate.getMonth(),
-			selectedDate.getDate(),
-			toSelectedTime.getHours(),
-			toSelectedTime.getMinutes(),
-			toSelectedTime.getSeconds()
+			Date.UTC(
+				selectedDate.getUTCFullYear(),
+				selectedDate.getUTCMonth(),
+				selectedDate.getUTCDate(),
+				toSelectedTime.getUTCHours(),
+				toSelectedTime.getUTCMinutes(),
+				toSelectedTime.getUTCSeconds()
+			)
 		);
 
 		// Check if the selected date and time conflict with existing reservations
