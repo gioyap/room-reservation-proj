@@ -50,8 +50,8 @@ export async function POST(request: NextRequest) {
 		}
 
 		// Ensure the startDate is in the correct format
-		const formattedStartDate = new Date(fromDate);
-		const formattedToDate = new Date(toDate);
+		const formattedStartDate = new Date(fromDate).toISOString();
+		const formattedToDate = new Date(toDate).toISOString();
 
 		const newReservation = new Reservation({
 			email,

@@ -1,5 +1,6 @@
 "use client";
 import Sidebar from "@/components/Sidebar";
+import WebSocketComponent from "@/src/components/WebSocketComponent";
 import React from "react";
 
 const AdminDashboard = () => {
@@ -7,6 +8,7 @@ const AdminDashboard = () => {
 		<div>
 			<Sidebar />
 			Still Developing
+			<WebSocketComponent />
 		</div>
 	);
 };
