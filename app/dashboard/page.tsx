@@ -8,6 +8,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FaUser } from "react-icons/fa";
 import SidebarClient from "@/components/SidebarClient";
+import WebSocketComponent from "@/src/components/WebSocketComponent";
 const companies = ["Flawless", "MTSI", "FINA", "Beauty and Butter"];
 
 const departments = [
@@ -295,6 +296,7 @@ const Dashboard = () => {
 						<span className="lg:text-xl 2xl:text-4xl tracking-wide font-black font-sans text-[#e61e84]">
 							Calendar Reservation
 						</span>
+						<WebSocketComponent />
 					</div>
 					{session && (
 						<div className="flex flex-col w-full gap-4 lg:w-[300px] 2xl:w-[600px] lg:-ml-10  2xl:ml-6">
