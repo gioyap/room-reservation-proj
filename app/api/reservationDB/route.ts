@@ -50,8 +50,31 @@ export async function POST(request: NextRequest) {
 		}
 
 		// Ensure the startDate is in the correct format
-		const formattedStartDate = new Date(fromDate).toISOString();
-		const formattedToDate = new Date(toDate).toISOString();
+		const formattedStartDate = new Date(fromDate);
+		const formattedToDate = new Date(toDate);
+
+		// Use UTC methods to get UTC values
+		const utcStartDate = new Date(
+			Date.UTC(
+				formattedStartDate.getUTCFullYear(),
+				formattedStartDate.getUTCMonth(),
+				formattedStartDate.getUTCDate(),
+				formattedStartDate.getUTCHours(),
+				formattedStartDate.getUTCMinutes(),
+				formattedStartDate.getUTCSeconds()
+			)
+		).toISOString();
+
+		const utcToDate = new Date(
+			Date.UTC(
+				formattedToDate.getUTCFullYear(),
+				formattedToDate.getUTCMonth(),
+				formattedToDate.getUTCDate(),
+				formattedToDate.getUTCHours(),
+				formattedToDate.getUTCMinutes(),
+				formattedToDate.getUTCSeconds()
+			)
+		).toISOString();
 
 		const newReservation = new Reservation({
 			email,
@@ -59,8 +82,8 @@ export async function POST(request: NextRequest) {
 			department,
 			name,
 			title,
-			fromDate: formattedStartDate,
-			toDate: formattedToDate,
+			fromDate: utcStartDate,
+			toDate: utcToDate,
 			description: description || "",
 		});
 
