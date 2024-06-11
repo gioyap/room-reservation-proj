@@ -325,7 +325,7 @@ const Dashboard = () => {
 									id="company"
 									value={company}
 									onChange={handleCompanyChange}
-									className="w-full lg:text-[12px] 22xl:text-[18px] lg:px-4 lg:py-1 xl:py-2 border rounded-md"
+									className="w-full lg:text-[12px] 2xl:text-[18px] lg:px-4 lg:py-1 xl:py-2 border rounded-md"
 								>
 									{companies.map((comp) => (
 										<option key={comp} value={comp}>
@@ -345,7 +345,7 @@ const Dashboard = () => {
 									id="department"
 									value={department}
 									onChange={handleDepartmentChange}
-									className="w-full lg:text-[12px] 22xl:text-[18px] lg:px-4 lg:py-1 xl:py-2 border rounded-md"
+									className="w-full lg:text-[12px] 2xl:text-[18px] lg:px-4 lg:py-1 xl:py-2 border rounded-md"
 								>
 									{sortedDepartments.map((dept) => (
 										<option key={dept} value={dept}>
