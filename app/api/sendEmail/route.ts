@@ -1,17 +1,16 @@
-// pages/api/sendEmail.ts
 import { NextRequest, NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 
+// Function to convert UTC date to local date string
+const convertUTCToLocalDate = (utcDateString: string, timeZone: string) => {
+	const utcDate = new Date(utcDateString);
+	return utcDate.toLocaleString("en-US", { timeZone });
+};
+
 export async function POST(request: NextRequest) {
 	try {
-		// // Log the newData to check its structure
-		// console.log("New Data:", newData);
-
 		// Parse the request body to get the email details
 		const newData = await request.json();
-
-		// Log the email details to check its structure
-		// console.log("Email details:", newData);
 
 		// Create a transporter
 		const transporter = nodemailer.createTransport({
@@ -26,6 +25,9 @@ export async function POST(request: NextRequest) {
 			? `<p style="text-align: center; color: #e61e84; font-size: 20px;">This is from user, he/she has a concern:</p>
 		   <p style="text-align: center; color: #e61e84; font-size: 18px;">"${newData.description}"</p>`
 			: "";
+
+		// Set the desired time zone
+		const timeZone = "Asia/Manila";
 
 		// Generate HTML content for the email
 		const htmlContent = `
@@ -49,14 +51,14 @@ export async function POST(request: NextRequest) {
                 <td>${newData.department}</td>
                 <td>${newData.name}</td>
                 <td>${newData.title}</td>
-                <td>${new Date(newData.fromDate).toLocaleString()}</td>
-                <td>${new Date(newData.toDate).toLocaleString()}</td>
+                <td>${convertUTCToLocalDate(newData.fromDate, timeZone)}</td>
+                <td>${convertUTCToLocalDate(newData.toDate, timeZone)}</td>
             </tr>
         </tbody>
     </table>
     ${descriptionContent}
-    <p style="text-align: center; color: #e61e84; font-size: 18px;">This is new reservation, please let me know if this is accepted or decline</p>
-    <p style="text-align: center; color: #e61e84; font-size: 18px; ">Go to the Admin Dashboard to able to accepted or deny the request. Thank you</p>
+    <p style="text-align: center; color: #e61e84; font-size: 18px;">This is a new reservation, please let me know if this is accepted or declined.</p>
+    <p style="text-align: center; color: #e61e84; font-size: 18px;">Go to the Admin Dashboard to be able to accept or deny the request. Thank you.</p>
 		</div>
 	`;
 

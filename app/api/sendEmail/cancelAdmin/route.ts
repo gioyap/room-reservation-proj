@@ -1,6 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 
+// Function to convert UTC date to local date string
+const convertUTCToLocalDate = (utcDateString: string, timeZone: string) => {
+	const utcDate = new Date(utcDateString);
+	return utcDate.toLocaleString("en-US", { timeZone });
+};
+
 export async function POST(request: NextRequest) {
 	try {
 		// Parse the request body to get the email details
@@ -22,6 +28,9 @@ export async function POST(request: NextRequest) {
 				pass: process.env.NEXT_PUBLIC_EMAIL_PASS,
 			},
 		});
+		// Set the desired time zone
+		const timeZone = "Asia/Manila";
+
 		const htmlMessage = `
     <div style="background-color: white; padding: 20px; border-radius: 10px; text-align: center;">
         <h1 style="color: #ff7b00; font-size: 42px;">Reservation Canceled</h1>
@@ -42,12 +51,14 @@ export async function POST(request: NextRequest) {
                         <td>${updatedReservation.department}</td>
                         <td>${updatedReservation.name}</td>
                         <td>${updatedReservation.title}</td>
-                        <td>${new Date(
-													updatedReservation.fromDate
-												).toLocaleString()}</td>
-                        <td>${new Date(
-													updatedReservation.toDate
-												).toLocaleString()}</td>
+                       <td>${convertUTCToLocalDate(
+													updatedReservation.fromDate,
+													timeZone
+												)}</td>
+                <td>${convertUTCToLocalDate(
+									updatedReservation.toDate,
+									timeZone
+								)}</td>
                     </tr>
                 </tbody>
             </table>
