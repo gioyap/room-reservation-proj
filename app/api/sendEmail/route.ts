@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
 
 		// Generate HTML content for the email
 		const htmlContent = `
-	<div style="background-color: white; padding-top: 8px; padding-bottom: 8px; border-radius: 10px;">
+	<div style="background-color: white; padding-top: 8px; padding-bottom: 8px; border-radius: 10px; text-align: center;">
     <h1 style="text-align: center; color: #e61e84; font-size: 42px;">New Reservation</h1>
     <p style="text-align: center; color: #e61e84; font-size: 20px;">Here is the new reservation:</p>
     <table border="1" cellpadding="10" cellspacing="0">
