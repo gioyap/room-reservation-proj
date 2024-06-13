@@ -196,33 +196,34 @@ const DeclinedPage = () => {
 							</tr>
 						</thead>
 						<tbody className="bg-white divide-y divide-gray-200">
-							{currentReservations.map((reservation) => (
-								<tr key={reservation._id}>
-									<td className="lg:px-4 2xl:px-8 lg:py-1 2xl:py-3 whitespace-nowrap lg:text-[14px] 2xl:text-[16px]">
-										{reservation.company}
-									</td>
-									<td className="lg:px-4 2xl:px-8 lg:py-1 2xl:py-3 whitespace-nowrap lg:text-[14px] 2xl:text-[16px]">
-										{reservation.department}
-									</td>
-									<td className="lg:px-4 2xl:px-8 lg:py-1 2xl:py-3 whitespace-nowrap lg:text-[14px] 2xl:text-[16px]">
-										{reservation.name}
-									</td>
-									<td className="lg:px-4 2xl:px-8 lg:py-1 2xl:py-3 whitespace-nowrap lg:text-[14px] 2xl:text-[16px]">
-										{reservation.title}
-									</td>
-									<td className="lg:px-4 2xl:px-8 lg:py-1 2xl:py-3 whitespace-nowrap lg:text-[14px] 2xl:text-[16px]">
-										{new Date(reservation.fromDate).toLocaleString()}
-									</td>
-									<td className="lg:px-4 2xl:px-8 lg:py-1 2xl:py-3 whitespace-nowrap lg:text-[14px] 2xl:text-[16px]">
-										{new Date(reservation.toDate).toLocaleString()}
-									</td>
-									<td className="lg:px-4 2xl:px-8 lg:py-1 2xl:py-3 whitespace-nowrap lg:text-[14px] 2xl:text-[16px]">
-										<span className="bg-red-600 font-bold rounded-full px-4 py-1 text-white">
-											{reservation.status}
-										</span>
-									</td>
-								</tr>
-							))}
+							{declinedReservations &&
+								currentReservations.map((reservation) => (
+									<tr key={reservation._id}>
+										<td className="lg:px-4 2xl:px-8 lg:py-1 2xl:py-3 whitespace-nowrap lg:text-[14px] 2xl:text-[16px]">
+											{reservation.company}
+										</td>
+										<td className="lg:px-4 2xl:px-8 lg:py-1 2xl:py-3 whitespace-nowrap lg:text-[14px] 2xl:text-[16px]">
+											{reservation.department}
+										</td>
+										<td className="lg:px-4 2xl:px-8 lg:py-1 2xl:py-3 whitespace-nowrap lg:text-[14px] 2xl:text-[16px]">
+											{reservation.name}
+										</td>
+										<td className="lg:px-4 2xl:px-8 lg:py-1 2xl:py-3 whitespace-nowrap lg:text-[14px] 2xl:text-[16px]">
+											{reservation.title}
+										</td>
+										<td className="lg:px-4 2xl:px-8 lg:py-1 2xl:py-3 whitespace-nowrap lg:text-[14px] 2xl:text-[16px]">
+											{new Date(reservation.fromDate).toLocaleString()}
+										</td>
+										<td className="lg:px-4 2xl:px-8 lg:py-1 2xl:py-3 whitespace-nowrap lg:text-[14px] 2xl:text-[16px]">
+											{new Date(reservation.toDate).toLocaleString()}
+										</td>
+										<td className="lg:px-4 2xl:px-8 lg:py-1 2xl:py-3 whitespace-nowrap lg:text-[14px] 2xl:text-[16px]">
+											<span className="bg-red-600 font-bold rounded-full px-4 py-1 text-white">
+												{reservation.status}
+											</span>
+										</td>
+									</tr>
+								))}
 						</tbody>
 					</table>
 				</div>
