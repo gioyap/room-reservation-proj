@@ -15,6 +15,11 @@ app.use(
 	})
 );
 
+// Define a route handler for GET /
+app.get("/", (req, res) => {
+	res.send("WebSocket server is running.");
+});
+
 // Create HTTP server
 const server = http.createServer(app);
 
@@ -43,3 +48,4 @@ io.on("connection", (socket: Socket) => {
 
 const PORT = process.env.EXPRESS_PORT || 4000;
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+export default Socket;

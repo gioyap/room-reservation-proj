@@ -1,9 +1,18 @@
-// app/api/reservationDB/route.ts
+// route.ts
 import { NextResponse, NextRequest } from "next/server";
 import { connect } from "@/utils/config/database";
 import Reservation from "@/utils/models/reservation";
+import httpServer, {
+	startWebSocketServer,
+	getSocketIOInstance,
+} from "@/websocket-server";
 
+// Connect to the database
 connect();
+
+// Initialize WebSocket server
+startWebSocketServer(4000);
+const io = getSocketIOInstance();
 
 // Function to convert UTC date to local date string
 const convertUTCToLocalDate = (utcDateString: string, timeZone: string) => {
@@ -69,7 +78,6 @@ export async function POST(request: NextRequest) {
 
 		// Use UTC methods to get UTC values
 		const utcStartDate = new Date(fromDate).toISOString();
-
 		const utcToDate = new Date(toDate).toISOString();
 
 		const newReservation = new Reservation({
@@ -85,6 +93,9 @@ export async function POST(request: NextRequest) {
 
 		await newReservation.save();
 
+		// Emit the event to all connected clients
+		io.emit("reservationUpdate", newReservation);
+
 		return NextResponse.json(
 			{
 				message: "Reservation saved successfully!",
@@ -97,11 +108,10 @@ export async function POST(request: NextRequest) {
 		return NextResponse.json({ error: error.message }, { status: 500 });
 	}
 }
-// this put logic is for the admin able to click the accept and decline button
+
+// PUT method for updating reservation status
 export async function PUT(request: NextRequest) {
 	try {
-		// const id = request.url.split("/").pop(); // Extract ID from URL
-		// const { status } = await request.json();
 		const { id, status } = await request.json();
 
 		if (!id || !status) {
@@ -127,6 +137,9 @@ export async function PUT(request: NextRequest) {
 
 		// Fetch the user's email from the reservation
 		const { email } = updatedReservation;
+
+		// Emit the event to all connected clients
+		io.emit("reservationUpdate", updatedReservation);
 
 		return NextResponse.json(
 			{
