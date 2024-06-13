@@ -31,6 +31,8 @@ const io = new SocketIOServer(server, {
 		origin: [
 			"http://localhost:3000",
 			"https://reservation-system-nu.vercel.app",
+			"http://localhost:3000/admin",
+			"https://reservation-system-nu.vercel.app/admin",
 		],
 		methods: ["GET", "POST"],
 	},
