@@ -32,14 +32,6 @@ const PendingPage = () => {
 	const [sortColumn, setSortColumn] = useState<SortColumn>("department");
 	const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
-	// Update reservations state with data from socket
-	useEffect(() => {
-		if (pendingReservations && pendingReservations.length > 0) {
-			setReservations(pendingReservations);
-			setLoading(false);
-		}
-	}, [pendingReservations]);
-
 	// Sorting function
 	const sortTable = (column: SortColumn) => {
 		let newSortOrder: "asc" | "desc" = "asc";
@@ -323,52 +315,53 @@ const PendingPage = () => {
 							</tr>
 						</thead>
 						<tbody className="bg-white divide-y divide-gray-200">
-							{currentReservations.map((reservation) => (
-								<tr key={reservation._id}>
-									<td className="lg:px-4 2xl:px-8 lg:py-1 2xl:py-3 whitespace-nowrap lg:text-[14px] 2xl:text-[16px]">
-										{reservation.company}
-									</td>
-									<td className="lg:px-4 2xl:px-8 lg:py-1 2xl:py-3 whitespace-nowrap lg:text-[14px] 2xl:text-[16px]">
-										{reservation.department}
-									</td>
-									<td className="lg:px-4 2xl:px-8 lg:py-1 2xl:py-3 whitespace-nowrap lg:text-[14px] 2xl:text-[16px]">
-										{reservation.name}
-									</td>
-									<td className="lg:px-4 2xl:px-8 lg:py-1 2xl:py-3 whitespace-nowrap lg:text-[14px] 2xl:text-[16px]">
-										{reservation.title}
-									</td>
-									<td className="lg:px-4 2xl:px-8 lg:py-1 2xl:py-3 whitespace-nowrap lg:text-[14px] 2xl:text-[16px]">
-										{new Date(reservation.fromDate).toLocaleString()}
-									</td>
-									<td className="lg:px-4 2xl:px-8 lg:py-1 2xl:py-3 whitespace-nowrap lg:text-[14px] 2xl:text-[16px]">
-										{new Date(reservation.toDate).toLocaleString()}
-									</td>
-									<td className="lg:px-4 2xl:px-8 lg:py-1 2xl:py-3 whitespace-nowrap lg:text-[14px] 2xl:text-[16px]">
-										{reservation.status === "Accepted" ||
-										reservation.status === "Declined"
-											? reservation.status
-											: "Pending"}
-									</td>
-									<td className="lg:px-4 2xl:px-8 lg:py-1 2xl:py-3 whitespace-nowrap lg:text-[14px] 2xl:text-[16px]">
-										<button
-											className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mr-2"
-											onClick={() =>
-												handleAccept(reservation._id, reservation.email)
-											}
-										>
-											Accept
-										</button>
-										<button
-											className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-											onClick={() =>
-												handleDecline(reservation._id, reservation.email)
-											}
-										>
-											Decline
-										</button>
-									</td>
-								</tr>
-							))}
+							{pendingReservations &&
+								currentReservations.map((reservation) => (
+									<tr key={reservation._id}>
+										<td className="lg:px-4 2xl:px-8 lg:py-1 2xl:py-3 whitespace-nowrap lg:text-[14px] 2xl:text-[16px]">
+											{reservation.company}
+										</td>
+										<td className="lg:px-4 2xl:px-8 lg:py-1 2xl:py-3 whitespace-nowrap lg:text-[14px] 2xl:text-[16px]">
+											{reservation.department}
+										</td>
+										<td className="lg:px-4 2xl:px-8 lg:py-1 2xl:py-3 whitespace-nowrap lg:text-[14px] 2xl:text-[16px]">
+											{reservation.name}
+										</td>
+										<td className="lg:px-4 2xl:px-8 lg:py-1 2xl:py-3 whitespace-nowrap lg:text-[14px] 2xl:text-[16px]">
+											{reservation.title}
+										</td>
+										<td className="lg:px-4 2xl:px-8 lg:py-1 2xl:py-3 whitespace-nowrap lg:text-[14px] 2xl:text-[16px]">
+											{new Date(reservation.fromDate).toLocaleString()}
+										</td>
+										<td className="lg:px-4 2xl:px-8 lg:py-1 2xl:py-3 whitespace-nowrap lg:text-[14px] 2xl:text-[16px]">
+											{new Date(reservation.toDate).toLocaleString()}
+										</td>
+										<td className="lg:px-4 2xl:px-8 lg:py-1 2xl:py-3 whitespace-nowrap lg:text-[14px] 2xl:text-[16px]">
+											{reservation.status === "Accepted" ||
+											reservation.status === "Declined"
+												? reservation.status
+												: "Pending"}
+										</td>
+										<td className="lg:px-4 2xl:px-8 lg:py-1 2xl:py-3 whitespace-nowrap lg:text-[14px] 2xl:text-[16px]">
+											<button
+												className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mr-2"
+												onClick={() =>
+													handleAccept(reservation._id, reservation.email)
+												}
+											>
+												Accept
+											</button>
+											<button
+												className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+												onClick={() =>
+													handleDecline(reservation._id, reservation.email)
+												}
+											>
+												Decline
+											</button>
+										</td>
+									</tr>
+								))}
 						</tbody>
 					</table>
 				</div>

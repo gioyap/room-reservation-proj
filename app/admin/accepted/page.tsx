@@ -259,43 +259,44 @@ const AcceptedPage = () => {
 							</tr>
 						</thead>
 						<tbody className="bg-white divide-y divide-gray-200">
-							{currentReservations.map((reservation) => (
-								<tr key={reservation._id}>
-									<td className="lg:px-4 2xl:px-8 lg:py-1 2xl:py-3 whitespace-nowrap lg:text-[14px] 2xl:text-[16px]">
-										{reservation.company}
-									</td>
-									<td className="lg:px-4 2xl:px-8 lg:py-1 2xl:py-3 whitespace-nowrap lg:text-[14px] 2xl:text-[16px]">
-										{reservation.department}
-									</td>
-									<td className="lg:px-4 2xl:px-8 lg:py-1 2xl:py-3 whitespace-nowrap lg:text-[14px] 2xl:text-[16px]">
-										{reservation.name}
-									</td>
-									<td className="lg:px-4 2xl:px-8 lg:py-1 2xl:py-3 whitespace-nowrap lg:text-[14px] 2xl:text-[16px]">
-										{reservation.title}
-									</td>
-									<td className="lg:px-4 2xl:px-8 lg:py-1 2xl:py-3 whitespace-nowrap lg:text-[14px] 2xl:text-[16px]">
-										{new Date(reservation.fromDate).toLocaleString()}
-									</td>
-									<td className="lg:px-4 2xl:px-8 lg:py-1 2xl:py-3 whitespace-nowrap lg:text-[14px] 2xl:text-[16px]">
-										{new Date(reservation.toDate).toLocaleString()}
-									</td>
-									<td className="lg:px-4 2xl:px-8 lg:py-1 2xl:py-3 whitespace-nowrap lg:text-[14px] 2xl:text-[16px]">
-										<span className="bg-green-600 rounded-full px-4 py-1 text-white font-bold">
-											{reservation.status}
-										</span>
-									</td>
-									<td className="lg:px-4 2xl:px-8 lg:py-1 2xl:py-3 whitespace-nowrap lg:text-[14px] 2xl:text-[16px]">
-										<button
-											className="bg-[#ff7b00] hover:bg-red-700 text-white font-bold py-1 px-6 rounded-full"
-											onClick={() =>
-												handleCancel(reservation._id, reservation.email)
-											}
-										>
-											Cancel
-										</button>
-									</td>
-								</tr>
-							))}
+							{acceptedReservations &&
+								currentReservations.map((reservation) => (
+									<tr key={reservation._id}>
+										<td className="lg:px-4 2xl:px-8 lg:py-1 2xl:py-3 whitespace-nowrap lg:text-[14px] 2xl:text-[16px]">
+											{reservation.company}
+										</td>
+										<td className="lg:px-4 2xl:px-8 lg:py-1 2xl:py-3 whitespace-nowrap lg:text-[14px] 2xl:text-[16px]">
+											{reservation.department}
+										</td>
+										<td className="lg:px-4 2xl:px-8 lg:py-1 2xl:py-3 whitespace-nowrap lg:text-[14px] 2xl:text-[16px]">
+											{reservation.name}
+										</td>
+										<td className="lg:px-4 2xl:px-8 lg:py-1 2xl:py-3 whitespace-nowrap lg:text-[14px] 2xl:text-[16px]">
+											{reservation.title}
+										</td>
+										<td className="lg:px-4 2xl:px-8 lg:py-1 2xl:py-3 whitespace-nowrap lg:text-[14px] 2xl:text-[16px]">
+											{new Date(reservation.fromDate).toLocaleString()}
+										</td>
+										<td className="lg:px-4 2xl:px-8 lg:py-1 2xl:py-3 whitespace-nowrap lg:text-[14px] 2xl:text-[16px]">
+											{new Date(reservation.toDate).toLocaleString()}
+										</td>
+										<td className="lg:px-4 2xl:px-8 lg:py-1 2xl:py-3 whitespace-nowrap lg:text-[14px] 2xl:text-[16px]">
+											<span className="bg-green-600 rounded-full px-4 py-1 text-white font-bold">
+												{reservation.status}
+											</span>
+										</td>
+										<td className="lg:px-4 2xl:px-8 lg:py-1 2xl:py-3 whitespace-nowrap lg:text-[14px] 2xl:text-[16px]">
+											<button
+												className="bg-[#ff7b00] hover:bg-red-700 text-white font-bold py-1 px-6 rounded-full"
+												onClick={() =>
+													handleCancel(reservation._id, reservation.email)
+												}
+											>
+												Cancel
+											</button>
+										</td>
+									</tr>
+								))}
 						</tbody>
 					</table>
 				</div>
