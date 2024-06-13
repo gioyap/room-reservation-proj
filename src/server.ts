@@ -46,6 +46,4 @@ io.on("connection", (socket: Socket) => {
 	});
 });
 
-const PORT = process.env.EXPRESS_PORT || 4000;
-server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 export default Socket;

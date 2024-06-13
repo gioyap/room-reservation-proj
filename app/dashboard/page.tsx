@@ -8,7 +8,6 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FaUser } from "react-icons/fa";
 import SidebarClient from "@/components/SidebarClient";
-import io from "socket.io-client"; // Import Socket.IO client
 import { Reservation } from "../../types/type";
 import useReservations from "../../hooks/useReservations"; // Adjust the path as necessary
 const companies = ["Flawless", "MTSI", "FINA", "Beauty and Butter"];
@@ -44,21 +43,6 @@ const Dashboard = () => {
 	const [reservations, setReservations] = useState<Reservation[]>([]);
 	const [showDescription, setShowDescription] = useState(false);
 	const [dropdownVisible, setDropdownVisible] = useState(false);
-
-	useEffect(() => {
-		// Connect to the WebSocket server
-		const socket = io("http://localhost:4000");
-
-		// Listen for reservation updates
-		socket.on("reservationUpdate", (data: any) => {
-			setReservations((prevReservations) => [...prevReservations, data]);
-		});
-
-		// Cleanup on unmount
-		return () => {
-			socket.disconnect();
-		};
-	}, []);
 
 	const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setEmail(e.target.value);

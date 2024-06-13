@@ -8,6 +8,6 @@ export type Reservation = {
 	fromDate: string;
 	toDate: string;
 	description?: string;
-	status?: string;
-	_id?: string;
+	status: string;
+	_id: string;
 };
