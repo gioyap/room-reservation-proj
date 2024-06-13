@@ -1,5 +1,3 @@
-// hooks/useReservations.ts
-
 import { useEffect, useState } from "react";
 import io from "socket.io-client";
 import { Reservation } from "@/types/type";
@@ -16,7 +14,28 @@ const useReservations = () => {
 		const socket = io(socketUrl);
 
 		socket.on("reservationUpdate", (data: Reservation) => {
-			setReservations((prevReservations) => [...prevReservations, data]);
+			setReservations((prevReservations) => {
+				// Check if the reservation already exists
+				const existingReservationIndex = prevReservations.findIndex(
+					(reservation) => reservation._id === data._id
+				);
+
+				if (existingReservationIndex !== -1) {
+					// Update the existing reservation
+					const updatedReservations = [...prevReservations];
+					updatedReservations[existingReservationIndex] = data;
+					return updatedReservations;
+				}
+
+				// Add the new reservation
+				return [...prevReservations, data];
+			});
+		});
+
+		socket.on("reservationDelete", (id: string) => {
+			setReservations((prevReservations) =>
+				prevReservations.filter((reservation) => reservation._id !== id)
+			);
 		});
 
 		return () => {

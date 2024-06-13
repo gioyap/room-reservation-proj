@@ -6,7 +6,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Sidebar from "@/components/Sidebar"; // Ensure you have this Sidebar component
 import Pagination from "@/components/Pagination";
-import WebSocketComponent from "@/src/components/WebSocketComponent";
+import useReservations from "@/hooks/useReservations";
 
 interface Reservation {
 	_id: string;
@@ -24,6 +24,7 @@ type SortColumn = keyof Reservation;
 
 const DeclinedPage = () => {
 	const { data: session, status } = useSession();
+	const socketReservations = useReservations();
 	const [reservations, setReservations] = useState<Reservation[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [currentPage, setCurrentPage] = useState(1);
@@ -79,6 +80,13 @@ const DeclinedPage = () => {
 		}
 	}, [session]);
 
+	// Update reservations state with data from socket
+	useEffect(() => {
+		if (socketReservations.length > 0) {
+			setReservations(socketReservations);
+		}
+	}, [socketReservations]);
+
 	const indexOfLastReservation = currentPage * reservationsPerPage;
 	const indexOfFirstReservation = indexOfLastReservation - reservationsPerPage;
 	const currentReservations = sortedReservations.slice(
@@ -103,7 +111,6 @@ const DeclinedPage = () => {
 					<h1 className="lg:text-2xl 2xl:text-4xl font-extrabold text-[#e81e83]">
 						Declined Records
 					</h1>
-					<WebSocketComponent />
 				</div>
 				<div className="w-full max-w-8xl mx-auto bg-white shadow-md rounded-lg overflow-hidden">
 					<div className="flex justify-end lg:p-0 xl:p-3 items-center">
