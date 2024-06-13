@@ -32,6 +32,13 @@ const PendingPage = () => {
 	const [sortColumn, setSortColumn] = useState<SortColumn>("department");
 	const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
+	// Update reservations state with data from socket
+	useEffect(() => {
+		if (socketReservations.length > 0) {
+			setReservations(socketReservations);
+		}
+	}, [socketReservations]);
+
 	// Sorting function
 	const sortTable = (column: SortColumn) => {
 		let newSortOrder: "asc" | "desc" = "asc";
@@ -79,13 +86,6 @@ const PendingPage = () => {
 			fetchData();
 		}
 	}, [session]);
-
-	// Update reservations state with data from socket
-	useEffect(() => {
-		if (socketReservations.length > 0) {
-			setReservations(socketReservations);
-		}
-	}, [socketReservations]);
 
 	const handleAccept = async (id: string, email: string) => {
 		try {

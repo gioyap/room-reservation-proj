@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import io from "socket.io-client";
+import io, { Socket } from "socket.io-client";
 import { Reservation } from "@/types/type";
 
 const socketUrl =
@@ -11,30 +11,15 @@ const useReservations = () => {
 	const [reservations, setReservations] = useState<Reservation[]>([]);
 
 	useEffect(() => {
-		const socket = io(socketUrl);
+		const socket: Socket = io(socketUrl); // Adjust to your server URL
 
-		socket.on("reservationUpdate", (data: Reservation) => {
-			setReservations((prevReservations) => {
-				// Check if the reservation already exists
-				const existingReservationIndex = prevReservations.findIndex(
-					(reservation) => reservation._id === data._id
-				);
-
-				if (existingReservationIndex !== -1) {
-					// Update the existing reservation
-					const updatedReservations = [...prevReservations];
-					updatedReservations[existingReservationIndex] = data;
-					return updatedReservations;
-				}
-
-				// Add the new reservation
-				return [...prevReservations, data];
-			});
-		});
-
-		socket.on("reservationDelete", (id: string) => {
+		socket.on("reservationUpdate", (updatedReservation: Reservation) => {
 			setReservations((prevReservations) =>
-				prevReservations.filter((reservation) => reservation._id !== id)
+				prevReservations.map((reservation) =>
+					reservation._id === updatedReservation._id
+						? updatedReservation
+						: reservation
+				)
 			);
 		});
 
