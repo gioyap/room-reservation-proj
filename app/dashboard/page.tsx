@@ -8,7 +8,9 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FaUser } from "react-icons/fa";
 import SidebarClient from "@/components/SidebarClient";
-import WebSocketComponent from "@/src/components/WebSocketComponent";
+import io from "socket.io-client"; // Import Socket.IO client
+import { Reservation } from "../../types/type";
+import useReservations from "../../hooks/useReservations"; // Adjust the path as necessary
 const companies = ["Flawless", "MTSI", "FINA", "Beauty and Butter"];
 
 const departments = [
@@ -28,6 +30,7 @@ const departments = [
 const sortedDepartments = departments.sort((a, b) => a.localeCompare(b));
 
 const Dashboard = () => {
+	const socketReservations = useReservations();
 	const { data: session } = useSession();
 	const [selectedDate, setSelectedDate] = useState(new Date());
 	const [fromSelectedTime, setFromSelectedTime] = useState(new Date());
@@ -38,9 +41,24 @@ const Dashboard = () => {
 	const [name, setName] = useState("");
 	const [title, setTitle] = useState("");
 	const [description, setDescription] = useState("");
-	const [reservations, setReservations] = useState<[]>([]);
+	const [reservations, setReservations] = useState<Reservation[]>([]);
 	const [showDescription, setShowDescription] = useState(false);
 	const [dropdownVisible, setDropdownVisible] = useState(false);
+
+	useEffect(() => {
+		// Connect to the WebSocket server
+		const socket = io("http://localhost:4000");
+
+		// Listen for reservation updates
+		socket.on("reservationUpdate", (data: any) => {
+			setReservations((prevReservations) => [...prevReservations, data]);
+		});
+
+		// Cleanup on unmount
+		return () => {
+			socket.disconnect();
+		};
+	}, []);
 
 	const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setEmail(e.target.value);
@@ -300,7 +318,6 @@ const Dashboard = () => {
 						<span className="lg:text-xl 2xl:text-4xl tracking-wide font-black font-sans text-[#e61e84]">
 							Calendar Reservation
 						</span>
-						<WebSocketComponent />
 					</div>
 					{session && (
 						<div className="flex flex-col w-full gap-4 lg:w-[300px] 2xl:w-[600px] lg:-ml-10  2xl:ml-6">
@@ -468,7 +485,7 @@ const Dashboard = () => {
 							onTimeChange={setFromSelectedTime}
 							toSelectedTime={toSelectedTime}
 							onToTimeChange={setToSelectedTime}
-							reservations={reservations}
+							reservations={socketReservations}
 						/>
 					</div>
 					{/* reflected data */}

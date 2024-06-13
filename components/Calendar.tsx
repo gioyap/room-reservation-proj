@@ -11,18 +11,7 @@ import {
 	setMonth,
 	setYear,
 } from "date-fns";
-
-// Define the Reservation interface
-interface Reservation {
-	_id: string;
-	company: string;
-	department: string;
-	name: string;
-	title: string; // This field will hold the category like "Energy", "Focus", "Lecture"
-	fromDate: Date;
-	toDate: Date;
-	status: string;
-}
+import { Reservation } from "../types/type";
 
 // Define the CalendarProps interface
 interface CalendarProps {
