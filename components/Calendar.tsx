@@ -236,13 +236,13 @@ const Calendar: React.FC<CalendarProps> = ({
 	};
 
 	const handleMonthSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
-		const newDate = setMonth(currentDate, parseInt(e.target.value));
+		const newDate = setMonth(currentDate, parseInt(e.target.value, 10));
 		setCurrentDate(newDate);
 		onChange(newDate);
 	};
 
 	const handleYearSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
-		const newDate = setYear(currentDate, parseInt(e.target.value));
+		const newDate = setYear(currentDate, parseInt(e.target.value, 10));
 		setCurrentDate(newDate);
 		onChange(newDate);
 	};
