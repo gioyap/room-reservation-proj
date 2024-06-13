@@ -32,7 +32,7 @@ const PendingPage = () => {
 	const [sortColumn, setSortColumn] = useState<SortColumn>("department");
 	const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
-	// Effect to update reservations when pendingReservations changes
+	// Update reservations state with data from socket
 	useEffect(() => {
 		if (pendingReservations && pendingReservations.length > 0) {
 			setReservations(pendingReservations);
@@ -51,7 +51,7 @@ const PendingPage = () => {
 	};
 
 	// Sorting logic to apply to reservations
-	let sortedReservations = [...pendingReservations];
+	let sortedReservations = [...reservations];
 	if (sortColumn && sortOrder) {
 		sortedReservations = sortedReservations.sort((a, b) => {
 			// Compare function based on the sort column
@@ -164,7 +164,7 @@ const PendingPage = () => {
 				throw new Error("Failed to decline reservation");
 			}
 
-			const updatedReservation = pendingReservations.find(
+			const updatedReservation = reservations.find(
 				(reservation) => reservation._id === id
 			);
 
