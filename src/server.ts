@@ -1,5 +1,3 @@
-// src/server.ts
-
 import express, { Request, Response } from "express";
 import http from "http";
 import { Server as SocketIOServer, Socket } from "socket.io";
@@ -70,3 +68,5 @@ connect()
 		console.error("Error connecting to MongoDB:", error);
 		process.exit(1); // Exit the process with an error code
 	});
+
+export const getSocketIOInstance = () => io;

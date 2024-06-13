@@ -2,16 +2,11 @@
 import { NextResponse, NextRequest } from "next/server";
 import { connect } from "@/utils/config/database";
 import Reservation from "@/utils/models/reservation";
-import httpServer, {
-	startWebSocketServer,
-	getSocketIOInstance,
-} from "@/websocket-server";
+import { getSocketIOInstance } from "../../../src/server";
 
 // Connect to the database
 connect();
 
-// Initialize WebSocket server
-startWebSocketServer(4000);
 const io = getSocketIOInstance();
 
 // Function to convert UTC date to local date string
