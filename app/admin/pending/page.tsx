@@ -6,7 +6,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Sidebar from "@/components/Sidebar"; // Ensure you have this Sidebar component
 import Pagination from "@/components/Pagination";
-import useReservations from "@/hooks/useReservations";
+import usePendingReservations from "@/hooks/usePendingReservation";
 
 interface Reservation {
 	_id: string;
@@ -23,7 +23,7 @@ interface Reservation {
 type SortColumn = keyof Reservation;
 
 const PendingPage = () => {
-	const socketReservations = useReservations();
+	const pendingReservations = usePendingReservations();
 	const { data: session, status } = useSession();
 	const [reservations, setReservations] = useState<Reservation[]>([]);
 	const [loading, setLoading] = useState(true);
@@ -32,12 +32,13 @@ const PendingPage = () => {
 	const [sortColumn, setSortColumn] = useState<SortColumn>("department");
 	const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
-	// Update reservations state with data from socket
+	// Effect to update reservations when pendingReservations changes
 	useEffect(() => {
-		if (socketReservations.length > 0) {
-			setReservations(socketReservations);
+		if (pendingReservations && pendingReservations.length > 0) {
+			setReservations(pendingReservations);
+			setLoading(false);
 		}
-	}, [socketReservations]);
+	}, [pendingReservations]);
 
 	// Sorting function
 	const sortTable = (column: SortColumn) => {
@@ -50,7 +51,7 @@ const PendingPage = () => {
 	};
 
 	// Sorting logic to apply to reservations
-	let sortedReservations = [...reservations];
+	let sortedReservations = [...pendingReservations];
 	if (sortColumn && sortOrder) {
 		sortedReservations = sortedReservations.sort((a, b) => {
 			// Compare function based on the sort column
@@ -163,7 +164,7 @@ const PendingPage = () => {
 				throw new Error("Failed to decline reservation");
 			}
 
-			const updatedReservation = reservations.find(
+			const updatedReservation = pendingReservations.find(
 				(reservation) => reservation._id === id
 			);
 

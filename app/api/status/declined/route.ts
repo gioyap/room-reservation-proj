@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
 		const reservations = await Reservation.find({ status: "Declined" });
 
 		// Emit the pending reservations to all connected clients
-		io.emit("pendingReservations", reservations);
+		io.emit("declinedReservations", reservations);
 
 		return NextResponse.json({ reservations }, { status: 200 });
 	} catch (error: any) {

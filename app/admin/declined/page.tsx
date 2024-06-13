@@ -6,7 +6,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Sidebar from "@/components/Sidebar"; // Ensure you have this Sidebar component
 import Pagination from "@/components/Pagination";
-import useReservations from "@/hooks/useReservations";
+import useDeclinedReservations from "@/hooks/useDeclinedReservations";
 
 interface Reservation {
 	_id: string;
@@ -23,8 +23,8 @@ interface Reservation {
 type SortColumn = keyof Reservation;
 
 const DeclinedPage = () => {
+	const declinedReservations = useDeclinedReservations();
 	const { data: session, status } = useSession();
-	const socketReservations = useReservations();
 	const [reservations, setReservations] = useState<Reservation[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [currentPage, setCurrentPage] = useState(1);
@@ -32,12 +32,13 @@ const DeclinedPage = () => {
 	const [sortColumn, setSortColumn] = useState<SortColumn>("department");
 	const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
-	// Update reservations state with data from socket
+	// Effect to update reservations when declinedReservations changes
 	useEffect(() => {
-		if (socketReservations.length > 0) {
-			setReservations(socketReservations);
+		if (declinedReservations && declinedReservations.length > 0) {
+			setReservations(declinedReservations);
+			setLoading(false);
 		}
-	}, [socketReservations]);
+	}, [declinedReservations]);
 
 	// Sorting function
 	const sortTable = (column: SortColumn) => {
