@@ -6,7 +6,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Sidebar from "@/components/Sidebar"; // Ensure you have this Sidebar component
 import Pagination from "@/components/Pagination";
-import usePendingReservations from "@/hooks/usePendingReservation";
+import { io, Socket } from "socket.io-client";
 
 interface Reservation {
 	_id: string;
@@ -23,7 +23,6 @@ interface Reservation {
 type SortColumn = keyof Reservation;
 
 const PendingPage = () => {
-	const pendingReservations = usePendingReservations();
 	const { data: session, status } = useSession();
 	const [reservations, setReservations] = useState<Reservation[]>([]);
 	const [loading, setLoading] = useState(true);
@@ -31,14 +30,31 @@ const PendingPage = () => {
 	const [reservationsPerPage, setReservationsPerPage] = useState(10);
 	const [sortColumn, setSortColumn] = useState<SortColumn>("department");
 	const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+	const socket: Socket = io("http://localhost:4000");
 
-	// Effect to update reservations when declinedReservations changes
+	socket.emit("message", "Hello, server!");
+
+	socket.on("reply", (data) => {
+		console.log("Server replied:", data);
+		// Update state or perform actions based on server response
+	});
+
+	// Event listener for reservation updates
 	useEffect(() => {
-		if (pendingReservations && pendingReservations.length > 0) {
-			setReservations(pendingReservations);
-			setLoading(false);
-		}
-	}, [pendingReservations]);
+		socket.on("reservationUpdate", (updatedReservation: Reservation) => {
+			setReservations((prevReservations) =>
+				prevReservations.map((reservation) =>
+					reservation._id === updatedReservation._id
+						? updatedReservation
+						: reservation
+				)
+			);
+		});
+
+		return () => {
+			socket.off("reservationUpdate");
+		};
+	}, []);
 
 	// Sorting function
 	const sortTable = (column: SortColumn) => {
@@ -141,6 +157,10 @@ const PendingPage = () => {
 				console.error("Email error:", errorData);
 				toast.error("Failed to send email");
 			}
+
+			// Emit WebSocket event to notify other clients
+			socket?.emit("acceptReservation", { id, status: "Accepted" });
+
 			setTimeout(() => {
 				window.location.reload();
 			}, 5000);
@@ -203,6 +223,10 @@ const PendingPage = () => {
 				console.error("Email error:", errorData);
 				toast.error("Failed to send email");
 			}
+
+			// Emit WebSocket event to notify other clients
+			socket?.emit("declineReservation", { id, status: "Declined" });
+
 			setTimeout(() => {
 				window.location.reload();
 			}, 5000);
@@ -323,53 +347,52 @@ const PendingPage = () => {
 							</tr>
 						</thead>
 						<tbody className="bg-white divide-y divide-gray-200">
-							{pendingReservations &&
-								currentReservations.map((reservation) => (
-									<tr key={reservation._id}>
-										<td className="lg:px-4 2xl:px-8 lg:py-1 2xl:py-3 whitespace-nowrap lg:text-[14px] 2xl:text-[16px]">
-											{reservation.company}
-										</td>
-										<td className="lg:px-4 2xl:px-8 lg:py-1 2xl:py-3 whitespace-nowrap lg:text-[14px] 2xl:text-[16px]">
-											{reservation.department}
-										</td>
-										<td className="lg:px-4 2xl:px-8 lg:py-1 2xl:py-3 whitespace-nowrap lg:text-[14px] 2xl:text-[16px]">
-											{reservation.name}
-										</td>
-										<td className="lg:px-4 2xl:px-8 lg:py-1 2xl:py-3 whitespace-nowrap lg:text-[14px] 2xl:text-[16px]">
-											{reservation.title}
-										</td>
-										<td className="lg:px-4 2xl:px-8 lg:py-1 2xl:py-3 whitespace-nowrap lg:text-[14px] 2xl:text-[16px]">
-											{new Date(reservation.fromDate).toLocaleString()}
-										</td>
-										<td className="lg:px-4 2xl:px-8 lg:py-1 2xl:py-3 whitespace-nowrap lg:text-[14px] 2xl:text-[16px]">
-											{new Date(reservation.toDate).toLocaleString()}
-										</td>
-										<td className="lg:px-4 2xl:px-8 lg:py-1 2xl:py-3 whitespace-nowrap lg:text-[14px] 2xl:text-[16px]">
-											{reservation.status === "Accepted" ||
-											reservation.status === "Declined"
-												? reservation.status
-												: "Pending"}
-										</td>
-										<td className="lg:px-4 2xl:px-8 lg:py-1 2xl:py-3 whitespace-nowrap lg:text-[14px] 2xl:text-[16px]">
-											<button
-												className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mr-2"
-												onClick={() =>
-													handleAccept(reservation._id, reservation.email)
-												}
-											>
-												Accept
-											</button>
-											<button
-												className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-												onClick={() =>
-													handleDecline(reservation._id, reservation.email)
-												}
-											>
-												Decline
-											</button>
-										</td>
-									</tr>
-								))}
+							{currentReservations.map((reservation) => (
+								<tr key={reservation._id}>
+									<td className="lg:px-4 2xl:px-8 lg:py-1 2xl:py-3 whitespace-nowrap lg:text-[14px] 2xl:text-[16px]">
+										{reservation.company}
+									</td>
+									<td className="lg:px-4 2xl:px-8 lg:py-1 2xl:py-3 whitespace-nowrap lg:text-[14px] 2xl:text-[16px]">
+										{reservation.department}
+									</td>
+									<td className="lg:px-4 2xl:px-8 lg:py-1 2xl:py-3 whitespace-nowrap lg:text-[14px] 2xl:text-[16px]">
+										{reservation.name}
+									</td>
+									<td className="lg:px-4 2xl:px-8 lg:py-1 2xl:py-3 whitespace-nowrap lg:text-[14px] 2xl:text-[16px]">
+										{reservation.title}
+									</td>
+									<td className="lg:px-4 2xl:px-8 lg:py-1 2xl:py-3 whitespace-nowrap lg:text-[14px] 2xl:text-[16px]">
+										{new Date(reservation.fromDate).toLocaleString()}
+									</td>
+									<td className="lg:px-4 2xl:px-8 lg:py-1 2xl:py-3 whitespace-nowrap lg:text-[14px] 2xl:text-[16px]">
+										{new Date(reservation.toDate).toLocaleString()}
+									</td>
+									<td className="lg:px-4 2xl:px-8 lg:py-1 2xl:py-3 whitespace-nowrap lg:text-[14px] 2xl:text-[16px]">
+										{reservation.status === "Accepted" ||
+										reservation.status === "Declined"
+											? reservation.status
+											: "Pending"}
+									</td>
+									<td className="lg:px-4 2xl:px-8 lg:py-1 2xl:py-3 whitespace-nowrap lg:text-[14px] 2xl:text-[16px]">
+										<button
+											className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mr-2"
+											onClick={() =>
+												handleAccept(reservation._id, reservation.email)
+											}
+										>
+											Accept
+										</button>
+										<button
+											className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+											onClick={() =>
+												handleDecline(reservation._id, reservation.email)
+											}
+										>
+											Decline
+										</button>
+									</td>
+								</tr>
+							))}
 						</tbody>
 					</table>
 				</div>

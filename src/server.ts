@@ -1,6 +1,6 @@
 import express from "express";
 import http from "http";
-import { Server as SocketIOServer, Socket } from "socket.io";
+import { Server, Socket } from "socket.io";
 import cors from "cors";
 
 // Initialize Express app
@@ -24,7 +24,7 @@ app.get("/", (req, res) => {
 const server = http.createServer(app);
 
 // Initialize Socket.IO server
-const io = new SocketIOServer(server, {
+const io = new Server(server, {
 	cors: {
 		origin: [
 			"http://localhost:3000",
@@ -45,4 +45,8 @@ io.on("connection", (socket: Socket) => {
 		console.log("Client disconnected");
 	});
 });
+
+const PORT = process.env.EXPRESS_PORT || 4000;
+server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
 export const getSocketIOInstance = () => io;
