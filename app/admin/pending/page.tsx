@@ -6,7 +6,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Sidebar from "@/components/Sidebar"; // Ensure you have this Sidebar component
 import Pagination from "@/components/Pagination";
-import { io, Socket } from "socket.io-client";
+import usePendingReservations from "@/hooks/usePendingReservations";
 
 interface Reservation {
 	_id: string;
@@ -24,37 +24,14 @@ type SortColumn = keyof Reservation;
 
 const PendingPage = () => {
 	const { data: session, status } = useSession();
-	const [reservations, setReservations] = useState<Reservation[]>([]);
+	const { reservations, setReservations, socket } = usePendingReservations({
+		initialReservations: [],
+	});
 	const [loading, setLoading] = useState(true);
 	const [currentPage, setCurrentPage] = useState(1);
 	const [reservationsPerPage, setReservationsPerPage] = useState(10);
 	const [sortColumn, setSortColumn] = useState<SortColumn>("department");
 	const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
-	const socket: Socket = io("http://localhost:4000");
-
-	socket.emit("message", "Hello, server!");
-
-	socket.on("reply", (data) => {
-		console.log("Server replied:", data);
-		// Update state or perform actions based on server response
-	});
-
-	// Event listener for reservation updates
-	useEffect(() => {
-		socket.on("reservationUpdate", (updatedReservation: Reservation) => {
-			setReservations((prevReservations) =>
-				prevReservations.map((reservation) =>
-					reservation._id === updatedReservation._id
-						? updatedReservation
-						: reservation
-				)
-			);
-		});
-
-		return () => {
-			socket.off("reservationUpdate");
-		};
-	}, []);
 
 	// Sorting function
 	const sortTable = (column: SortColumn) => {
