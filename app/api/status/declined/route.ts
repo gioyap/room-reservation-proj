@@ -11,6 +11,9 @@ export async function GET(request: NextRequest) {
 	try {
 		const reservations = await Reservation.find({ status: "Declined" });
 
+		// Emit the pending reservations to all connected clients
+		io.emit("declinedReservations", reservations);
+
 		return NextResponse.json({ reservations }, { status: 200 });
 	} catch (error: any) {
 		console.error("Error fetching reservations:", error);
