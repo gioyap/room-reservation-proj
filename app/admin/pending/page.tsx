@@ -32,6 +32,14 @@ const PendingPage = () => {
 	const [sortColumn, setSortColumn] = useState<SortColumn>("department");
 	const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
+	// Effect to update reservations when declinedReservations changes
+	useEffect(() => {
+		if (pendingReservations && pendingReservations.length > 0) {
+			setReservations(pendingReservations);
+			setLoading(false);
+		}
+	}, [pendingReservations]);
+
 	// Sorting function
 	const sortTable = (column: SortColumn) => {
 		let newSortOrder: "asc" | "desc" = "asc";
