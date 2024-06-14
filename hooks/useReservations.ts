@@ -11,8 +11,26 @@ const useReservations = () => {
 	const [reservations, setReservations] = useState<Reservation[]>([]);
 
 	useEffect(() => {
-		const socket = io(socketUrl); // Adjust to your server URL
+		const socket = io(socketUrl);
 
+		// Listen for reservation updates
+		socket.on("reservationUpdate", (data: Reservation) => {
+			setReservations((prevReservations) => {
+				const updatedReservations = prevReservations.map((reservation) =>
+					reservation._id === data._id ? data : reservation
+				);
+				if (
+					!updatedReservations.some(
+						(reservation) => reservation._id === data._id
+					)
+				) {
+					updatedReservations.push(data);
+				}
+				return updatedReservations;
+			});
+		});
+
+		// Listen for reservation deletion
 		socket.on("reservationDelete", (id: string) => {
 			setReservations((prevReservations) =>
 				prevReservations.filter((reservation) => reservation._id !== id)

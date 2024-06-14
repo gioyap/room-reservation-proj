@@ -29,7 +29,6 @@ const departments = [
 const sortedDepartments = departments.sort((a, b) => a.localeCompare(b));
 
 const Dashboard = () => {
-	const socketReservations = useReservations();
 	const { data: session } = useSession();
 	const [selectedDate, setSelectedDate] = useState(new Date());
 	const [fromSelectedTime, setFromSelectedTime] = useState(new Date());
@@ -40,9 +39,9 @@ const Dashboard = () => {
 	const [name, setName] = useState("");
 	const [title, setTitle] = useState("");
 	const [description, setDescription] = useState("");
-	const [reservations, setReservations] = useState<Reservation[]>([]);
 	const [showDescription, setShowDescription] = useState(false);
 	const [dropdownVisible, setDropdownVisible] = useState(false);
+	const reservations = useReservations();
 
 	const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setEmail(e.target.value);
@@ -73,25 +72,6 @@ const Dashboard = () => {
 	) => {
 		setShowDescription(e.target.checked);
 	};
-
-	//just to get the data of reservation details
-	useEffect(() => {
-		const fetchReservations = async () => {
-			try {
-				const response = await fetch("/api/reservationDB");
-				if (response.ok) {
-					const data = await response.json();
-					setReservations(data.reservations);
-				} else {
-					toast.error("Failed to fetch reservations");
-				}
-			} catch (error) {
-				toast.error("An error occurred while fetching reservations");
-			}
-		};
-
-		fetchReservations();
-	}, []);
 
 	const formattedSelectedTime = fromSelectedTime.toLocaleTimeString([], {
 		hour: "2-digit",
@@ -469,7 +449,7 @@ const Dashboard = () => {
 							onTimeChange={setFromSelectedTime}
 							toSelectedTime={toSelectedTime}
 							onToTimeChange={setToSelectedTime}
-							reservations={socketReservations}
+							reservations={reservations}
 						/>
 					</div>
 					{/* reflected data */}
