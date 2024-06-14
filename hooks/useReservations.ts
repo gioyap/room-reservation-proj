@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import io, { Socket } from "socket.io-client";
+import io from "socket.io-client";
 import { Reservation } from "@/types/type";
 
 const socketUrl =
@@ -11,15 +11,11 @@ const useReservations = () => {
 	const [reservations, setReservations] = useState<Reservation[]>([]);
 
 	useEffect(() => {
-		const socket: Socket = io(socketUrl); // Adjust to your server URL
+		const socket = io(socketUrl); // Adjust to your server URL
 
-		socket.on("reservationUpdate", (updatedReservation: Reservation) => {
+		socket.on("reservationDelete", (id: string) => {
 			setReservations((prevReservations) =>
-				prevReservations.map((reservation) =>
-					reservation._id === updatedReservation._id
-						? updatedReservation
-						: reservation
-				)
+				prevReservations.filter((reservation) => reservation._id !== id)
 			);
 		});
 

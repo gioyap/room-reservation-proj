@@ -1,9 +1,7 @@
-import express, { Request, Response } from "express";
+import express from "express";
 import http from "http";
 import { Server as SocketIOServer, Socket } from "socket.io";
 import cors from "cors";
-import { connect } from "../utils/config/database"; // Adjust path as per your project structure
-import Reservation from "../utils/models/reservation";
 
 // Initialize Express app
 const app = express();
@@ -36,35 +34,11 @@ const io = new SocketIOServer(server, {
 	},
 });
 
-// Socket.IO event listeners
 io.on("connection", (socket: Socket) => {
 	console.log("New client connected");
 
-	socket.on("reservationUpdated", async (data) => {
-		try {
-			const updatedReservation = await Reservation.findByIdAndUpdate(
-				data.id,
-				{ status: data.status },
-				{ new: true }
-			);
-
-			const pendingReservations = await Reservation.find({
-				status: "Pending",
-			});
-			const acceptedReservations = await Reservation.find({
-				status: "Accepted",
-			});
-			const declinedReservations = await Reservation.find({
-				status: "Declined",
-			});
-
-			io.emit("pendingReservations", pendingReservations);
-			io.emit("acceptedReservations", acceptedReservations);
-			io.emit("declinedReservations", declinedReservations);
-			io.emit("reservationUpdate", updatedReservation);
-		} catch (error) {
-			console.error("Error updating reservation:", error);
-		}
+	socket.on("reservationUpdated", (data) => {
+		io.emit("reservationUpdate", data); // Broadcast to all clients
 	});
 
 	socket.on("disconnect", () => {
