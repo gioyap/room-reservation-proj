@@ -10,6 +10,8 @@ import {
 	addMonths,
 	setMonth,
 	setYear,
+	isSameDay,
+	isBefore,
 } from "date-fns";
 import { Reservation } from "../types/type";
 
@@ -48,6 +50,9 @@ const Calendar: React.FC<CalendarProps> = ({
 	const [selectedAvailableCategory, setSelectedAvailableCategory] = useState<
 		string | null
 	>(null);
+	const [reservationDetails, setReservationDetails] = useState<Reservation[]>(
+		[]
+	);
 
 	const months = [
 		"January",
@@ -103,24 +108,24 @@ const Calendar: React.FC<CalendarProps> = ({
 		day = addDays(day, 1);
 	}
 
+	const formattedSelectedTime = selectedTime.toLocaleTimeString([], {
+		hour: "2-digit",
+		minute: "2-digit",
+		hour12: true,
+		timeZone: "Asia/Manila",
+	});
+
+	const formattedToSelectedTime = toSelectedTime.toLocaleTimeString([], {
+		hour: "2-digit",
+		minute: "2-digit",
+		hour12: true,
+		timeZone: "Asia/Manila",
+	});
+
 	// Handle day click
 	const handleDayClick = (date: Date) => {
 		onChange(date);
 		setSelectedReservation([]);
-		setSelectedDateState(date);
-		setClickedDate(date);
-		setSelectedCategory(null); // Reset category when day is clicked
-		setSelectedAvailableCategory(null); // Reset available category when day is clicked
-	};
-
-	// Handle booked day click
-	const handleBookedDayClick = (reservation: Reservation) => {
-		const date = new Date(reservation.fromDate);
-		onChange(date);
-		const reservationsForDate = bookedDates.filter(
-			(res) => new Date(res.fromDate).toDateString() === date.toDateString()
-		);
-		setSelectedReservation(reservationsForDate);
 		setSelectedDateState(date);
 		setClickedDate(date);
 		setSelectedCategory(null); // Reset category when day is clicked
@@ -220,13 +225,29 @@ const Calendar: React.FC<CalendarProps> = ({
 		const isFullyBookedDay = isFullyBooked(day);
 		const isClickable = day.getMonth() === currentDate.getMonth();
 		const isSelected = selectedDateState
-			? day.toDateString() === selectedDateState.toDateString()
+			? isSameDay(day, selectedDateState)
 			: false;
-		return `${isSelected ? "text-[#e61e84] font-extrabold" : ""} ${
-			isFullyBookedDay ? "text-red-500 font-extrabold" : ""
-		} ${isBooked && !isFullyBookedDay ? "booked-day relative" : ""} ${
-			isClickable ? "selectable-day cursor-pointer hover:text-[#e61e84]" : ""
-		} ${day.getMonth() !== selectedDate.getMonth() ? "text-gray-400" : ""}`;
+		const isPast = isBefore(day, new Date());
+		const isWeekend = day.getDay() === 0 || day.getDay() === 6; // Sunday or Saturday
+
+		let className = "text-center pt-4 ";
+
+		if (isPast || isWeekend) {
+			className += "text-gray-400 bg-gray-100 cursor-not-allowed ";
+		} else {
+			className += isClickable
+				? "selectable-day cursor-pointer hover:text-[#e61e84] "
+				: "";
+			className += isSelected ? "text-[#e61e84] font-extrabold " : "";
+			className += isFullyBookedDay
+				? "text-red-500 font-extrabold bg-red-100 rounded-lg"
+				: "";
+			className += isBooked && !isFullyBookedDay ? "booked-day relative " : "";
+			className +=
+				day.getMonth() !== selectedDate.getMonth() ? "text-gray-400" : "";
+		}
+
+		return className;
 	};
 
 	const handleMonthChange = (increment: number) => {
@@ -260,77 +281,27 @@ const Calendar: React.FC<CalendarProps> = ({
 		return yearOptions;
 	};
 
-	// Handle category click
-	const handleCategoryClick = (category: string) => {
-		setSelectedCategory(selectedCategory === category ? null : category);
-	};
-
-	// Handle available category click
-	const handleAvailableCategoryClick = (category: string) => {
-		setSelectedAvailableCategory(
-			selectedAvailableCategory === category ? null : category
+	// Function to handle showing reservation details
+	const showReservationDetails = (
+		category: string,
+		date: Date | null = null
+	) => {
+		const reservations = bookedDates.filter(
+			(res) =>
+				res.title === category &&
+				(res.status === "Accepted" || res.status === "Pending") &&
+				(!date ||
+					new Date(res.fromDate).toLocaleDateString() ===
+						date.toLocaleDateString())
 		);
-	};
-
-	// Get available times for the selected category
-	const getAvailableTimes = (category: string): { from: Date; to: Date }[] => {
-		if (!clickedDate) {
-			return []; // Return empty array if clickedDate is null
-		}
-
-		// Filter booked dates for the selected category and date
-		const bookedTimes = bookedDates
-			.filter(
-				(reservation) =>
-					reservation.title === category &&
-					new Date(reservation.fromDate).toDateString() ===
-						clickedDate.toDateString() &&
-					reservation.status === "Accepted" // Include only accepted reservations
-			)
-			.map((reservation) => ({
-				from: new Date(reservation.fromDate),
-				to: new Date(reservation.toDate),
-			}));
-
-		// Sort booked times by start time
-		bookedTimes.sort((a, b) => a.from.getTime() - b.from.getTime());
-
-		const workingHours: { from: Date; to: Date }[] = [];
-		let lastEndTime = new Date(clickedDate);
-		lastEndTime.setHours(8, 0, 0, 0); // Set initial end time to 8:00 AM
-
-		// Loop through booked times to determine available times
-		bookedTimes.forEach((bookedTime) => {
-			// Check if there's a gap between last end time and current start time
-			if (bookedTime.from.getTime() > lastEndTime.getTime()) {
-				// Add available time from last end time to current start time
-				workingHours.push({
-					from: new Date(lastEndTime),
-					to: new Date(bookedTime.from),
-				});
-			}
-			// Update last end time to current end time
-			lastEndTime = bookedTime.to;
-		});
-
-		// Add available time after the last booked time until 6:00 PM
-		const endWorkingTime = new Date(clickedDate);
-		endWorkingTime.setHours(18, 0, 0, 0); // Set end time to 6:00 PM
-		if (lastEndTime.getTime() < endWorkingTime.getTime()) {
-			workingHours.push({
-				from: new Date(lastEndTime),
-				to: new Date(endWorkingTime),
-			});
-		}
-
-		return workingHours;
+		setReservationDetails(reservations);
 	};
 
 	// Function to generate time options in standard format (AM/PM)
 	const generateTimeOptions = (): string[] => {
 		const options: string[] = [];
 		for (let i = 8; i <= 18; i++) {
-			for (let j = 0; j < 60; j += 30) {
+			for (let j = 0; j < 60; j += 60) {
 				const hour = i > 12 ? i - 12 : i;
 				const ampm = i >= 12 ? "PM" : "AM";
 				const hourString = hour.toString().padStart(2, "0");
@@ -345,7 +316,7 @@ const Calendar: React.FC<CalendarProps> = ({
 		<div className="flex gap-x-3 items-start">
 			{/* this is responsible for calendar */}
 			<div className="calendar bg-white lg:p-2 2xl:p-6 rounded shadow mr-2">
-				<div className="header text-center lg:mb-1 2xl:mb-4 flex justify-between items-center">
+				<div className="header text-center lg: 2xl:mb-4 flex justify-between items-center">
 					<button
 						onClick={() => handleMonthChange(-1)}
 						className="arrow-button lg:text-[12px] 2xl:text-[16px]"
@@ -395,59 +366,59 @@ const Calendar: React.FC<CalendarProps> = ({
 						return (
 							<div
 								key={index}
-								className={`day text-center cursor-pointer pt-4 ${getDayClassName(
-									day
-								)} ${
-									day.getMonth() !== selectedDate.getMonth()
-										? "text-gray-400"
-										: ""
-								}`}
-								onClick={() =>
-									reservation
-										? handleBookedDayClick(reservation)
-										: handleDayClick(day)
-								}
+								className={`day text-center pt-4 ${getDayClassName(day)}`}
+								onClick={() => {
+									if (
+										!isBefore(day, new Date()) &&
+										day.getDay() !== 0 &&
+										day.getDay() !== 6 &&
+										day.getMonth() === currentDate.getMonth() // Ensure the clicked date is in the current month
+									) {
+										handleDayClick(day);
+									}
+								}}
 								style={{ margin: "-2px" }} // Adjust this value to achieve the desired gap
 							>
 								{format(day, "d")}
-								{isDateBooked(day) && (
-									<span
-										className={`absolute lg:w-1.5 lg:h-1.5 2xl:w-2 2xl:h-2 rounded-full top-2 lg:right-6 ${getBookingStatusColor(
-											day
-										)}`}
-									></span>
-								)}
+								{isDateBooked(day) &&
+									day.getMonth() === selectedDate.getMonth() && (
+										<span
+											className={`absolute lg:w-1.5 lg:h-1.5 2xl:w-2 2xl:h-2 rounded-full top-2 lg:right-6 ${getBookingStatusColor(
+												day
+											)}`}
+										></span>
+									)}
 							</div>
 						);
 					})}
 				</div>
 			</div>
 			{/* Choose the desired time */}
-			<div className="time-table bg-white p-4 lg:w-[150px] 2xl:w-[250px] rounded shadow">
+			<div className="time-table bg-white lg:p-2 2xl:p-4 lg:w-[210px] 2xl:w-[1050px] rounded shadow flex justify-between lg:gap-x-0 2xl:gap-x-5">
 				<div className="header text-left mb-0">
 					<span className="lg:text-md 2xl:text-lg font-extrabold text-[#e61e84]">
 						From:
 					</span>
+					<select
+						value={format(selectedTime, "hh:mm aa")}
+						onChange={handleTimeChange}
+						className="lg:px-1 lg:py-1 2xl:px-3 2xl:py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 lg:text-[12px] 2xl:text-[16px]"
+					>
+						{generateTimeOptions().map((time) => (
+							<option key={time} value={time}>
+								{time}
+							</option>
+						))}
+					</select>
 				</div>
-				<select
-					value={format(selectedTime, "hh:mm aa")}
-					onChange={handleTimeChange}
-					className="w-full lg:px-1 lg:py-1 2xl:px-3 2xl:py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 lg:text-[12px] 2xl:text-[16px]"
-				>
-					{generateTimeOptions().map((time) => (
-						<option key={time} value={time}>
-							{time}
-						</option>
-					))}
-				</select>
-				<div className="header text-left mb-2 mt-2">
+				<div className="header text-left">
 					<span className="lg:text-md 2xl:text-lg font-extrabold text-[#e61e84]">
 						To:
 					</span>
 					<select
 						value={format(toSelectedTime, "hh:mm aa")}
 						onChange={handleToTimeChange}
-						className="w-full lg:px-1 lg:py-1 2xl:px-3 2xl:py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 lg:text-[12px] 2xl:text-[16px]"
+						className="lg:px-1 lg:py-1 2xl:px-3 2xl:py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 lg:text-[12px] 2xl:text-[16px]"
 					>
 						{generateTimeOptions().map((time) => (
 							<option key={time} value={time}>
@@ -457,124 +428,214 @@ const Calendar: React.FC<CalendarProps> = ({
 					</select>
 				</div>
 			</div>
-			{/* able to see the availability of time */}
-			<div className="availability bg-white lg:p-2 2xl:p-4 lg:w-[200px] 2xl:w-[300px] lg:top-[200px] 2xl:top-[20px] absolute lg:left-[385px] 2xl:left-[740px] rounded shadow overflow-y-auto max-h-[400px] lg:h-[215px] 2xl:h-[500px]">
-				<h2 className="lg:text-[14px] 2xl:text-lg font-extrabold text-[#e61e84] lg:mt-1 2xl:mt-2 lg:mb-0 2xl:mb-2">
-					Unavailable Time
-				</h2>
-				<div>
-					{["Energy", "Focus", "Lecture"].map((category) => (
-						<div key={category}>
-							<button
-								onClick={() => handleCategoryClick(category)}
-								className="category-button lg:mb-0 2xl:mb-2 font-bold 2w-[100px] text-left hover:bg-[#e61e84] hover:text-white hover:rounded-full pl-4 lg:text-[12px] 2xl:text-[16px] "
-							>
-								{category}
-							</button>
-							{selectedCategory === category && (
-								<div className="overflow-y-auto max-h-[200px] lg:text-[12px] 2xl:text-[16px]">
-									{bookedDates
-										.filter(
+			{/* Time selection table */}
+			<div className="lg:w-[480px] 2xl:w-[600px] p-4 border rounded-lg shadow-lg absolute lg:top-[110px] lg:left-[380px] 2xl:top-[140px] 2xl:left-[468px]">
+				<div className="flex gap-x-10 text-center mb-4">
+					<div>
+						<p className="lg:text-[12px] 2xl:text-[18px] font-extrabold text-[#e61e84]">
+							Selected Date:{" "}
+							<span className="2xl:text-[16px] lg:text-[12px] text-black font-normal">
+								{selectedDateState ? selectedDate.toDateString() : "None"}
+							</span>
+						</p>
+					</div>
+					<div>
+						<p className="lg:text-[12px] 2xl:text-[18px] font-extrabold text-[#e61e84]">
+							From:{" "}
+							<span className="2xl:text-[16px] lg:text-[12px] text-black font-normal">
+								{formattedSelectedTime}
+							</span>
+						</p>
+						<p className="lg:text-[12px] 2xl:text-[16px]"></p>
+					</div>
+					<div>
+						<p className="lg:text-[12px] 2xl:text-[18px] font-extrabold text-[#e61e84]">
+							To:{" "}
+							<span className="2xl:text-[16px] lg:text-[12px] text-black font-normal">
+								{formattedToSelectedTime}
+							</span>
+						</p>
+					</div>
+				</div>
+				{clickedDate && (
+					<div>
+						<table className="w-full text-left">
+							<thead>
+								<tr>
+									<th className="p-2 lg:pl-0 2xl:pl-2 border-b lg:text-[14px] 2xl:text-[16px]">
+										Time
+									</th>
+									<th
+										className="p-2 border-b lg:text-[14px] 2xl:text-[16px] lg:pl-4 2xl:pl-2 cursor-pointer "
+										onClick={() =>
+											showReservationDetails("Energy", selectedDateState)
+										}
+									>
+										Energy
+									</th>
+									<th
+										className="p-2 border-b lg:text-[14px] 2xl:text-[16px] lg:pl-4 2xl:pl-2 cursor-pointer"
+										onClick={() =>
+											showReservationDetails("Focus", selectedDateState)
+										}
+									>
+										Focus
+									</th>
+									<th
+										className="p-2 border-b lg:text-[14px] 2xl:text-[16px] lg:pl-4 2xl:pl-2 cursor-pointer"
+										onClick={() =>
+											showReservationDetails("Lecture", selectedDateState)
+										}
+									>
+										Lecture
+									</th>
+								</tr>
+							</thead>
+							<tbody>
+								{Array.from({ length: 10 }, (_, i) => {
+									const startTime = new Date(clickedDate);
+									startTime.setHours(8 + i, 0, 0, 0);
+									const endTime = new Date(startTime);
+									endTime.setHours(startTime.getHours() + 1);
+
+									const isAvailable = (category: string) => {
+										// Filter reservations for the category, date, and status
+										const reservationsForCategory = bookedDates.filter(
 											(reservation) =>
-												reservation.title === category &&
-												clickedDate &&
 												new Date(reservation.fromDate).toDateString() ===
 													clickedDate.toDateString() &&
-												(reservation.status === "Accepted" ||
-													reservation.status === "Pending")
-										)
-										.map((reservation, index) => (
-											<div key={index} className="pl-4">
-												<p>
-													<span className="font-bold text-[#e61e84]">
-														Company:
-													</span>{" "}
-													{reservation.company}
-												</p>
-												<p>
-													<span className="font-bold text-[#e61e84]">
-														Department:
-													</span>{" "}
-													{reservation.department}
-												</p>
-												<p>
-													<span className="font-bold text-[#e61e84]">
-														Name:
-													</span>{" "}
-													{reservation.name}
-												</p>
-												<p>
-													<span className="font-bold text-[#e61e84]">
-														Room:
-													</span>{" "}
-													{reservation.title}
-												</p>
-												<p>
-													<span className="font-bold text-[#e61e84]">
-														From:
-													</span>{" "}
-													{new Date(reservation.fromDate).toLocaleString()}
-												</p>
-												<p>
-													<span className="font-bold text-[#e61e84]">To:</span>{" "}
-													{new Date(reservation.toDate).toLocaleTimeString()}
-												</p>
-												<p>
-													<span className="font-bold text-[#e61e84]">
-														Status:
-													</span>{" "}
-													<span
-														className={`rounded-full px-2 py-[1px] text-white ${
-															reservation.status === "Accepted"
-																? "bg-green-600"
-																: "bg-yellow-500"
-														}`}
-													>
-														{reservation.status || "Pending"}
-													</span>
-												</p>
-												<hr className="my-2" />
-											</div>
-										))}
-								</div>
-							)}
-						</div>
-					))}
-				</div>
+												reservation.title === category
+										);
 
-				<h2 className="lg:text-[14px] 2xl:text-lg font-extrabold text-[#e61e84] lg:mt-1 2xl:mt-2 lg:mb-0 2xl:mb-2">
-					Available Time
-				</h2>
-				<div>
-					{["Energy", "Focus", "Lecture"].map((category) => (
-						<div key={category}>
-							<button
-								onClick={() => handleAvailableCategoryClick(category)}
-								className="category-button lg:mb-0 xl:mb-2 font-bold w-[100px] text-left hover:bg-[#e61e84] hover:text-white hover:rounded-full pl-4 lg:text-[12px] 2xl:text-[16px]"
-							>
-								{category}
-							</button>
-							{selectedAvailableCategory === category &&
-								getAvailableTimes(category).map((time, index) => (
-									<div
+										// Check if there's any accepted reservation for the time slot
+										const hasAcceptedReservation = reservationsForCategory.some(
+											(reservation) =>
+												reservation.status === "Accepted" &&
+												!(
+													endTime <= new Date(reservation.fromDate) ||
+													startTime >= new Date(reservation.toDate)
+												)
+										);
+
+										// If there is an accepted reservation, return "Unavailable"
+										if (hasAcceptedReservation) {
+											return "Unavailable";
+										}
+
+										// Check if there's any pending reservation for the time slot
+										const hasPendingReservation = reservationsForCategory.some(
+											(reservation) =>
+												reservation.status === "Pending" &&
+												!(
+													endTime <= new Date(reservation.fromDate) ||
+													startTime >= new Date(reservation.toDate)
+												)
+										);
+
+										// If there's no accepted reservation but there's a pending one, return "Pending"
+										if (hasPendingReservation) {
+											return "Pending";
+										}
+
+										// Otherwise, return "Available"
+										return "Available";
+									};
+
+									return (
+										<tr key={i}>
+											<td className="2xl:p-2 border-b whitespace-nowrap lg:text-[12px] 2xl:text-[14px]">
+												{format(startTime, "h:mm aa")} -{" "}
+												{format(endTime, "h:mm aa")}
+											</td>
+											<td
+												className={`lg:p-0 2xl:p-2 border-b whitespace-nowrap lg:text-[12px] 2xl:text-[14px] lg:pl-4 font-bold ${
+													isAvailable("Energy") === "Available"
+														? "text-green-500"
+														: isAvailable("Energy") === "Pending"
+														? "text-yellow-500"
+														: "text-red-500"
+												}`}
+											>
+												{isAvailable("Energy")}
+											</td>
+											<td
+												className={`lg:p-0 2xl:p-2 border-b whitespace-nowrap lg:text-[12px] 2xl:text-[14px] lg:pl-4 font-bold ${
+													isAvailable("Focus") === "Available"
+														? "text-green-500"
+														: isAvailable("Focus") === "Pending"
+														? "text-yellow-500"
+														: "text-red-500"
+												}`}
+											>
+												{isAvailable("Focus")}
+											</td>
+											<td
+												className={`lg:p-0 2xl:p-2 border-b whitespace-nowrap lg:text-[12px] 2xl:text-[14px] lg:pl-4 font-bold ${
+													isAvailable("Lecture") === "Available"
+														? "text-green-500"
+														: isAvailable("Lecture") === "Pending"
+														? "text-yellow-500"
+														: "text-red-500"
+												}`}
+											>
+												{isAvailable("Lecture")}
+											</td>
+										</tr>
+									);
+								})}
+							</tbody>
+						</table>
+					</div>
+				)}
+			</div>
+			{reservationDetails.length > 0 && (
+				<div className="reservation-details-container">
+					<div className="reservation-details absolute lg:-top-[45px] lg:left-[610px] 2xl:-top-[75px] 2xl:left-[790px] 2xl:w-[290px] bg-white border rounded-lg shadow-lg p-2 pl-4 lg:w-[200px]">
+						<h3 className="lg:text-[14px] 2xl:text-lg font-bold mb-1 text-[#e61e84]">
+							Reservation Details
+						</h3>
+						<div className="lg:h-[114px] 2xl:h-[136px] overflow-y-auto">
+							<ul>
+								{reservationDetails.map((detail, index) => (
+									<li
 										key={index}
-										className="pl-4 lg:text-[12px] 2xl:text-[16px]"
+										className="lg:mb-2 2xl:mb-4 lg:text-[12px] 2xl:text-[16px]"
 									>
 										<p>
-											<span className="font-bold text-[#e61e84]">From:</span>{" "}
-											{time.from.toLocaleTimeString()}
+											<strong className="text-[#e61e84]">Name:</strong>{" "}
+											{detail.name}
 										</p>
 										<p>
-											<span className="font-bold text-[#e61e84]">To:</span>{" "}
-											{time.to.toLocaleTimeString()}
+											<strong className="text-[#e61e84]">Room:</strong>{" "}
+											{detail.title}
 										</p>
-										<hr className="my-2" />
-									</div>
+										<p>
+											<strong className="text-[#e61e84]">From:</strong>{" "}
+											{format(new Date(detail.fromDate), "hh:mm aa")}
+										</p>
+										<p>
+											<strong className="text-[#e61e84]">To:</strong>{" "}
+											{format(new Date(detail.toDate), "hh:mm aa")}
+										</p>
+										<p className="mb-1">
+											<strong className="text-[#e61e84]">Status:</strong>{" "}
+											<span
+												className={`inline-block py-1 px-2 rounded-lg font-bold ${
+													detail.status === "Pending"
+														? "bg-yellow-100 text-yellow-600"
+														: "bg-green-100 text-green-600"
+												}`}
+											>
+												{detail.status}
+											</span>
+										</p>
+									</li>
 								))}
+							</ul>
 						</div>
-					))}
+					</div>
 				</div>
-			</div>
+			)}
 		</div>
 	);
 };

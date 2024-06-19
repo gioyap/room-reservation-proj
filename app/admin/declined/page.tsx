@@ -7,6 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Sidebar from "@/components/Sidebar"; // Ensure you have this Sidebar component
 import Pagination from "@/components/Pagination";
 import useDeclinedReservations from "@/hooks/useDeclinedReservations";
+import { format } from "date-fns";
 
 interface Reservation {
 	_id: string;
@@ -23,22 +24,15 @@ interface Reservation {
 type SortColumn = keyof Reservation;
 
 const DeclinedPage = () => {
-	const declinedReservations = useDeclinedReservations();
 	const { data: session, status } = useSession();
-	const [reservations, setReservations] = useState<Reservation[]>([]);
+	const { reservations, setReservations, socket } = useDeclinedReservations({
+		initialReservations: [],
+	});
 	const [loading, setLoading] = useState(true);
 	const [currentPage, setCurrentPage] = useState(1);
 	const [reservationsPerPage, setReservationsPerPage] = useState(10);
 	const [sortColumn, setSortColumn] = useState<SortColumn>("department");
 	const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
-
-	// Effect to update reservations when declinedReservations changes
-	useEffect(() => {
-		if (declinedReservations && declinedReservations.length > 0) {
-			setReservations(declinedReservations);
-			setLoading(false);
-		}
-	}, [declinedReservations]);
 
 	// Sorting function
 	const sortTable = (column: SortColumn) => {
@@ -74,6 +68,7 @@ const DeclinedPage = () => {
 		const fetchData = async () => {
 			try {
 				const response = await fetch("/api/status/declined"); // Adjust your API endpoint accordingly
+				socket?.emit("declinedReservations", fetchData);
 				const data = await response.json();
 				setReservations(data.reservations);
 			} catch (error) {
@@ -133,99 +128,105 @@ const DeclinedPage = () => {
 							<option value={20}>20</option>
 						</select>
 					</div>
-					<table className="min-w-full divide-y divide-gray-200">
-						<thead className="bg-[#e81e83]">
-							<tr>
-								<th
-									className="lg:pl-4 2xl:pl-8 lg:py-1 2xl:py-3 text-left lg:text-[10px] 2xl:text-[12px] font-extrabold text-white uppercase tracking-wider cursor-pointer whitespace-nowrap"
-									onClick={() => sortTable("company")}
-								>
-									Company{" "}
-									{sortColumn === "company" && (
-										<span>{sortOrder === "asc" ? "▲" : "▼"}</span>
-									)}
-								</th>
-								<th
-									className="lg:pl-4 2xl:pl-8 lg:py-1 2xl:py-3 text-left lg:text-[10px] 2xl:text-[12px] font-extrabold text-white uppercase tracking-wider cursor-pointer whitespace-nowrap"
-									onClick={() => sortTable("department")}
-								>
-									Department{" "}
-									{sortColumn === "department" && (
-										<span>{sortOrder === "asc" ? "▲" : "▼"}</span>
-									)}
-								</th>
-								<th
-									className="lg:pl-4 2xl:pl-8 lg:py-1 2xl:py-3 text-left lg:text-[10px] 2xl:text-[12px] font-extrabold text-white uppercase tracking-wider cursor-pointer whitespace-nowrap"
-									onClick={() => sortTable("name")}
-								>
-									Name{" "}
-									{sortColumn === "name" && (
-										<span>{sortOrder === "asc" ? "▲" : "▼"}</span>
-									)}
-								</th>
-								<th
-									className="lg:pl-4 2xl:pl-8 lg:py-1 2xl:py-3 text-left lg:text-[10px] 2xl:text-[12px] font-extrabold text-white uppercase tracking-wider cursor-pointer whitespace-nowrap"
-									onClick={() => sortTable("title")}
-								>
-									Room{" "}
-									{sortColumn === "title" && (
-										<span>{sortOrder === "asc" ? "▲" : "▼"}</span>
-									)}
-								</th>
-								<th
-									className="lg:pl-4 2xl:pl-8 lg:py-1 2xl:py-3 text-left lg:text-[10px] 2xl:text-[12px] font-extrabold text-white uppercase tracking-wider cursor-pointer whitespace-nowrap"
-									onClick={() => sortTable("fromDate")}
-								>
-									From{" "}
-									{sortColumn === "fromDate" && (
-										<span>{sortOrder === "asc" ? "▲" : "▼"}</span>
-									)}
-								</th>
-								<th
-									className="lg:pl-4 2xl:pl-8 lg:py-1 2xl:py-3 text-left lg:text-[10px] 2xl:text-[12px] font-extrabold text-white uppercase tracking-wider cursor-pointer whitespace-nowrap"
-									onClick={() => sortTable("toDate")}
-								>
-									To{" "}
-									{sortColumn === "toDate" && (
-										<span>{sortOrder === "asc" ? "▲" : "▼"}</span>
-									)}
-								</th>
-								<th className="lg:pl-4 2xl:pl-8 lg:py-1 2xl:py-3 text-left lg:text-[10px] 2xl:text-[12px] font-extrabold text-white uppercase tracking-wider cursor-pointer whitespace-nowrap">
-									Status
-								</th>
-							</tr>
-						</thead>
-						<tbody className="bg-white divide-y divide-gray-200">
-							{declinedReservations &&
-								currentReservations.map((reservation) => (
-									<tr key={reservation._id}>
-										<td className="lg:px-4 2xl:px-8 lg:py-1 2xl:py-3 whitespace-nowrap lg:text-[14px] 2xl:text-[16px]">
-											{reservation.company}
-										</td>
-										<td className="lg:px-4 2xl:px-8 lg:py-1 2xl:py-3 whitespace-nowrap lg:text-[14px] 2xl:text-[16px]">
-											{reservation.department}
-										</td>
-										<td className="lg:px-4 2xl:px-8 lg:py-1 2xl:py-3 whitespace-nowrap lg:text-[14px] 2xl:text-[16px]">
-											{reservation.name}
-										</td>
-										<td className="lg:px-4 2xl:px-8 lg:py-1 2xl:py-3 whitespace-nowrap lg:text-[14px] 2xl:text-[16px]">
-											{reservation.title}
-										</td>
-										<td className="lg:px-4 2xl:px-8 lg:py-1 2xl:py-3 whitespace-nowrap lg:text-[14px] 2xl:text-[16px]">
-											{new Date(reservation.fromDate).toLocaleString()}
-										</td>
-										<td className="lg:px-4 2xl:px-8 lg:py-1 2xl:py-3 whitespace-nowrap lg:text-[14px] 2xl:text-[16px]">
-											{new Date(reservation.toDate).toLocaleString()}
-										</td>
-										<td className="lg:px-4 2xl:px-8 lg:py-1 2xl:py-3 whitespace-nowrap lg:text-[14px] 2xl:text-[16px]">
-											<span className="bg-red-600 font-bold rounded-full px-4 py-1 text-white">
-												{reservation.status}
-											</span>
-										</td>
+					<div className="overflow-x-auto">
+						<div
+							className={
+								reservationsPerPage === 15 || reservationsPerPage === 20
+									? "h-[608px] overflow-y-auto"
+									: ""
+							}
+						>
+							<table className="min-w-full divide-y divide-gray-200">
+								<thead className="bg-[#e81e83]">
+									<tr>
+										<th
+											className="sticky top-0 lg:pl-4 2xl:pl-8 lg:py-2 text-left lg:text-[12px] 2xl:text-[14px] font-extrabold text-white uppercase tracking-wider cursor-pointer whitespace-nowrap lg:pr-4 2xl:pr-0 "
+											onClick={() => sortTable("company")}
+										>
+											Company{" "}
+											{sortColumn === "company" && (
+												<span>{sortOrder === "asc" ? "▲" : "▼"}</span>
+											)}
+										</th>
+										<th
+											className="sticky top-0 lg:py-2 text-left lg:text-[12px] 2xl:text-[14px] font-extrabold text-white uppercase tracking-wider cursor-pointer whitespace-nowrap lg:pr-4 2xl:pr-0  "
+											onClick={() => sortTable("department")}
+										>
+											Department{" "}
+											{sortColumn === "department" && (
+												<span>{sortOrder === "asc" ? "▲" : "▼"}</span>
+											)}
+										</th>
+										<th
+											className="sticky top-0 lg:py-2 text-left lg:text-[12px] 2xl:text-[14px] font-extrabold text-white uppercase tracking-wider cursor-pointer  "
+											onClick={() => sortTable("name")}
+										>
+											Name{" "}
+											{sortColumn === "name" && (
+												<span>{sortOrder === "asc" ? "▲" : "▼"}</span>
+											)}
+										</th>
+										<th
+											className="sticky top-0 lg:py-2 text-left lg:text-[12px] 2xl:text-[14px] font-extrabold text-white uppercase tracking-wider cursor-pointer  "
+											onClick={() => sortTable("title")}
+										>
+											Room{" "}
+											{sortColumn === "title" && (
+												<span>{sortOrder === "asc" ? "▲" : "▼"}</span>
+											)}
+										</th>
+										<th
+											className="sticky top-0 lg:pl-12 2xl:pl-12 lg:py-2 text-left lg:text-[12px] 2xl:text-[14px] font-extrabold text-white uppercase tracking-wider cursor-pointer  "
+											onClick={() => sortTable("fromDate")}
+										>
+											From{" "}
+											{sortColumn === "fromDate" && (
+												<span>{sortOrder === "asc" ? "▲" : "▼"}</span>
+											)}
+										</th>
+										<th className="sticky top-0 lg:pl-12 2xl:pl-16 lg:py-2 text-left lg:text-[12px] 2xl:text-[14px] font-extrabold text-white uppercase tracking-wider ">
+											To{" "}
+										</th>
+										<th className="sticky top-0 lg:pl-4 lg:py-2 text-left lg:text-[12px] 2xl:text-[14px] font-extrabold text-white uppercase tracking-wider ">
+											Status
+										</th>
 									</tr>
-								))}
-						</tbody>
-					</table>
+								</thead>
+								<tbody className="bg-white divide-y divide-gray-200">
+									{currentReservations.map((reservation) => (
+										<tr key={reservation._id}>
+											<td className="lg:pl-4 2xl:pl-8 lg:py-2 lg:w-[240px] 2xl:w-[220px] whitespace-nowrap lg:px-4 2xl:px-0 lg:text-[14px] 2xl:text-[16px]">
+												{reservation.company}
+											</td>
+											<td className="lg:py-2 lg:w-[200px] 2xl:w-[160px] lg:text-[14px] lg:pr-4 2xl:px-0 whitespace-nowrap 2xl:text-[16px] ">
+												{reservation.department}
+											</td>
+											<td className=" lg:py-2 lg:w-[250px] 2xl:w-[200px] 2xl:pr-4 lg:pr-4 2xl:px-0 whitespace-nowrap lg:text-[14px] 2xl:text-[16px] ">
+												{reservation.name}
+											</td>
+											<td className="  lg:py-2 lg:text-[14px] lg:w-[120px] lg:pr-4 2xl:px-0 2xl:w-[100px] 2xl:text-[16px] ">
+												{reservation.title}
+											</td>
+											<td className="lg:py-2 lg:w-[140px] 2xl:w-[220px] lg:pr-4 2xl:px-0 whitespace-nowrap lg:text-[14px] 2xl:text-[16px] ">
+												{new Date(reservation.fromDate).toLocaleString()}
+											</td>
+											<td className=" lg:py-2 lg:w-[150px] 2xl:w-[220px] lg:pr-4 2xl:px-0 whitespace-nowrap lg:text-[14px] 2xl:text-[16px] 2xl:pl-10 lg:pl-7">
+												{format(
+													new Date(reservation.toDate).toLocaleString(),
+													"hh:mm aa"
+												)}
+											</td>
+											<td className=" lg:py-2 lg:w-[140px] 2xl:w-[120px] lg:pr-6 2xl:px-0 lg:text-[14px] 2xl:text-[16px]">
+												<span className="bg-red-600 font-bold rounded-full px-4 py-1 text-white">
+													{reservation.status}
+												</span>
+											</td>
+										</tr>
+									))}
+								</tbody>
+							</table>
+						</div>
+					</div>
 				</div>
 				<Pagination
 					reservations={reservations}
