@@ -15,7 +15,7 @@ const Signup = () => {
 	const [error, setError] = useState("");
 	const [user, setUser] = useState({
 		name: "",
-		email: "",
+		username: "",
 		password: "",
 		confirmPassword: "",
 	});
@@ -33,30 +33,11 @@ const Signup = () => {
 		try {
 			if (
 				!user.name ||
-				!user.email ||
+				!user.username ||
 				!user.password ||
 				!user.confirmPassword
 			) {
 				toast.error("Please fill out all required fields.");
-				setLoading(false);
-				return;
-			}
-			const emailRegex = /^([a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/;
-			if (!emailRegex.test(user.email)) {
-				setError("Invalid email address");
-				toast.error("Invalid email address");
-				setLoading(false);
-				return;
-			}
-
-			// Password validation regex pattern
-			const passwordRegex =
-				/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/;
-			if (!passwordRegex.test(user.password)) {
-				setError("Invalid password");
-				toast.error(
-					"Password must contain at least one uppercase letter, one lowercase letter, one number, and be at least 8 characters long"
-				);
 				setLoading(false);
 				return;
 			}
@@ -89,7 +70,7 @@ const Signup = () => {
 		setLoading(false);
 		setUser({
 			name: "",
-			email: "",
+			username: "",
 			password: "",
 			confirmPassword: "",
 		});
@@ -126,19 +107,19 @@ const Signup = () => {
 							type="text"
 							name="name"
 							className="w-full bg-slate-100 p-3 rounded-full"
-							placeholder="John Doe"
+							placeholder="Gio Yap"
 							value={user.name}
 							onChange={handleInputChange}
 						/>
 					</div>
 					<div>
-						<h2 className="font-extrabold mb-1">Email</h2>
+						<h2 className="font-extrabold mb-1">Username</h2>
 						<input
-							type="email"
-							name="email"
+							type="text"
+							name="username"
 							className="w-full bg-slate-100 p-3 rounded-full"
-							placeholder="example@123.com"
-							value={user.email}
+							placeholder="gioyap"
+							value={user.username}
 							onChange={handleInputChange}
 						/>
 					</div>

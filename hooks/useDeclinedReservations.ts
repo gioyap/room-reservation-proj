@@ -7,22 +7,58 @@ const socketUrl =
 		? "http://localhost:4000"
 		: "https://reservation-system-nu.vercel.app";
 
-const useDeclinedReservations = () => {
-	const [reservations, setReservations] = useState<Reservation[]>([]);
+interface UseDeclinedReservationsProps {
+	initialReservations?: Reservation[];
+}
 
+const useDeclinedReservations = ({
+	initialReservations = [],
+}: UseDeclinedReservationsProps) => {
+	const [reservations, setReservations] =
+		useState<Reservation[]>(initialReservations);
+	const [socket, setSocket] = useState<Socket | null>(null);
+
+	// Socket initialization effect
 	useEffect(() => {
-		const socket: Socket = io(socketUrl);
+		const newSocket = io(socketUrl);
 
-		socket.on("declinedReservations", (updatedReservations: Reservation[]) => {
-			setReservations(updatedReservations);
+		newSocket.emit("message", "Hello, server!");
+
+		newSocket.on("reply", (data) => {
+			console.log("Server replied:", data);
+			// Update state or perform actions based on server response
 		});
 
+		setSocket(newSocket);
+
 		return () => {
-			socket.disconnect();
+			newSocket.disconnect();
 		};
 	}, []);
 
-	return reservations;
+	// Effect for handling socket events
+	useEffect(() => {
+		if (!socket) return;
+
+		const handleDeclinedReservations = (declinedReservation: Reservation) => {
+			setReservations((prevReservations) =>
+				prevReservations.map((reservation) =>
+					reservation._id === declinedReservation._id
+						? declinedReservation
+						: reservation
+				)
+			);
+		};
+
+		socket.on("declinedReservations", handleDeclinedReservations);
+
+		// Cleanup to avoid memory leaks
+		return () => {
+			socket.off("declinedReservations", handleDeclinedReservations);
+		};
+	}, [socket, setReservations]);
+
+	return { reservations, setReservations, socket };
 };
 
 export default useDeclinedReservations;

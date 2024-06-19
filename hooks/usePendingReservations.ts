@@ -1,7 +1,11 @@
-// hooks/usePendingReservations.ts
 import { useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import { Reservation } from "@/types/type"; // Adjust path as per your file structure
+
+const socketUrl =
+	process.env.NODE_ENV === "development"
+		? "http://localhost:4000"
+		: "https://reservation-system-nu.vercel.app";
 
 interface UsePendingReservationsProps {
 	initialReservations: Reservation[];
@@ -14,8 +18,9 @@ const usePendingReservations = ({
 		useState<Reservation[]>(initialReservations);
 	const [socket, setSocket] = useState<Socket | null>(null);
 
+	// Socket initialization effect
 	useEffect(() => {
-		const newSocket = io("http://localhost:4000");
+		const newSocket = io(socketUrl);
 
 		newSocket.emit("message", "Hello, server!");
 
@@ -31,10 +36,11 @@ const usePendingReservations = ({
 		};
 	}, []);
 
+	// Effect for handling socket events
 	useEffect(() => {
 		if (!socket) return;
 
-		socket.on("reservationUpdate", (updatedReservation: Reservation) => {
+		const handleReservationUpdate = (updatedReservation: Reservation) => {
 			setReservations((prevReservations) =>
 				prevReservations.map((reservation) =>
 					reservation._id === updatedReservation._id
@@ -42,12 +48,15 @@ const usePendingReservations = ({
 						: reservation
 				)
 			);
-		});
-
-		return () => {
-			socket.off("reservationUpdate");
 		};
-	}, [socket]);
+
+		socket.on("reservationUpdate", handleReservationUpdate);
+
+		// Cleanup to avoid memory leaks
+		return () => {
+			socket.off("reservationUpdate", handleReservationUpdate);
+		};
+	}, [socket, setReservations]);
 
 	return { reservations, socket, setReservations };
 };

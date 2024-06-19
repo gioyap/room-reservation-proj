@@ -104,25 +104,21 @@ const Dashboard = () => {
 		}
 
 		const combinedFromDateTime = new Date(
-			Date.UTC(
-				selectedDate.getUTCFullYear(),
-				selectedDate.getUTCMonth(),
-				selectedDate.getUTCDate(),
-				fromSelectedTime.getUTCHours(),
-				fromSelectedTime.getUTCMinutes(),
-				fromSelectedTime.getSeconds()
-			)
+			selectedDate.getFullYear(),
+			selectedDate.getMonth(),
+			selectedDate.getDate(),
+			fromSelectedTime.getHours(),
+			fromSelectedTime.getMinutes(),
+			fromSelectedTime.getSeconds()
 		);
 
 		const combinedToDateTime = new Date(
-			Date.UTC(
-				selectedDate.getUTCFullYear(),
-				selectedDate.getUTCMonth(),
-				selectedDate.getUTCDate(),
-				toSelectedTime.getUTCHours(),
-				toSelectedTime.getUTCMinutes(),
-				toSelectedTime.getUTCSeconds()
-			)
+			selectedDate.getFullYear(),
+			selectedDate.getMonth(),
+			selectedDate.getDate(),
+			toSelectedTime.getHours(),
+			toSelectedTime.getMinutes(),
+			toSelectedTime.getSeconds()
 		);
 
 		// Check if the selected date and time conflict with existing reservations
@@ -159,35 +155,6 @@ const Dashboard = () => {
 			toast.error(
 				"The selected room is already reserved. Please choose another room or select a different date and time."
 			);
-			return;
-		}
-
-		// Check if the selected date and time are within working hours (8:00 AM - 6:00 PM)
-		if (
-			combinedFromDateTime.getHours() < 8 ||
-			combinedFromDateTime.getHours() >= 18 ||
-			(combinedToDateTime.getHours() === 18 &&
-				combinedToDateTime.getMinutes() > 0) || // After 6:00 PM
-			combinedToDateTime.getHours() > 18
-		) {
-			toast.error("Reservation can only be made between 8:00 AM and 6:00 PM.");
-			return;
-		}
-
-		// Check if the selected date and time are not on weekends (Saturday or Sunday)
-		if (
-			selectedDate.getDay() === 0 || // Sunday
-			selectedDate.getDay() === 6 // Saturday
-		) {
-			toast.error("Reservation is not available on weekends.");
-			return;
-		}
-
-		// Check if the selected date is in the past
-		const currentDate = new Date();
-		currentDate.setHours(0, 0, 0, 0); // Set current time to midnight
-		if (selectedDate.getTime() < currentDate.getTime()) {
-			toast.error("Reservation date cannot be in the past.");
 			return;
 		}
 
@@ -249,7 +216,7 @@ const Dashboard = () => {
 			<SidebarClient />
 			<ToastContainer autoClose={5000} />
 			{session && (
-				<div className="flex lg:pl-[400px] xl:pl-[550px] 2xl:pl-[850px] gap-2 bg-[#e81e83] lg:py-1 2xl:py-2 items-center justify-between">
+				<div className="flex lg:pl-[400px] xl:pl-[550px] 2xl:pl-[850px] gap-2 bg-[#e81e83] lg:py-1 22xl:py-2 items-center justify-between">
 					<div>
 						<h1 className="lg:text-xl 2xl:text-2xl font-bold text-white">
 							Welcome, {session.user?.name}
@@ -263,10 +230,10 @@ const Dashboard = () => {
 							/>
 						</div>
 						{dropdownVisible && (
-							<div className="absolute right-0 mt-2 w-48 bg-white border rounded-md shadow-lg">
+							<div className="absolute right-14 lg:-mt-8 2xl:-mt-10 w-32 bg-white border rounded-md shadow-lg">
 								<button
 									onClick={() => signOut()}
-									className="w-full px-4 py-2 text-left text-black hover:bg-gray-200"
+									className="w-full px-4 py-2 text-left text-black hover:bg-gray-200 lg:text-[12px] 2xl:text-[16px]"
 								>
 									Logout
 								</button>
@@ -276,15 +243,15 @@ const Dashboard = () => {
 				</div>
 			)}
 
-			<div className="grid grid-cols-1 md:grid-cols-2 mx-5 lg:px-[80px] 2xl:px-[330px] lg:w-full lg:h-[557px] lg:ml-0 2xl:w-full 2xl:ml-0 2xl:mt-0 2xl:h-[860px] 2xl:pl-14 2xl:pt-16 bg-slate-100 py-8 shadow-md">
-				<div className="flex flex-col items-start gap-6 lg:gap-8 px-5 lg:px-10 2xl:px-14">
+			<div className="grid grid-cols-1 md:grid-cols-2 mx-5 lg:px-[80px] 2xl:px-[330px] lg:w-full lg:h-[657px] lg:ml-0 2xl:w-full 2xl:ml-0 2xl:mt-0 2xl:h-[870px] 2xl:pl-14 2xl:pt-12 bg-slate-100 lg:py-6 shadow-md">
+				<div className="flex flex-col items-start lg:gap-4 2xl:gap-6 px-5 lg:px-10 2xl:px-14">
 					<div className="lg:-ml-10 2xl:ml-6">
 						<span className="lg:text-xl 2xl:text-4xl tracking-wide font-black font-sans text-[#e61e84]">
 							Calendar Reservation
 						</span>
 					</div>
 					{session && (
-						<div className="flex flex-col w-full gap-4 lg:w-[300px] 2xl:w-[600px] lg:-ml-10  2xl:ml-6">
+						<div className="flex flex-col w-full lg:gap-3 2xl:gap-4 lg:w-[300px] 2xl:w-[600px] lg:-ml-10  2xl:ml-6">
 							<div>
 								<label
 									className="lg:text-[14px] 2xl:text-[22px] text-[#e61e84] tracking-normal font-extrabold"
@@ -297,7 +264,7 @@ const Dashboard = () => {
 									type="text"
 									value={email}
 									onChange={handleEmailChange}
-									className="w-full lg:text-[12px] 2xl:text-[18px] lg:px-4 lg:py-1 xl:py-2 border rounded-md"
+									className="w-full lg:text-[12px] 2xl:text-[18px] lg:px-4 lg:py-1 22xl:py-2 border rounded-md"
 									placeholder="example123@gmail.com"
 								/>
 							</div>
@@ -312,7 +279,7 @@ const Dashboard = () => {
 									id="company"
 									value={company}
 									onChange={handleCompanyChange}
-									className="w-full lg:text-[12px] 2xl:text-[18px] lg:px-4 lg:py-1 xl:py-2 border rounded-md"
+									className="w-full lg:text-[12px] 2xl:text-[18px] lg:px-4 lg:py-1 2xl:py-2 border rounded-md"
 								>
 									{companies.map((comp) => (
 										<option key={comp} value={comp}>
@@ -332,7 +299,7 @@ const Dashboard = () => {
 									id="department"
 									value={department}
 									onChange={handleDepartmentChange}
-									className="w-full lg:text-[12px] 2xl:text-[18px] lg:px-4 lg:py-1 xl:py-2 border rounded-md"
+									className="w-full lg:text-[12px] 2xl:text-[18px] lg:px-4 lg:py-1 2xl:py-2 border rounded-md"
 								>
 									{sortedDepartments.map((dept) => (
 										<option key={dept} value={dept}>
@@ -353,7 +320,7 @@ const Dashboard = () => {
 									type="text"
 									value={name}
 									onChange={handleNameChange}
-									className="w-full lg:text-[12px] 2xl:text-[18px] lg:px-4 lg:py-1 xl:py-2 border rounded-md"
+									className="w-full lg:text-[12px] 2xl:text-[18px] lg:px-4 lg:py-1 2xl:py-2 border rounded-md"
 									placeholder="Please enter your full name"
 								/>
 							</div>
@@ -427,11 +394,19 @@ const Dashboard = () => {
 										type="description"
 										value={description}
 										onChange={handleDescriptionChange}
-										className="w-full lg:text-[12px] 2xl:text-[18px] px-4 lg:py-1 xl:py-2 border rounded-md"
+										className="w-full lg:text-[12px] 2xl:text-[18px] px-4 lg:py-1 2xl:py-2 border rounded-md"
 										placeholder="Please provide the reason"
 									/>
 								</div>
 							)}
+							<form onSubmit={handleContinue}>
+								<button
+									type="submit"
+									className="bg-[#e61e84] lg:mt-0 2xl:mt-2 hover:bg-[#3fa8ee] 2xl:text-[18px] font-extrabold text-white rounded text-[12px] w-auto p-2 uppercase"
+								>
+									Submit
+								</button>
+							</form>
 						</div>
 					)}
 				</div>
@@ -452,41 +427,44 @@ const Dashboard = () => {
 							reservations={reservations}
 						/>
 					</div>
-					{/* reflected data */}
-					<div className="absolute lg:top-[450px] 2xl:top-[655px] lg:flex justify-between gap-x-10 lg:left-[400px] items-center 2xl:block 2xl:left-[820px]">
-						<div className="mt-0">
-							<p className="lg:text-[14px] 2xl:text-[22px] font-semibold text-[#e61e84]">
-								Selected Date:
-							</p>
-							<p className="lg:text-[12px] 2xl:text-[18px]">
-								{selectedDate.toDateString()}
-							</p>
+					<div className="grid lg:grid-cols-2 2xl:grid-cols-2 gap-2 lg:gap-x-4 2xl:gap-x-10 font-bold lg:absolute lg:top-[550px] lg:left-[800px] 2xl:top-[810px] 2xl:left-[1300px]">
+						<div className="bg-green-200 text-green-500 2xl:text-[16px] lg:text-[12px] 2xl:p-2 lg:p-1 rounded-lg">
+							Available - Free to reserve
 						</div>
-						<div className="mt-1 pb-2">
-							<p className="lg:text-[14px] 2xl:text-[22px] font-semibold text-[#e61e84]">
-								From:
-							</p>
-							<p className="lg:text-[12px] 2xl:text-[18px]">
-								{formattedSelectedTime}
-							</p>
+						<div className="bg-red-200 text-red-500 2xl:text-[16px] lg:text-[12px] 2xl:p-2 lg:p-1 rounded-lg">
+							Unavailable - Cannot reserve
 						</div>
-						<div className="mt-1 pb-2">
-							<p className="lg:text-[14px] 2xl:text-[22px] font-semibold text-[#e61e84]">
-								To:
-							</p>
-							<p className="lg:text-[12px] 2xl:text-[18px]">
-								{formattedToSelectedTime}
-							</p>
+						<div className="bg-yellow-200 text-yellow-600 2xl:text-[16px] lg:text-[12px] 2xl:p-2 lg:p-1 rounded-lg">
+							Pending - Reservation in progress
 						</div>
-						<div className="absolute lg:top-[50px] 2xl:top-0 2xl:relative">
-							<form onSubmit={handleContinue}>
-								<button
-									type="submit"
-									className="bg-[#e61e84] mt-2 hover:bg-[#3fa8ee] 2xl:text-[18px] font-extrabold text-white rounded text-[12px] w-auto p-2 uppercase"
-								>
-									Submit
-								</button>
-							</form>
+					</div>
+
+					<div className="font-bold lg:absolute lg:top-[450px] lg:left-[400px] 2xl:top-[640px] 2xl:left-[820px] lg:text-[12px] 2xl:text-[16px] ">
+						<div className="flex items-center mb-4">
+							<div className="bg-green-500 2xl:p-2 lg:p-1 rounded-lg mr-2"></div>
+							<div>
+								<p>Booking Confirmed</p>
+							</div>
+						</div>
+						<div className="flex items-center mb-4">
+							<div className="bg-[#65fe08] 2xl:p-2 lg:p-1 rounded-lg mr-2"></div>
+							<div>
+								<p>Booking Confirmed & Pending Reservations</p>
+							</div>
+						</div>
+						<div className="flex items-center mb-4">
+							<div className="bg-yellow-400 2xl:p-2 lg:p-1 rounded-lg mr-2"></div>
+							<div>
+								<p>Pending Reservations</p>
+							</div>
+						</div>
+						<div className="flex items-center">
+							<div className="bg-red-200 2xl:p-2 lg:p-1 rounded-lg mr-2">
+								<p className=" text-red-500">Fully Booked</p>
+							</div>
+							<div>
+								<p>No Room Availability</p>
+							</div>
 						</div>
 					</div>
 				</div>
