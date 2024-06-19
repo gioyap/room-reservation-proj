@@ -31,36 +31,38 @@ export async function POST(request: NextRequest) {
 
 		// Generate HTML content for the email
 		const htmlContent = `
-	<div style="background-color: white; padding-top: 8px; padding-bottom: 8px; border-radius: 10px; text-align: center;">
-    <h1 style="text-align: center; color: #e61e84; font-size: 42px;">New Reservation</h1>
-    <p style="text-align: center; color: #e61e84; font-size: 20px;">Here is the new reservation:</p>
-    <table border="1" cellpadding="10" cellspacing="0">
-        <thead>
-		<tr style="background-color: #e61e84; color: white; font-size: 18px; text-align: center;">
-                <th>Company</th>
-                <th>Department</th>
-                <th>Name</th>
-                <th>Room</th>
-                <th>From</th>
-                <th>To</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr style="text-align: center; color: #e61e84; font-size: 18px;">
-                <td>${newData.company}</td>
-                <td>${newData.department}</td>
-                <td>${newData.name}</td>
-                <td>${newData.title}</td>
-                <td>${convertUTCToLocalDate(newData.fromDate, timeZone)}</td>
+		<div style="background-color: white; padding: 20px; border-radius: 10px; text-align: center;">
+					<h1 style="color: #e61e84; font-size: 42px;">Reservation Accepted</h1>
+					<p style="color: #e61e84; font-size: 20px;">Your reservation has been accepted.</p>
+					<div style="display: flex; justify-content: center;">
+						<table border="1" cellpadding="10" cellspacing="0" style="border-collapse: collapse; margin: 0 auto;">
+							<thead>
+								<tr style="background-color: #e61e84; color: white; font-size: 18px;">
+									<th>Company</th>
+									<th>Department</th>
+									<th>Name</th>
+									<th>Room</th>
+									<th>From</th>
+									<th>To</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr style="color: #e61e84; font-size: 18px;">
+									<td>${newData.company}</td>
+									<td>${newData.department}</td>
+									<td>${newData.name}</td>
+									<td>${newData.title}</td>
+									<td>${convertUTCToLocalDate(newData.fromDate, timeZone)}</td>
                 <td>${convertUTCToLocalDate(newData.toDate, timeZone)}</td>
-            </tr>
-        </tbody>
-    </table>
-    ${descriptionContent}
-    <p style="text-align: center; color: #e61e84; font-size: 18px;">This is a new reservation, please let me know if this is accepted or declined.</p>
-    <p style="text-align: center; color: #e61e84; font-size: 18px;">Go to the Admin Dashboard to be able to accept or deny the request. Thank you.</p>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+			${descriptionContent}
+			<p style="text-align: center; color: #e61e84; font-size: 18px;">This is a new reservation, please let me know if this is accepted or declined.</p>
+			<p style="text-align: center; color: #e61e84; font-size: 18px;">Go to the Admin Dashboard to be able to accept or deny the request. Thank you.</p>
 		</div>
-	`;
+		`;
 
 		// the user able to notify the admin
 		const adminMailOptions = {
