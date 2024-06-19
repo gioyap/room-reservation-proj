@@ -3,7 +3,7 @@
 
 import Image from "next/image";
 import google from "../public/google2.svg";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import "react-toastify/dist/ReactToastify.css";
@@ -13,30 +13,40 @@ const Login = () => {
 	const [loading, setLoading] = useState(false);
 	const router = useRouter();
 	const [error, setError] = useState("");
+	const [rememberMe, setRememberMe] = useState(false);
 	const [user, setUser] = useState({
 		email: "",
 		password: "",
 	});
 
-	const handleInputChange = (event: any) => {
+	useEffect(() => {
+		// Check if email and password are saved in localStorage
+		const savedEmail = localStorage.getItem("rememberedEmail");
+		const savedPassword = localStorage.getItem("rememberedPassword");
+		if (savedEmail && savedPassword) {
+			setUser({ email: savedEmail, password: savedPassword });
+			setRememberMe(true);
+		}
+	}, []);
+
+	const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		const { name, value } = event.target;
 		setUser((prevInfo) => ({ ...prevInfo, [name]: value }));
 	};
 
-	const handleSubmit = async (e: any) => {
+	const handleRememberMeChange = (
+		event: React.ChangeEvent<HTMLInputElement>
+	) => {
+		setRememberMe(event.target.checked);
+	};
+
+	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		setError("");
 		setLoading(true);
 		try {
 			if (!user.email || !user.password) {
 				toast.error("Please fill out all required fields");
-				setLoading(false);
-				return;
-			}
-			const emailRegex = /^([a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/;
-			if (!emailRegex.test(user.email)) {
-				setError("invalid email id");
-				toast.error("Invalid email address");
 				setLoading(false);
 				return;
 			}
@@ -53,6 +63,14 @@ const Login = () => {
 				toast.error("Invalid email or password");
 				setLoading(false);
 				return;
+			}
+
+			if (rememberMe) {
+				localStorage.setItem("rememberedEmail", user.email);
+				localStorage.setItem("rememberedPassword", user.password);
+			} else {
+				localStorage.removeItem("rememberedEmail");
+				localStorage.removeItem("rememberedPassword");
 			}
 
 			toast.success("Logged in successfully!");
@@ -95,7 +113,7 @@ const Login = () => {
 					<div>
 						<h2 className="font-extrabold mb-1">Email</h2>
 						<input
-							type="email"
+							type="text"
 							name="email"
 							value={user.email}
 							className="w-full bg-slate-100 p-3 rounded-full"
@@ -113,6 +131,18 @@ const Login = () => {
 							value={user.password}
 							onChange={handleInputChange}
 						/>
+					</div>
+					<div className="flex items-center mb-4">
+						<input
+							type="checkbox"
+							checked={rememberMe}
+							onChange={handleRememberMeChange}
+							id="rememberMe"
+							className="mr-2"
+						/>
+						<label htmlFor="rememberMe" className="text-sm">
+							Remember Me
+						</label>
 					</div>
 					<div>
 						<button
