@@ -1,14 +1,13 @@
 "use client";
 
 import { signOut, useSession } from "next-auth/react";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Calendar from "@/components/Calendar"; // Import Calendar component
 import "react-datepicker/dist/react-datepicker.css";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FaUser } from "react-icons/fa";
 import SidebarClient from "@/components/SidebarClient";
-import { Reservation } from "../../types/type";
 import useReservations from "../../hooks/useReservations"; // Adjust the path as necessary
 const companies = ["Flawless", "MTSI", "FINA", "Beauty and Butter"];
 import { io, Socket } from "socket.io-client";
@@ -80,20 +79,6 @@ const Dashboard = () => {
 	) => {
 		setShowDescription(e.target.checked);
 	};
-
-	const formattedSelectedTime = fromSelectedTime.toLocaleTimeString([], {
-		hour: "2-digit",
-		minute: "2-digit",
-		hour12: true,
-		timeZone: "Asia/Manila",
-	});
-
-	const formattedToSelectedTime = toSelectedTime.toLocaleTimeString([], {
-		hour: "2-digit",
-		minute: "2-digit",
-		hour12: true,
-		timeZone: "Asia/Manila",
-	});
 
 	const handleContinue = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
@@ -188,6 +173,9 @@ const Dashboard = () => {
 
 			if (response.ok) {
 				toast.success("Reservation saved successfully!");
+
+				// Emit the new-reservation event after successful save
+				socket.emit("new-reservation", reservationData);
 
 				const emailResponse = await fetch("/api/sendEmail", {
 					method: "POST",

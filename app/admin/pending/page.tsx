@@ -7,6 +7,13 @@ import "react-toastify/dist/ReactToastify.css";
 import Sidebar from "@/components/Sidebar"; // Ensure you have this Sidebar component
 import Pagination from "@/components/Pagination";
 import { format } from "date-fns";
+import { io, Socket } from "socket.io-client";
+
+let socket: Socket;
+if (typeof window !== "undefined") {
+	socket = io("http://localhost:4000");
+}
+
 interface Reservation {
 	_id: string;
 	company: string;
@@ -76,6 +83,19 @@ const PendingPage = () => {
 
 		if (session && session.user.isAdmin) {
 			fetchData();
+
+			// Socket event listener for real-time updates
+			socket.on("update-reservations", (newReservation: Reservation) => {
+				setReservations((prevReservations) => [
+					...prevReservations,
+					newReservation,
+				]);
+			});
+
+			// Cleanup the socket event listener on component unmount
+			return () => {
+				socket.off("update-reservations");
+			};
 		}
 	}, [session]);
 
