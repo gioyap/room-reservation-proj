@@ -11,6 +11,14 @@ import SidebarClient from "@/components/SidebarClient";
 import { Reservation } from "../../types/type";
 import useReservations from "../../hooks/useReservations"; // Adjust the path as necessary
 const companies = ["Flawless", "MTSI", "FINA", "Beauty and Butter"];
+import { io, Socket } from "socket.io-client";
+
+let socket: Socket;
+
+// Initialize socket connection
+if (typeof window !== "undefined") {
+	socket = io("http://localhost:4000");
+}
 
 const departments = [
 	"Executives",
