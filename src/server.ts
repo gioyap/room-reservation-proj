@@ -5,12 +5,22 @@ import bodyParser from "body-parser";
 import { connect } from "../utils/config/database";
 import Reservation from "../utils/models/reservation";
 import dotenv from "dotenv";
+import cors from "cors";
 
 dotenv.config();
 
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
+
+// Allow requests from Vercel domain
+const corsOptions = {
+	origin: "https://reservation-system-nu.vercel.app",
+	methods: ["GET", "POST"],
+	allowedHeaders: ["Content-Type"],
+};
+
+app.use(cors(corsOptions));
 
 app.use(bodyParser.json());
 
@@ -42,7 +52,9 @@ app.post("/api/reservationDB", async (req, res) => {
 // API endpoint to get pending reservations
 app.get("/api/status/pending", async (req, res) => {
 	try {
-		const reservations = await Reservation.find({ status: "Pending" });
+		const reservations = await Reservation.find({
+			status: "Pending",
+		}).maxTimeMS(30000);
 		res.send({ reservations });
 	} catch (error: any) {
 		// Type assertion for 'error'

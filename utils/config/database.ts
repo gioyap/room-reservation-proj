@@ -20,7 +20,9 @@ export async function connect() {
 		}
 
 		// Connect to MongoDB using Mongoose
-		await mongoose.connect(process.env.NEXT_PUBLIC_MONGO_URI, {});
+		await mongoose.connect(process.env.NEXT_PUBLIC_MONGO_URI, {
+			serverSelectionTimeoutMS: 30000,
+		});
 
 		// Set up event listeners for MongoDB connection
 		mongoose.connection.once("connected", () => {

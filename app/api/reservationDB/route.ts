@@ -11,7 +11,7 @@ const convertUTCToLocalDate = (utcDateString: string, timeZone: string) => {
 export async function GET(request: NextRequest) {
 	try {
 		// Fetch reservation data from the database
-		const reservations = await Reservation.find();
+		const reservations = await Reservation.find({}).maxTimeMS(30000); // Example: Set timeout to 30 seconds
 
 		// Convert UTC dates to local dates
 		const timeZone = "Asia/Manila"; // Set the desired time zone

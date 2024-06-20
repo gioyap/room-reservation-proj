@@ -3,7 +3,9 @@ import Reservation from "@/utils/models/reservation";
 
 export async function GET(request: NextRequest) {
 	try {
-		const reservations = await Reservation.find({ status: "Pending" });
+		const reservations = await Reservation.find({
+			status: "Pending",
+		}).maxTimeMS(30000);
 
 		return NextResponse.json({ reservations }, { status: 200 });
 	} catch (error: any) {

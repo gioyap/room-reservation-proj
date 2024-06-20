@@ -7,7 +7,7 @@ export async function GET(req: NextRequest) {
 	{
 		try {
 			await connect();
-			const reservations = await Reservation.find();
+			const reservations = await Reservation.find({}).maxTimeMS(30000); // Example: Set timeout to 30 seconds
 			return NextResponse.json(
 				{
 					reservation: reservations,

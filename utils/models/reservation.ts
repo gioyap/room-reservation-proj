@@ -38,6 +38,8 @@ const ReservationSchema = new mongoose.Schema({
 	},
 });
 
+ReservationSchema.index({ status: 1 });
+
 const Reservation =
 	mongoose.models.Reservation ||
 	mongoose.model("Reservation", ReservationSchema);
