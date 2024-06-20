@@ -11,7 +11,12 @@ import { io, Socket } from "socket.io-client";
 
 let socket: Socket;
 if (typeof window !== "undefined") {
-	socket = io("http://localhost:4000");
+	const baseURL =
+		process.env.NODE_ENV === "development"
+			? "http://localhost:5400" // Use local server in development
+			: "https://reservation-system-nu.vercel.app"; // Use Vercel deployment in production
+
+	socket = io(baseURL);
 }
 
 interface Reservation {

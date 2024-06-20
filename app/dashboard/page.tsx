@@ -10,14 +10,9 @@ import { FaUser } from "react-icons/fa";
 import SidebarClient from "@/components/SidebarClient";
 import useReservations from "../../hooks/useReservations"; // Adjust the path as necessary
 const companies = ["Flawless", "MTSI", "FINA", "Beauty and Butter"];
-import { io, Socket } from "socket.io-client";
+import { Socket } from "socket.io-client";
 
 let socket: Socket;
-
-// Initialize socket connection
-if (typeof window !== "undefined") {
-	socket = io("http://localhost:4000");
-}
 
 const departments = [
 	"Executives",

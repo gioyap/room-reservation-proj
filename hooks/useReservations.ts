@@ -4,7 +4,7 @@ import { Reservation } from "@/types/type";
 
 const socketUrl =
 	process.env.NODE_ENV === "development"
-		? "http://localhost:4000" // Use the port your Express server is listening on
+		? "http://localhost:5400" // Use the port your Express server is listening on
 		: "https://reservation-system-nu.vercel.app"; // Adjust to your production WebSocket server
 
 const useReservations = () => {
