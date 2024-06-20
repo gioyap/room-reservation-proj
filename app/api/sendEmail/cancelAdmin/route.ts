@@ -39,6 +39,7 @@ export async function POST(request: NextRequest) {
             <table border="1" cellpadding="10" cellspacing="0" style="border-collapse: collapse; margin: 0 auto;">
                 <thead>
                     <tr style="background-color: #ff7b00; color: white; font-size: 18px;">
+						<th>Company</th>
                         <th>Department</th>
                         <th>Name</th>
                         <th>Room</th>
@@ -48,6 +49,7 @@ export async function POST(request: NextRequest) {
                 </thead>
                 <tbody>
                     <tr style="color: #ff7b00; font-size: 18px;">
+						<td>${updatedReservation.company}</td>
                         <td>${updatedReservation.department}</td>
                         <td>${updatedReservation.name}</td>
                         <td>${updatedReservation.title}</td>
