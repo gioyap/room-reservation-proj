@@ -3,9 +3,10 @@ import io from "socket.io-client";
 import { Reservation } from "@/types/type";
 
 const socketUrl =
-	process.env.NODE_ENV === "development"
-		? "http://localhost:5400" // Use the port your Express server is listening on
-		: "https://reservation-system-nu.vercel.app"; // Adjust to your production WebSocket server
+	process.env.NODE_ENV === "production"
+		? process.env.NEXT_PUBLIC_SOCKET_URL_PROD ??
+		  "https://reservation-system-nu.vercel.app"
+		: process.env.NEXT_PUBLIC_SOCKET_URL_DEV ?? "http://localhost:5400";
 
 const useReservations = () => {
 	const [reservations, setReservations] = useState<Reservation[]>([]);

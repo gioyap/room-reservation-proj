@@ -68,6 +68,10 @@ io.on("connection", (socket: Socket) => {
 	socket.on("disconnect", () => {
 		console.log("user disconnected");
 	});
+
+	socket.on("update-reservations", (data) => {
+		io.emit("update-reservations", data); // Broadcast to all clients
+	});
 });
 
 const PORT = process.env.EXPRESS_PORT || 5400;

@@ -1,23 +1,24 @@
 "use client";
 
 import { signOut, useSession } from "next-auth/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Calendar from "@/components/Calendar"; // Import Calendar component
 import "react-datepicker/dist/react-datepicker.css";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FaUser } from "react-icons/fa";
 import SidebarClient from "@/components/SidebarClient";
-import useReservations from "../../hooks/useReservations"; // Adjust the path as necessary
 const companies = ["Flawless", "MTSI", "FINA", "Beauty and Butter"];
 import { io, Socket } from "socket.io-client";
+import { Reservation } from "@/types/type";
 
 let socket: Socket;
 if (typeof window !== "undefined") {
 	const baseURL =
-		process.env.NODE_ENV === "development"
-			? "http://localhost:5400" // Use local server in development
-			: "https://reservation-system-nu.vercel.app"; // Use Vercel deployment in production
+		process.env.NODE_ENV === "production"
+			? process.env.NEXT_PUBLIC_SOCKET_URL_PROD ??
+			  "https://reservation-system-nu.vercel.app"
+			: process.env.NEXT_PUBLIC_SOCKET_URL_DEV ?? "http://localhost:5400";
 
 	socket = io(baseURL);
 }
@@ -51,7 +52,7 @@ const Dashboard = () => {
 	const [description, setDescription] = useState("");
 	const [showDescription, setShowDescription] = useState(false);
 	const [dropdownVisible, setDropdownVisible] = useState(false);
-	const reservations = useReservations();
+	const [reservations, setReservations] = useState<Reservation[]>([]);
 
 	const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setEmail(e.target.value);
@@ -82,6 +83,36 @@ const Dashboard = () => {
 	) => {
 		setShowDescription(e.target.checked);
 	};
+
+	useEffect(() => {
+		// Listen for reservation updates
+		socket.on("reservationUpdate", (data: Reservation) => {
+			setReservations((prevReservations) => {
+				const updatedReservations = prevReservations.map((reservation) =>
+					reservation._id === data._id ? data : reservation
+				);
+				if (
+					!updatedReservations.some(
+						(reservation) => reservation._id === data._id
+					)
+				) {
+					updatedReservations.push(data);
+				}
+				return updatedReservations;
+			});
+		});
+
+		// Listen for reservation deletion
+		socket.on("reservationDelete", (id: string) => {
+			setReservations((prevReservations) =>
+				prevReservations.filter((reservation) => reservation._id !== id)
+			);
+		});
+
+		return () => {
+			socket.disconnect();
+		};
+	}, []);
 
 	const handleContinue = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();

@@ -42,3 +42,19 @@ export async function connect() {
 		process.exit(1); // Exit the process with an error code
 	}
 }
+
+export const saveReservationToDatabase = async (reservation: any) => {
+	try {
+		const client = await connect();
+		if (!client) {
+			throw new Error("MongoDB client is not available");
+		}
+
+		const database = client.db; // Correct usage of mongoose.Connection.db property
+		await database.collection("reservations").insertOne(reservation);
+		console.log("Reservation saved to database");
+	} catch (error) {
+		console.error("Error saving reservation to database:", error);
+		throw error;
+	}
+};
