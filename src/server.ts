@@ -21,3 +21,6 @@ io.on("connection", (socket: Socket) => {
 server.listen(4000, () => {
 	console.log("listening on *:4000");
 });
+
+export default io;
+export const getSocketIOInstance = () => io;

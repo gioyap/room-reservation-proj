@@ -2,6 +2,9 @@
 	"compilerOptions": {
 		"lib": ["dom", "dom.iterable", "esnext"],
 		"types": ["node"],
+		"target": "ES6",
+		"forceConsistentCasingInFileNames": true,
+		"outDir": "./dist",
 		"allowJs": true,
 		"skipLibCheck": true,
 		"strict": true,
