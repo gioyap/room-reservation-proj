@@ -2,8 +2,8 @@ import express from "express";
 import http from "http";
 import { Server, Socket } from "socket.io";
 import bodyParser from "body-parser";
-import { connect } from "@/utils/config/database";
-import Reservation from "@/utils/models/reservation";
+import { connect } from "../utils/config/database";
+import Reservation from "../utils/models/reservation";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -58,7 +58,7 @@ io.on("connection", (socket: Socket) => {
 	});
 });
 
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.EXPRESS_PORT || 5400;
 server.listen(PORT, () => {
 	console.log(`Server is running on port ${PORT}`);
 });
