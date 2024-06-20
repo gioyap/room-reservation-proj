@@ -6,7 +6,6 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Sidebar from "@/components/Sidebar"; // Ensure you have this Sidebar component
 import Pagination from "@/components/Pagination";
-import useDeclinedReservations from "@/hooks/useDeclinedReservations";
 import { format } from "date-fns";
 
 interface Reservation {
@@ -25,9 +24,7 @@ type SortColumn = keyof Reservation;
 
 const DeclinedPage = () => {
 	const { data: session, status } = useSession();
-	const { reservations, setReservations, socket } = useDeclinedReservations({
-		initialReservations: [],
-	});
+	const [reservations, setReservations] = useState<Reservation[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [currentPage, setCurrentPage] = useState(1);
 	const [reservationsPerPage, setReservationsPerPage] = useState(10);
@@ -68,7 +65,6 @@ const DeclinedPage = () => {
 		const fetchData = async () => {
 			try {
 				const response = await fetch("/api/status/declined"); // Adjust your API endpoint accordingly
-				socket?.emit("declinedReservations", fetchData);
 				const data = await response.json();
 				setReservations(data.reservations);
 			} catch (error) {

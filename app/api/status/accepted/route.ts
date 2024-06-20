@@ -1,18 +1,9 @@
 import { NextResponse, NextRequest } from "next/server";
-import { connect } from "@/utils/config/database";
 import Reservation from "@/utils/models/reservation";
-import { getSocketIOInstance } from "@/src/server";
-
-connect();
-
-const io = getSocketIOInstance();
 
 export async function GET(request: NextRequest) {
 	try {
 		const reservations = await Reservation.find({ status: "Accepted" });
-
-		// Emit the pending reservations to all connected clients
-		io.emit("acceptedReservations", reservations);
 
 		return NextResponse.json({ reservations }, { status: 200 });
 	} catch (error: any) {

@@ -1,13 +1,6 @@
 // route.ts
 import { NextResponse, NextRequest } from "next/server";
-import { connect } from "@/utils/config/database";
 import Reservation from "@/utils/models/reservation";
-import { getSocketIOInstance } from "../../../src/server";
-
-// Connect to the database
-connect();
-
-const io = getSocketIOInstance();
 
 // Function to convert UTC date to local date string
 const convertUTCToLocalDate = (utcDateString: string, timeZone: string) => {
@@ -88,9 +81,6 @@ export async function POST(request: NextRequest) {
 
 		await newReservation.save();
 
-		// Emit the event to all connected clients
-		io.emit("reservationUpdate", newReservation);
-
 		return NextResponse.json(
 			{
 				message: "Reservation saved successfully!",
@@ -132,9 +122,6 @@ export async function PUT(request: NextRequest) {
 
 		// Fetch the user's email from the reservation
 		const { email } = updatedReservation;
-
-		// Emit the event to all connected clients
-		io.emit("reservationUpdate", updatedReservation);
 
 		return NextResponse.json(
 			{

@@ -6,7 +6,6 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Sidebar from "@/components/Sidebar"; // Ensure you have this Sidebar component
 import Pagination from "@/components/Pagination";
-import usePendingReservations from "@/hooks/usePendingReservations";
 import { format } from "date-fns";
 interface Reservation {
 	_id: string;
@@ -18,15 +17,14 @@ interface Reservation {
 	toDate: string;
 	status: string;
 	email: string;
+	description: any;
 }
 
 type SortColumn = keyof Reservation;
 
 const PendingPage = () => {
 	const { data: session, status } = useSession();
-	const { reservations, setReservations, socket } = usePendingReservations({
-		initialReservations: [],
-	});
+	const [reservations, setReservations] = useState<Reservation[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [currentPage, setCurrentPage] = useState(1);
 	const [reservationsPerPage, setReservationsPerPage] = useState(10);
@@ -67,7 +65,6 @@ const PendingPage = () => {
 		const fetchData = async () => {
 			try {
 				const response = await fetch("/api/status/pending"); // Adjust your API endpoint accordingly
-				socket?.emit("updatedReservations", fetchData);
 				const data = await response.json();
 				setReservations(data.reservations);
 			} catch (error) {
@@ -135,10 +132,6 @@ const PendingPage = () => {
 				console.error("Email error:", errorData);
 				toast.error("Failed to send email");
 			}
-
-			// Emit WebSocket event to notify other clients
-			socket?.emit("acceptReservation", { id, status: "Accepted" });
-
 			setTimeout(() => {
 				window.location.reload();
 			}, 5000);
@@ -201,10 +194,6 @@ const PendingPage = () => {
 				console.error("Email error:", errorData);
 				toast.error("Failed to send email");
 			}
-
-			// Emit WebSocket event to notify other clients
-			socket?.emit("declineReservation", { id, status: "Declined" });
-
 			setTimeout(() => {
 				window.location.reload();
 			}, 5000);
