@@ -10,9 +10,17 @@ import { FaUser } from "react-icons/fa";
 import SidebarClient from "@/components/SidebarClient";
 import useReservations from "../../hooks/useReservations"; // Adjust the path as necessary
 const companies = ["Flawless", "MTSI", "FINA", "Beauty and Butter"];
-import { Socket } from "socket.io-client";
+import { io, Socket } from "socket.io-client";
 
 let socket: Socket;
+if (typeof window !== "undefined") {
+	const baseURL =
+		process.env.NODE_ENV === "development"
+			? "http://localhost:5400" // Use local server in development
+			: "https://reservation-system-nu.vercel.app"; // Use Vercel deployment in production
+
+	socket = io(baseURL);
+}
 
 const departments = [
 	"Executives",
