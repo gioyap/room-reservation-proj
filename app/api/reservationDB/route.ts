@@ -1,6 +1,7 @@
 // route.ts
 import { NextResponse, NextRequest } from "next/server";
 import Reservation from "@/utils/models/reservation";
+import { connect } from "@/utils/config/database";
 
 // Function to convert UTC date to local date string
 const convertUTCToLocalDate = (utcDateString: string, timeZone: string) => {
@@ -10,8 +11,9 @@ const convertUTCToLocalDate = (utcDateString: string, timeZone: string) => {
 
 export async function GET(request: NextRequest) {
 	try {
+		connect();
 		// Fetch reservation data from the database
-		const reservations = await Reservation.find({}).maxTimeMS(30000); // Example: Set timeout to 30 seconds
+		const reservations = await Reservation.find({}); // Example: Set timeout to 30 seconds
 
 		// Convert UTC dates to local dates
 		const timeZone = "Asia/Manila"; // Set the desired time zone
@@ -36,6 +38,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
 	try {
+		await connect();
 		const {
 			email,
 			company,
@@ -97,6 +100,7 @@ export async function POST(request: NextRequest) {
 // PUT method for updating reservation status
 export async function PUT(request: NextRequest) {
 	try {
+		await connect();
 		const { id, status } = await request.json();
 
 		if (!id || !status) {

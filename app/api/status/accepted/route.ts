@@ -5,7 +5,7 @@ export async function GET(request: NextRequest) {
 	try {
 		const reservations = await Reservation.find({
 			status: "Accepted",
-		}).maxTimeMS(30000);
+		});
 
 		return NextResponse.json({ reservations }, { status: 200 });
 	} catch (error: any) {

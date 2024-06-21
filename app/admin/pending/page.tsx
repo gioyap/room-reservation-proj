@@ -7,7 +7,6 @@ import "react-toastify/dist/ReactToastify.css";
 import Sidebar from "@/components/Sidebar"; // Ensure you have this Sidebar component
 import Pagination from "@/components/Pagination";
 import { format } from "date-fns";
-import { io, Socket } from "socket.io-client";
 
 interface Reservation {
 	_id: string;
@@ -32,41 +31,32 @@ const PendingPage = () => {
 	const [reservationsPerPage, setReservationsPerPage] = useState(10);
 	const [sortColumn, setSortColumn] = useState<SortColumn>("department");
 	const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
-	const socketRef = useRef<Socket | null>(null);
+	const [notifications, setNotifications] = useState<string[]>([]);
 
 	useEffect(() => {
-		if (typeof window !== "undefined") {
-			const baseURL: string =
-				process.env.NODE_ENV === "production"
-					? process.env.NEXT_PUBLIC_SOCKET_URL_PROD ??
-					  "https://reservation-system-nu.vercel.app"
-					: process.env.NEXT_PUBLIC_SOCKET_URL_DEV ?? "http://localhost:5400";
+		const ws = new WebSocket(
+			process.env.NEXT_PUBLIC_WEBSOCKET_URL || "ws://localhost:3001"
+		);
 
-			socketRef.current = io(baseURL);
+		ws.onopen = () => {
+			console.log("WebSocket connected");
+		};
 
-			socketRef.current.on("connect", () => {
-				console.log("Connected to WebSocket server");
-			});
+		ws.onmessage = (event) => {
+			const message = event.data;
+			console.log("Received message:", message);
+			setNotifications((prevNotifications) => [...prevNotifications, message]);
+		};
 
-			socketRef.current.on("disconnect", () => {
-				console.log("Disconnected from WebSocket server");
-			});
+		ws.onclose = () => {
+			console.log("WebSocket disconnected");
+		};
 
-			socketRef.current.on(
-				"update-reservations",
-				(newReservation: Reservation) => {
-					setReservations((prevReservations) => [
-						...prevReservations,
-						newReservation,
-					]);
-				}
-			);
+		return () => {
+			ws.close();
+		};
+	}, [session]);
 
-			return () => {
-				socketRef.current?.disconnect();
-			};
-		}
-	}, []);
 	// Sorting function
 	const sortTable = (column: SortColumn) => {
 		let newSortOrder: "asc" | "desc" = "asc";
