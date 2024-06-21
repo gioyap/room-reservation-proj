@@ -10,6 +10,7 @@ import { FaUser } from "react-icons/fa";
 import SidebarClient from "@/components/SidebarClient";
 const companies = ["Flawless", "MTSI", "FINA", "Beauty and Butter"];
 import { Reservation } from "@/types/type";
+import { io, Socket } from "socket.io-client";
 
 const departments = [
 	"Executives",
@@ -41,6 +42,43 @@ const Dashboard = () => {
 	const [showDescription, setShowDescription] = useState(false);
 	const [dropdownVisible, setDropdownVisible] = useState(false);
 	const [reservations, setReservations] = useState<Reservation[]>([]);
+
+	useEffect(() => {
+		let socket: Socket;
+
+		// Define the socket connection URL based on the environment
+		const socketUrl =
+			process.env.NODE_ENV === "production"
+				? "https://reservation-system-nu.vercel.app"
+				: "http://localhost:3001";
+
+		// Create the socket connection
+		socket = io(socketUrl, {
+			transports: ["websocket"],
+		});
+
+		socket.on("connect", () => {
+			console.log("WebSocket connected");
+		});
+
+		socket.on("newReservation", (data: Reservation) => {
+			console.log("New reservation received:", data);
+			setReservations((prevReservations) => [...prevReservations, data]);
+		});
+
+		socket.on("disconnect", () => {
+			console.log("WebSocket disconnected");
+		});
+
+		socket.on("error", (error: Error) => {
+			console.error("WebSocket error:", error);
+		});
+
+		// Clean up WebSocket on component unmount
+		return () => {
+			socket.disconnect();
+		};
+	}, []);
 
 	const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setEmail(e.target.value);
