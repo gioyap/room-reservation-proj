@@ -49,7 +49,7 @@ const Dashboard = () => {
 		// Define the socket connection URL based on the environment
 		const socketUrl =
 			process.env.NODE_ENV === "production"
-				? "https://reservation-system-nu.vercel.app/"
+				? "https://reservation-system-nu.vercel.app"
 				: "http://localhost:3001";
 
 		// Create the socket connection

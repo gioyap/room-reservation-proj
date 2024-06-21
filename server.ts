@@ -9,7 +9,10 @@ const app = express();
 const httpServer = createServer(app);
 const io = new SocketIOServer(httpServer, {
 	cors: {
-		origin: "*", // Adjust this to your frontend URL in production
+		origin: "https://reservation-system-nu.vercel.app",
+		methods: ["GET", "POST"], // Add methods as needed
+		allowedHeaders: ["Authorization"], // Add allowed headers as needed
+		credentials: true, // Allow credentials (cookies, authorization headers, etc.)
 	},
 });
 
