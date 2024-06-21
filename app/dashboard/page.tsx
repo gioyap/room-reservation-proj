@@ -1,7 +1,7 @@
 "use client";
 
 import { signOut, useSession } from "next-auth/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Calendar from "@/components/Calendar"; // Import Calendar component
 import "react-datepicker/dist/react-datepicker.css";
 import { toast, ToastContainer } from "react-toastify";
@@ -41,6 +41,33 @@ const Dashboard = () => {
 	const [showDescription, setShowDescription] = useState(false);
 	const [dropdownVisible, setDropdownVisible] = useState(false);
 	const [reservations, setReservations] = useState<Reservation[]>([]);
+
+	useEffect(() => {
+		const ws = new WebSocket(
+			process.env.NEXT_PUBLIC_WEBSOCKET_URL || "ws://localhost:3001"
+		);
+
+		ws.onopen = () => {
+			console.log("WebSocket connected");
+		};
+
+		ws.onmessage = (event) => {
+			const message = JSON.parse(event.data);
+			if (message.type === "newReservation") {
+				setReservations((prevReservations) => [
+					...prevReservations,
+					message.reservation,
+				]);
+			}
+		};
+
+		ws.onclose = () => {
+			console.log("WebSocket disconnected");
+		};
+		return () => {
+			ws.close();
+		};
+	}, []);
 
 	const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setEmail(e.target.value);

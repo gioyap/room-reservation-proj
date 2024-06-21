@@ -14,10 +14,32 @@ connect();
 wss.on("connection", (ws) => {
 	console.log("Client connected");
 
+	// Simulated reservation data
+	const newReservation = {
+		_id: "some_id",
+		company: "Flawless",
+		department: "Executives",
+		name: "John Doe",
+		title: "Meeting Room",
+		fromDate: "2024-06-22T10:00:00Z",
+		toDate: "2024-06-22T11:00:00Z",
+		status: "Pending",
+		email: "john.doe@example.com",
+		description: "Meeting about project updates",
+	};
+
+	ws.send(
+		JSON.stringify({
+			type: "newReservation",
+			reservation: newReservation,
+		})
+	);
+
 	ws.on("close", () => {
 		console.log("Client disconnected");
 	});
 });
+console.log("WebSocket server running on ws://localhost:3001");
 
 const notifyClients = (data: any) => {
 	wss.clients.forEach((client) => {

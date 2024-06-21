@@ -31,7 +31,6 @@ const PendingPage = () => {
 	const [reservationsPerPage, setReservationsPerPage] = useState(10);
 	const [sortColumn, setSortColumn] = useState<SortColumn>("department");
 	const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
-	const [notifications, setNotifications] = useState<string[]>([]);
 
 	useEffect(() => {
 		const ws = new WebSocket(
@@ -43,19 +42,22 @@ const PendingPage = () => {
 		};
 
 		ws.onmessage = (event) => {
-			const message = event.data;
-			console.log("Received message:", message);
-			setNotifications((prevNotifications) => [...prevNotifications, message]);
+			const message = JSON.parse(event.data);
+			if (message.type === "newReservation") {
+				setReservations((prevReservations) => [
+					...prevReservations,
+					message.reservation,
+				]);
+			}
 		};
 
 		ws.onclose = () => {
 			console.log("WebSocket disconnected");
 		};
-
 		return () => {
 			ws.close();
 		};
-	}, [session]);
+	}, []);
 
 	// Sorting function
 	const sortTable = (column: SortColumn) => {
