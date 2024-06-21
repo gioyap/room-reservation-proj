@@ -13,6 +13,7 @@
 		"@types/mongoose": "^5.11.97",
 		"@types/react-modal": "^3.16.3",
 		"@types/redux": "^3.6.0",
+		"@types/socket.io": "^3.0.2",
 		"axios": "^1.6.8",
 		"bcryptjs": "^2.4.3",
 		"cors": "^2.8.5",
@@ -34,6 +35,8 @@
 		"react-toastify": "^10.0.5",
 		"react-tooltip": "^5.27.0",
 		"redux": "^5.0.1",
+		"socket.io": "^4.7.5",
+		"socket.io-client": "^4.7.5",
 		"ws": "^8.17.1"
 	},
 	"devDependencies": {

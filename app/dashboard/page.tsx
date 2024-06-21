@@ -10,6 +10,7 @@ import { FaUser } from "react-icons/fa";
 import SidebarClient from "@/components/SidebarClient";
 const companies = ["Flawless", "MTSI", "FINA", "Beauty and Butter"];
 import { Reservation } from "@/types/type";
+import { io, Socket } from "socket.io-client";
 
 const departments = [
 	"Executives",
@@ -43,29 +44,39 @@ const Dashboard = () => {
 	const [reservations, setReservations] = useState<Reservation[]>([]);
 
 	useEffect(() => {
-		const ws = new WebSocket(
-			process.env.NEXT_PUBLIC_WEBSOCKET_URL || "ws://localhost:3001"
-		);
+		let socket: Socket;
 
-		ws.onopen = () => {
+		// Define the socket connection URL based on the environment
+		const socketUrl =
+			process.env.NODE_ENV === "production"
+				? "https://reservation-system-nu.vercel.app/"
+				: "http://localhost:3001";
+
+		// Create the socket connection
+		socket = io(socketUrl, {
+			transports: ["websocket"],
+		});
+
+		socket.on("connect", () => {
 			console.log("WebSocket connected");
-		};
+		});
 
-		ws.onmessage = (event) => {
-			const message = JSON.parse(event.data);
-			if (message.type === "newReservation") {
-				setReservations((prevReservations) => [
-					...prevReservations,
-					message.reservation,
-				]);
-			}
-		};
+		socket.on("newReservation", (data: Reservation) => {
+			console.log("New reservation received:", data);
+			setReservations((prevReservations) => [...prevReservations, data]);
+		});
 
-		ws.onclose = () => {
+		socket.on("disconnect", () => {
 			console.log("WebSocket disconnected");
-		};
+		});
+
+		socket.on("error", (error: Error) => {
+			console.error("WebSocket error:", error);
+		});
+
+		// Clean up WebSocket on component unmount
 		return () => {
-			ws.close();
+			socket.disconnect();
 		};
 	}, []);
 

@@ -1,54 +1,29 @@
 // server.ts
-import { createServer } from "http";
 import express from "express";
+import { createServer } from "http";
 import { connect } from "./utils/config/database";
-import { Server } from "ws";
+import { Server as SocketIOServer, Socket } from "socket.io";
 import Reservation from "./utils/models/reservation";
 
 const app = express();
-const server = createServer(app);
-const wss = new Server({ server });
+const httpServer = createServer(app);
+const io = new SocketIOServer(httpServer, {
+	cors: {
+		origin: "*", // Adjust this to your frontend URL in production
+	},
+});
 
 connect();
 
-wss.on("connection", (ws) => {
-	console.log("Client connected");
+io.on("connection", (socket: Socket) => {
+	console.log(`Client connected: ${socket.id}`);
 
-	// Simulated reservation data
-	const newReservation = {
-		_id: "some_id",
-		company: "Flawless",
-		department: "Executives",
-		name: "John Doe",
-		title: "Meeting Room",
-		fromDate: "2024-06-22T10:00:00Z",
-		toDate: "2024-06-22T11:00:00Z",
-		status: "Pending",
-		email: "john.doe@example.com",
-		description: "Meeting about project updates",
-	};
-
-	ws.send(
-		JSON.stringify({
-			type: "newReservation",
-			reservation: newReservation,
-		})
-	);
-
-	ws.on("close", () => {
-		console.log("Client disconnected");
+	socket.on("disconnect", () => {
+		console.log(`Client disconnected: ${socket.id}`);
 	});
 });
-console.log("WebSocket server running on ws://localhost:3001");
 
-const notifyClients = (data: any) => {
-	wss.clients.forEach((client) => {
-		if (client.readyState === client.OPEN) {
-			client.send(JSON.stringify(data));
-		}
-	});
-};
-
+// Watch for changes in Reservation collection
 Reservation.watch().on(
 	"change",
 	(change: { operationType: string; fullDocument: { status: string } }) => {
@@ -56,12 +31,12 @@ Reservation.watch().on(
 			change.operationType === "insert" &&
 			change.fullDocument.status === "Pending"
 		) {
-			notifyClients(change.fullDocument);
+			io.emit("newReservation", change.fullDocument);
 		}
 	}
 );
 
 const PORT = process.env.EXPRESS_PORT || 3001;
-server.listen(PORT, () => {
+httpServer.listen(PORT, () => {
 	console.log(`Server is listening on port ${PORT}`);
 });
