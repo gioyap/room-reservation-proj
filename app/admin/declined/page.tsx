@@ -7,7 +7,6 @@ import "react-toastify/dist/ReactToastify.css";
 import Sidebar from "@/components/Sidebar"; // Ensure you have this Sidebar component
 import Pagination from "@/components/Pagination";
 import { format } from "date-fns";
-import { io, Socket } from "socket.io-client";
 
 interface Reservation {
 	_id: string;
@@ -31,43 +30,6 @@ const DeclinedPage = () => {
 	const [reservationsPerPage, setReservationsPerPage] = useState(10);
 	const [sortColumn, setSortColumn] = useState<SortColumn>("department");
 	const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
-
-	useEffect(() => {
-		let socket: Socket;
-
-		// Define the socket connection URL based on the environment
-		const socketUrl =
-			process.env.NODE_ENV === "production"
-				? "https://reservation-system-nu.vercel.app"
-				: "http://localhost:3001";
-
-		// Create the socket connection
-		socket = io(socketUrl, {
-			transports: ["websocket"],
-		});
-
-		socket.on("connect", () => {
-			console.log("WebSocket connected");
-		});
-
-		socket.on("newReservation", (data: Reservation) => {
-			console.log("New reservation received:", data);
-			setReservations((prevReservations) => [...prevReservations, data]);
-		});
-
-		socket.on("disconnect", () => {
-			console.log("WebSocket disconnected");
-		});
-
-		socket.on("error", (error: Error) => {
-			console.error("WebSocket error:", error);
-		});
-
-		// Clean up WebSocket on component unmount
-		return () => {
-			socket.disconnect();
-		};
-	}, []);
 
 	// Sorting function
 	const sortTable = (column: SortColumn) => {
