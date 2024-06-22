@@ -36,10 +36,7 @@ Reservation.watch().on("change", (change) => {
     }
 });
 
-// Use PORT provided in environment or default to 3000
-const PORT: number = parseInt(process.env.PORT || '3000', 10);
-
-// Listen on `port` and 0.0.0.0
-httpServer.listen(PORT, "0.0.0.0", () => {
-    console.log(`Server is listening on port ${PORT}`);
+const PORT = process.env.EXPRESS_PORT || 3001;
+httpServer.listen(PORT, () => {
+	console.log(`Server is listening on port ${PORT}`);
 });

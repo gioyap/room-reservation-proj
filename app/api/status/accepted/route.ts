@@ -1,5 +1,5 @@
 import { NextResponse, NextRequest } from "next/server";
-import Reservation from "@/utils/models/reservation";
+import Reservation from "../../../../utils/models/reservation";
 
 export async function GET(request: NextRequest) {
 	try {

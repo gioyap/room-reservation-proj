@@ -1,7 +1,7 @@
 // pages/api/fetchData.ts
 import { NextRequest, NextResponse } from "next/server";
-import { connect } from "@/utils/config/database";
-import Reservation from "@/utils/models/reservation";
+import { connect } from "../../../utils/config/database";
+import Reservation from "../../../utils/models/reservation";
 
 export async function GET(req: NextRequest) {
 	{

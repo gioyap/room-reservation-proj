@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import { toast, ToastContainer } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Sidebar from "@/components/Sidebar"; // Ensure you have this Sidebar component
-import Pagination from "@/components/Pagination";
+import Sidebar from "../../../components/Sidebar";
+import Pagination from "../../../components/Pagination";
 import { format } from "date-fns";
 import { io, Socket } from "socket.io-client";
 

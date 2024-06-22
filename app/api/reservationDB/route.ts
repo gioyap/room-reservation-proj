@@ -1,7 +1,7 @@
 // route.ts
 import { NextResponse, NextRequest } from "next/server";
-import Reservation from "@/utils/models/reservation";
-import { connect } from "@/utils/config/database";
+import Reservation from "../../../utils/models/reservation";
+import { connect } from "../../../utils/config/database";
 
 // Function to convert UTC date to local date string
 const convertUTCToLocalDate = (utcDateString: string, timeZone: string) => {

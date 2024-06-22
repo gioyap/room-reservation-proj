@@ -1,9 +1,8 @@
 // components/ClientLayout.tsx
 "use client";
 
-import AuthProvider from "@/components/Provider";
-import RedirectComponent from "@/app/RedirectComponent";
-import { useEffect } from "react";
+import AuthProvider from "../components/Provider";
+import RedirectComponent from "../app/RedirectComponent";
 import { Mulish } from "next/font/google";
 import "@/app/globals.css";
 

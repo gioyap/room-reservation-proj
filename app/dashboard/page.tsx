@@ -2,14 +2,14 @@
 
 import { signOut, useSession } from "next-auth/react";
 import React, { useEffect, useState } from "react";
-import Calendar from "@/components/Calendar"; // Import Calendar component
+import Calendar from "../../components/Calendar"; // Import Calendar component
 import "react-datepicker/dist/react-datepicker.css";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FaUser } from "react-icons/fa";
-import SidebarClient from "@/components/SidebarClient";
+import SidebarClient from "../../components/SidebarClient";
 const companies = ["Flawless", "MTSI", "FINA", "Beauty and Butter"];
-import { Reservation } from "@/types/type";
+import { Reservation } from "../../types/type";
 import { io, Socket } from "socket.io-client";
 
 const departments = [
