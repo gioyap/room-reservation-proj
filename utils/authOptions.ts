@@ -1,7 +1,7 @@
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { connect } from "@/utils/config/database";
-import User from "@/utils/models/auth";
+import { connect } from "../utils/config/database";
+import User from "../utils/models/auth";
 import bcryptjs from "bcryptjs";
 import GoogleProvider from "next-auth/providers/google";
 

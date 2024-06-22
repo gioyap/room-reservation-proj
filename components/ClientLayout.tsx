@@ -4,7 +4,7 @@
 import AuthProvider from "../components/Provider";
 import RedirectComponent from "../app/RedirectComponent";
 import { Mulish } from "next/font/google";
-import "@/app/globals.css";
+import "../app/globals.css";
 
 const mulish = Mulish({ subsets: ["latin"] });
 

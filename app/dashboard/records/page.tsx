@@ -1,4 +1,4 @@
-import SidebarClient from "@/components/SidebarClient";
+import SidebarClient from "../../../components/SidebarClient";
 import React from "react";
 
 const Records = () => {
