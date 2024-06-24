@@ -1,7 +1,7 @@
 {
 	"compilerOptions": {
 		"lib": ["dom", "dom.iterable", "esnext"],
-		"types": ["node"],
+		"types": ["node", "@types/bcryptjs", "express"],
 		"target": "ES6",
 		"forceConsistentCasingInFileNames": true,
 		"outDir": "./dist",
@@ -29,7 +29,8 @@
 		"next-env.d.ts",
 		"**/*.ts",
 		"**/*.tsx",
-		".next/types/**/*.ts"
+		".next/types/**/*.ts",
+		"node_modules/@types"
 		// "src/**/*.ts"
 	],
 	"exclude": ["node_modules"]

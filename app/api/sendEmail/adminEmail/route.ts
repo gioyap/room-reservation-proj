@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import nodemailer from "nodemailer";
+import * as nodemailer from "nodemailer";
 
 // Function to convert UTC date to local date string
 const convertUTCToLocalDate = (utcDateString: string, timeZone: string) => {

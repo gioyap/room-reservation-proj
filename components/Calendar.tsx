@@ -466,15 +466,15 @@ const Calendar: React.FC<CalendarProps> = ({
 										Time
 									</th>
 									<th
-										className="p-2 border-b lg:text-[14px] 2xl:text-[16px] lg:pl-4 2xl:pl-2 cursor-pointer "
+										className="p-2 border-b lg:text-[14px] 2xl:text-[16px] lg:pl-4 2xl:pl-2 cursor-pointer hover:bg-[#fe93cb] rounded-full text-center"
 										onClick={() =>
 											showReservationDetails("Energy", selectedDateState)
 										}
 									>
-										Energy
+										<span className="">Energy</span>
 									</th>
 									<th
-										className="p-2 border-b lg:text-[14px] 2xl:text-[16px] lg:pl-4 2xl:pl-2 cursor-pointer"
+										className="p-2 border-b lg:text-[14px] 2xl:text-[16px] lg:pl-4 2xl:pl-2 cursor-pointer hover:bg-[#fe93cb] rounded-full text-center"
 										onClick={() =>
 											showReservationDetails("Focus", selectedDateState)
 										}
@@ -482,7 +482,7 @@ const Calendar: React.FC<CalendarProps> = ({
 										Focus
 									</th>
 									<th
-										className="p-2 border-b lg:text-[14px] 2xl:text-[16px] lg:pl-4 2xl:pl-2 cursor-pointer"
+										className="p-2 border-b lg:text-[14px] 2xl:text-[16px] lg:pl-4 2xl:pl-2 cursor-pointer hover:bg-[#fe93cb] rounded-full text-center"
 										onClick={() =>
 											showReservationDetails("Lecture", selectedDateState)
 										}
@@ -548,7 +548,7 @@ const Calendar: React.FC<CalendarProps> = ({
 												{format(endTime, "h:mm aa")}
 											</td>
 											<td
-												className={`lg:p-0 2xl:p-2 border-b whitespace-nowrap lg:text-[12px] 2xl:text-[14px] lg:pl-4 font-bold ${
+												className={`lg:p-0 2xl:p-2 border-b whitespace-nowrap lg:text-[12px] 2xl:text-[14px] lg:pl-4 font-bold text-center ${
 													isAvailable("Energy") === "Available"
 														? "text-green-500"
 														: isAvailable("Energy") === "Pending"
@@ -559,7 +559,7 @@ const Calendar: React.FC<CalendarProps> = ({
 												{isAvailable("Energy")}
 											</td>
 											<td
-												className={`lg:p-0 2xl:p-2 border-b whitespace-nowrap lg:text-[12px] 2xl:text-[14px] lg:pl-4 font-bold ${
+												className={`lg:p-0 2xl:p-2 border-b whitespace-nowrap lg:text-[12px] 2xl:text-[14px] lg:pl-4 font-bold text-center ${
 													isAvailable("Focus") === "Available"
 														? "text-green-500"
 														: isAvailable("Focus") === "Pending"
@@ -570,7 +570,7 @@ const Calendar: React.FC<CalendarProps> = ({
 												{isAvailable("Focus")}
 											</td>
 											<td
-												className={`lg:p-0 2xl:p-2 border-b whitespace-nowrap lg:text-[12px] 2xl:text-[14px] lg:pl-4 font-bold ${
+												className={`lg:p-0 2xl:p-2 border-b whitespace-nowrap lg:text-[12px] 2xl:text-[14px] lg:pl-4 font-bold text-center ${
 													isAvailable("Lecture") === "Available"
 														? "text-green-500"
 														: isAvailable("Lecture") === "Pending"

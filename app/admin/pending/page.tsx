@@ -39,7 +39,7 @@ const PendingPage = () => {
 		// Define the socket connection URL based on the environment
 		const socketUrl =
 			process.env.NODE_ENV === "production"
-				? "https://reservation-system-46og.onrender.com"
+				? "https://calendarreservation-423300.df.r.appspot.com"
 				: "http://localhost:3001";
 
 		// Create the socket connection

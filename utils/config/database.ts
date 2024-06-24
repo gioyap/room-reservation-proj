@@ -1,17 +1,17 @@
-import mongoose from "mongoose";
+import mongoose, { Connection } from "mongoose"; // Import mongoose and Connection type
 import dotenv from "dotenv";
 
 dotenv.config();
 
 let isConnected = false;
-let db: mongoose.Connection | null = null;
+let db: Connection | null = null; // Use Connection type for db variable
 
 const options = {
 	serverSelectionTimeoutMS: 30000, // Increase timeout to 30 seconds
 	socketTimeoutMS: 45000, // Increase socket timeout
 };
 
-export async function connect() {
+export async function connect(): Promise<Connection> {
 	if (isConnected && db) {
 		return db;
 	}
