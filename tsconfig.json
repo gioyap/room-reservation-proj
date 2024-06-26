@@ -2,7 +2,7 @@
 	"compilerOptions": {
 		"lib": ["dom", "dom.iterable", "esnext"],
 		"types": ["node", "@types/bcryptjs", "express"],
-		"target": "ES6",
+		"target": "ESNext",
 		"forceConsistentCasingInFileNames": true,
 		"outDir": "./dist",
 		"allowJs": true,
@@ -10,12 +10,11 @@
 		"strict": true,
 		"noEmit": true,
 		"esModuleInterop": true,
-		"module": "commonjs",
-		"moduleResolution": "node",
-		"resolveJsonModule": true,
+		"moduleResolution": "Node",
 		"isolatedModules": true,
 		"jsx": "preserve",
 		"incremental": true,
+		"module": "ESNext",
 		"plugins": [
 			{
 				"name": "next"
@@ -23,15 +22,16 @@
 		],
 		"paths": {
 			"@/*": ["./*"]
-		}
+		},
+		"resolveJsonModule": true
 	},
 	"include": [
 		"next-env.d.ts",
 		"**/*.ts",
 		"**/*.tsx",
 		".next/types/**/*.ts",
-		"node_modules/@types"
-		// "src/**/*.ts"
+		"node_modules/@types",
+		"server.ts"
 	],
 	"exclude": ["node_modules"]
 }

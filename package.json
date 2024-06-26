@@ -7,14 +7,16 @@
 		"dev": "next dev",
 		"build-next": "next build",
 		"start-next": "next start",
-		"start": "ts-node server.ts",
-		"lint": "eslint ."
+		"start": "node --no-warnings=ExperimentalWarning --loader ts-node/esm server.ts",
+		"lint": "eslint .",
+		"build": "tsc"
 	},
 	"dependencies": {
 		"@npmcli/fs": "^3.1.1",
 		"@npmcli/package-json": "^5.2.0",
 		"@sendgrid/mail": "^8.1.3",
 		"@types/react-modal": "^3.16.3",
+		"@types/socket.io": "^3.0.2",
 		"autoprefixer": "^10.4.19",
 		"axios": "^1.7.2",
 		"bcryptjs": "^2.4.3",
@@ -46,7 +48,7 @@
 		"winston": "^3.13.0"
 	},
 	"engines": {
-		"node": "22.x"
+		"node": "20.x"
 	},
 	"devDependencies": {
 		"@types/bcryptjs": "^2.4.6",
@@ -61,6 +63,6 @@
 		"eslint-config-next": "14.2.4",
 		"postcss": "^8.4.38",
 		"ts-node": "^10.9.2",
-		"typescript": "^5.4.4"
+		"typescript": "^5.5.2"
 	}
 }

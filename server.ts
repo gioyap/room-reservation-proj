@@ -1,9 +1,9 @@
 // server.ts
 import express from "express";
 import { createServer } from "http";
-import { connect } from "./utils/config/database";
+import { connect } from "./utils/config/database.js";
 import { Server as SocketIOServer, Socket } from "socket.io";
-import Reservation from "./utils/models/reservation";
+import Reservation from "./utils/models/reservation.js";
 
 const app = express();
 const httpServer = createServer(app);
