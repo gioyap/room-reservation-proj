@@ -13,10 +13,6 @@ RUN npm install --omit=dev
 # Copy local code to the container image
 COPY . .
 
-# Install Tailwind CSS and run build
-RUN npm install -D tailwindcss postcss autoprefixer
-RUN npx tailwindcss init -p
-
 # Set environment variables
 ENV NEXT_PUBLIC_MONGO_URI=mongodb+srv://gio_flawless:flawless123@cluster0.6ednv6t.mongodb.net/
 ENV NEXTAUTH_SECRET=ee31rIAF8a0oBPCTJr81r0N5rzS22HEj4e0knj0Xpuk=
@@ -28,14 +24,14 @@ ENV NEXT_PUBLIC_ADMIN_EMAIL=gioedrianlyap7@gmail.com
 ENV NEXT_PUBLIC_BASE_URL=https://calendarreservation-423300.df.r.appspot.com
 ENV NEXT_PUBLIC_EMAIL_USER=reservation.system05@gmail.com
 ENV NEXT_PUBLIC_EMAIL_PASS="zcol tgqw vpzs qnvl"
-ENV APP_ENV=development
+ENV NODE_ENV=production
 ENV EXPRESS_PORT=3001
 
 # Build the Next.js app
 RUN npm run build-next
 
-# Expose the port
-EXPOSE 3000
+# Expose the port for Nginx
+EXPOSE 3001
 
-# for next js app
-CMD ["npm", "run", "dev"]
+# the Node.js app
+CMD ["npm", "start"]

@@ -9,7 +9,7 @@ const app = express();
 const httpServer = createServer(app);
 const io = new SocketIOServer(httpServer, {
 	cors: {
-		origin: "https://calendarreservation-423300.df.r.appspot.com",
+		origin: "https://nextjs-docker-gcr-image-enq3ce7zja-wl.a.run.app",
 		methods: ["GET", "POST"], // Add methods as needed
 		allowedHeaders: ["Authorization"], // Add allowed headers as needed
 		credentials: true, // Allow credentials (cookies, authorization headers, etc.)

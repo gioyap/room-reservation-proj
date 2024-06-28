@@ -38,8 +38,8 @@ const PendingPage = () => {
 
 		// Define the socket connection URL based on the environment
 		const socketUrl =
-			process.env.NODE_ENV === "production"
-				? "https://calendarreservation-423300.df.r.appspot.com"
+			process.env.APP_ENV === "development"
+				? "https://nextjs-docker-gcr-image-enq3ce7zja-wl.a.run.app"
 				: "http://localhost:3001";
 
 		// Create the socket connection
