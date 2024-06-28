@@ -36,6 +36,10 @@ Reservation.watch().on("change", (change) => {
 	}
 });
 
+app.get("/", (req: any, res: { send: (arg0: string) => void }) => {
+	res.send("Welcome to the server");
+});
+
 const PORT = process.env.EXPRESS_PORT || 3001;
 httpServer.listen(PORT, () => {
 	console.log(`Server is listening on port ${PORT}`);

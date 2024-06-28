@@ -28,23 +28,17 @@ ENV NODE_ENV=production
 ENV EXPRESS_PORT=3001
 
 # Build the Next.js app
-RUN npm run build-next
+RUN npm run build
 
-# Stage 2: Set up the production environment
+# Set up the production environment
 FROM node:20
 WORKDIR /app
 
-# Copy the built application
+# Copy the built application from the builder stage
 COPY --from=builder /app .
 
-# Copy the Nginx configuration file
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-
-# Install Nginx
-RUN apt-get update && apt-get install -y nginx
-
-# Expose the port for Nginx
+# Expose the port for the Node.js app
 EXPOSE 3001
 
-# Start Nginx and the Node.js app
-CMD service nginx start && npm start
+# Start the Node.js app
+CMD ["npm", "start"]
