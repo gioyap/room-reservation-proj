@@ -9,7 +9,7 @@ const app = express();
 const httpServer = createServer(app);
 const io = new SocketIOServer(httpServer, {
 	cors: {
-		origin: "https://calendarreservation-423300.df.r.appspot.com",
+		origin: "https://calendar-reservation-enq3ce7zja-wl.a.run.app/",
 		methods: ["GET", "POST"], // Add methods as needed
 		allowedHeaders: ["Authorization"], // Add allowed headers as needed
 		credentials: true, // Allow credentials (cookies, authorization headers, etc.)
@@ -34,6 +34,10 @@ Reservation.watch().on("change", (change) => {
 	) {
 		io.emit("newReservationStatus", change.fullDocument);
 	}
+});
+
+app.get("/get", (req: any, res: { send: (arg0: string) => void }) => {
+	res.send("GET request received!");
 });
 
 const PORT = process.env.EXPRESS_PORT || 3001;

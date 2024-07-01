@@ -1,7 +1,8 @@
 {
 	"compilerOptions": {
 		"lib": ["dom", "dom.iterable", "esnext"],
-		"types": ["node", "@types/bcryptjs", "express"],
+		"types": ["node", "express", "bcryptjs"],
+		"typeRoots": ["./node_modules/@types", "./types"],
 		"target": "ESNext",
 		"forceConsistentCasingInFileNames": true,
 		"outDir": "./dist",
@@ -30,8 +31,9 @@
 		"**/*.ts",
 		"**/*.tsx",
 		".next/types/**/*.ts",
-		"node_modules/@types",
-		"server.ts"
+		"server.ts",
+		"./**/*.d.ts",
+		"node_modules/@types/bcryptjs/index.d.ts"
 	],
 	"exclude": ["node_modules"]
 }

@@ -13,6 +13,12 @@ RUN npm install --omit=dev
 # Copy local code to the container image
 COPY . .
 
+# Install ESLint
+RUN npm install --save-dev eslint
+
+# Install @types/bcryptjs
+RUN npm install --save-dev @types/bcryptjs
+
 # Set environment variables
 ENV NEXT_PUBLIC_MONGO_URI=mongodb+srv://gio_flawless:flawless123@cluster0.6ednv6t.mongodb.net/
 ENV NEXTAUTH_SECRET=ee31rIAF8a0oBPCTJr81r0N5rzS22HEj4e0knj0Xpuk=
@@ -30,21 +36,7 @@ ENV EXPRESS_PORT=3001
 # Build the Next.js app
 RUN npm run build-next
 
-# Stage 2: Set up the production environment
-FROM node:20
-WORKDIR /app
+EXPOSE 3000
 
-# Copy the built application
-COPY --from=builder /app .
-
-# Copy the Nginx configuration file
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-
-# Install Nginx
-RUN apt-get update && apt-get install -y nginx
-
-# Expose the port for Nginx
-EXPOSE 3001
-
-# Start Nginx and the Node.js app
-CMD service nginx start && npm start
+# Command to run Next.js in production mode
+CMD ["npm", "run", "start-next"]

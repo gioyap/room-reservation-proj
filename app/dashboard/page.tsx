@@ -47,10 +47,7 @@ const Dashboard = () => {
 		let socket: Socket;
 
 		// Define the socket connection URL based on the environment
-		const socketUrl =
-			process.env.NODE_ENV === "production"
-				? "https://calendarreservation-423300.df.r.appspot.com"
-				: "http://localhost:3001";
+		const socketUrl = "https://calendar-reservation-enq3ce7zja-wl.a.run.app/";
 
 		// Create the socket connection
 		socket = io(socketUrl, {
