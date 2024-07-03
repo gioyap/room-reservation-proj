@@ -89,18 +89,18 @@ const Login = () => {
 		<div className="flex justify-center items-center min-h-screen bg-slate-50 p-8">
 			<ToastContainer autoClose={3000} />
 			<form
-				className="flex flex-col md:flex-row gap-8 bg-white rounded-lg shadow-lg overflow-hidden"
+				className="flex flex-col md:flex-row lg:gap-4 2xl:gap-8 bg-white rounded-lg shadow-lg overflow-hidden"
 				onSubmit={handleSubmit}
 			>
-				<div className="bg-[#f93e9e] text-white flex flex-col justify-between w-[500px]">
-					<div className="p-24 pt-40">
-						<h1 className="text-4xl font-extrabold mb-4 whitespace-nowrap">
+				<div className="bg-[#f93e9e] text-white flex flex-col justify-between lg:w-[400px] 2xl:w-[500px]">
+					<div className=" lg:p-16 lg:pt-36 2xl:p-24 2xl:pt-40">
+						<h1 className="lg:text-3xl 2xl:text-4xl font-extrabold mb-4 whitespace-nowrap">
 							Welcome to Login
 						</h1>
 						<p className="mb-2">Don't have an account?</p>
 						<div className="pt-6">
 							<a
-								className="p-2 px-6 border-[1px] border-white rounded-full text-white"
+								className="lg:p-1 lg:px-6 2xl:p-2 2xl:px-6 border-[1px] border-white rounded-full text-white"
 								href="/signup"
 							>
 								Sign Up
@@ -108,15 +108,17 @@ const Login = () => {
 						</div>
 					</div>
 				</div>
-				<div className="p-12 flex flex-col gap-6 w-[500px]">
-					<h1 className="text-4xl font-bold mb-4">Sign In</h1>
+				<div className="lg:p-8 2xl:p-12 flex flex-col lg:gap-4 2xl:gap-6 lg:w-[400px] 2xl:w-[500px]">
+					<h1 className="lg:text-3xl 2xl:text-4xl font-bold lg:mb-2 2xl:mb-4">
+						Sign In
+					</h1>
 					<div>
 						<h2 className="font-extrabold mb-1">Email</h2>
 						<input
 							type="text"
 							name="email"
 							value={user.email}
-							className="w-full bg-slate-100 p-3 rounded-full"
+							className="w-full bg-slate-100 lg:p-2 lg:px-4 2xl:p-3 2xl:px-5 rounded-full"
 							placeholder="example@123.com"
 							onChange={handleInputChange}
 						/>
@@ -126,13 +128,13 @@ const Login = () => {
 						<input
 							type="password"
 							name="password"
-							className="w-full bg-slate-100 p-3 rounded-full"
+							className="w-full bg-slate-100 lg:p-2 lg:px-4 2xl:p-3 2xl:px-5 rounded-full"
 							placeholder="**********"
 							value={user.password}
 							onChange={handleInputChange}
 						/>
 					</div>
-					<div className="flex items-center mb-4">
+					<div className="flex items-center lg:mb-2 2xl:mb-4">
 						<input
 							type="checkbox"
 							checked={rememberMe}
@@ -147,7 +149,7 @@ const Login = () => {
 					<div>
 						<button
 							type="submit"
-							className="w-full px-10 py-3 rounded-full bg-[#f93e9e] text-white font-bold"
+							className="w-full lg:py-2 2xl:px-10 2xl:py-3 rounded-full bg-[#f93e9e] text-white font-bold"
 							disabled={loading}
 						>
 							{loading ? "Processing..." : "Sign In"}
@@ -155,7 +157,7 @@ const Login = () => {
 					</div>
 					<div
 						onClick={() => signIn("google")}
-						className="flex justify-center cursor-pointer mt-4"
+						className="flex justify-center cursor-pointer lg:mt-2 2xl:mt-4"
 					>
 						<Image src={google} alt="Sign in with Google" width={80} />
 					</div>

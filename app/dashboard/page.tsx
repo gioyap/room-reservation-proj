@@ -252,8 +252,13 @@ const Dashboard = () => {
 						{dropdownVisible && (
 							<div className="absolute right-14 lg:-mt-8 2xl:-mt-10 w-32 bg-white border rounded-md shadow-lg">
 								<button
-									onClick={() => signOut()}
-									className="w-full px-4 py-2 text-left text-black hover:bg-gray-200 lg:text-[12px] 2xl:text-[16px]"
+									onClick={() =>
+										signOut({
+											callbackUrl:
+												"https://calendar-reservation-enq3ce7zja-wl.a.run.app/",
+										})
+									}
+									className="w-full px-4 py-2 text-left text-black hover:bg-gray-200 lg:text-[16px] 2xl:text-[16px]"
 								>
 									Logout
 								</button>
@@ -263,10 +268,10 @@ const Dashboard = () => {
 				</div>
 			)}
 
-			<div className="grid grid-cols-1 md:grid-cols-2 mx-5 lg:px-[80px] 2xl:px-[330px] lg:w-full lg:h-[657px] lg:ml-0 2xl:w-full 2xl:ml-0 2xl:mt-0 2xl:h-[870px] 2xl:pl-14 2xl:pt-12 bg-slate-100 lg:py-6 shadow-md">
+			<div className="grid grid-cols-1 md:grid-cols-2 mx-5 lg:px-[80px] 2xl:px-[330px] lg:w-full lg:h-[757px] lg:ml-0 2xl:w-full 2xl:ml-0 2xl:mt-0 2xl:h-[870px] 2xl:pl-14 2xl:pt-12 bg-slate-100 lg:py-6 shadow-md">
 				<div className="flex flex-col items-start lg:gap-4 2xl:gap-6 px-5 lg:px-10 2xl:px-14">
-					<div className="lg:-ml-10 2xl:ml-6">
-						<span className="lg:text-xl 2xl:text-4xl tracking-wide font-black font-sans text-[#e61e84]">
+					<div className="lg:-ml-10 lg:pb-5 2xl:pb-0 2xl:ml-6">
+						<span className="lg:text-3xl 2xl:text-4xl tracking-wide font-black font-sans text-[#e61e84]">
 							Calendar Reservation
 						</span>
 					</div>
@@ -274,7 +279,7 @@ const Dashboard = () => {
 						<div className="flex flex-col w-full lg:gap-3 2xl:gap-4 lg:w-[300px] 2xl:w-[600px] lg:-ml-10  2xl:ml-6">
 							<div>
 								<label
-									className="lg:text-[14px] 2xl:text-[22px] text-[#e61e84] tracking-normal font-extrabold"
+									className="lg:text-[18px] 2xl:text-[22px] text-[#e61e84] tracking-normal font-extrabold"
 									htmlFor="email"
 								>
 									Email:
@@ -284,13 +289,13 @@ const Dashboard = () => {
 									type="text"
 									value={email}
 									onChange={handleEmailChange}
-									className="w-full lg:text-[12px] 2xl:text-[18px] lg:px-4 lg:py-1 22xl:py-2 border rounded-md"
+									className="lg:w-[350px] 2xl:w-full lg:text-[16px] 2xl:text-[18px] lg:px-4 lg:py-1 2xl:py-2 border rounded-md"
 									placeholder="example123@gmail.com"
 								/>
 							</div>
 							<div>
 								<label
-									className="lg:text-[14px] 2xl:text-[22px] text-[#e61e84] tracking-normal font-extrabold"
+									className="lg:text-[18px] 2xl:text-[22px] text-[#e61e84] tracking-normal font-extrabold"
 									htmlFor="company"
 								>
 									Company:
@@ -299,7 +304,7 @@ const Dashboard = () => {
 									id="company"
 									value={company}
 									onChange={handleCompanyChange}
-									className="w-full lg:text-[12px] 2xl:text-[18px] lg:px-4 lg:py-1 2xl:py-2 border rounded-md"
+									className="lg:w-[350px] 2xl:w-full lg:text-[16px] 2xl:text-[18px] lg:px-4 lg:py-1 2xl:py-2 border rounded-md"
 								>
 									{companies.map((comp) => (
 										<option key={comp} value={comp}>
@@ -310,7 +315,7 @@ const Dashboard = () => {
 							</div>
 							<div>
 								<label
-									className="lg:text-[14px] 2xl:text-[22px] text-[#e61e84] tracking-normal font-extrabold"
+									className="lg:text-[18px] 2xl:text-[22px] text-[#e61e84] tracking-normal font-extrabold"
 									htmlFor="department"
 								>
 									Department:
@@ -319,7 +324,7 @@ const Dashboard = () => {
 									id="department"
 									value={department}
 									onChange={handleDepartmentChange}
-									className="w-full lg:text-[12px] 2xl:text-[18px] lg:px-4 lg:py-1 2xl:py-2 border rounded-md"
+									className="lg:w-[350px] 2xl:w-full lg:text-[16px] 2xl:text-[18px] lg:px-4 lg:py-1 2xl:py-2 border rounded-md"
 								>
 									{sortedDepartments.map((dept) => (
 										<option key={dept} value={dept}>
@@ -330,7 +335,7 @@ const Dashboard = () => {
 							</div>
 							<div>
 								<label
-									className="lg:text-[14px] 2xl:text-[22px] text-[#e61e84] tracking-normal font-extrabold"
+									className="lg:text-[18px] 2xl:text-[22px] text-[#e61e84] tracking-normal font-extrabold"
 									htmlFor="name"
 								>
 									Full Name:
@@ -340,19 +345,19 @@ const Dashboard = () => {
 									type="text"
 									value={name}
 									onChange={handleNameChange}
-									className="w-full lg:text-[12px] 2xl:text-[18px] lg:px-4 lg:py-1 2xl:py-2 border rounded-md"
+									className="lg:w-[350px] 2xl:w-full lg:text-[16px] 2xl:text-[18px] lg:px-4 lg:py-1 2xl:py-2 border rounded-md"
 									placeholder="Please enter your full name"
 								/>
 							</div>
 							<div>
 								<label
-									className="lg:text-[14px] 2xl:text-[22px] text-[#e61e84] tracking-normal font-extrabold"
+									className="lg:text-[18px] 2xl:text-[22px] text-[#e61e84] tracking-normal font-extrabold"
 									htmlFor="title"
 								>
 									Room:
 								</label>
 								<div className="flex gap-2 pt-2">
-									<label className="text-[#e61e84] lg:text-[12px] 2xl:text-[15px]">
+									<label className="text-[#e61e84] lg:text-[16px] 2xl:text-[15px]">
 										<input
 											type="radio"
 											value="Energy"
@@ -362,7 +367,7 @@ const Dashboard = () => {
 										/>
 										Energy
 									</label>
-									<label className="text-[#e61e84] lg:text-[12px] 2xl:text-[15px]">
+									<label className="text-[#e61e84] lg:text-[16px] 2xl:text-[15px]">
 										<input
 											type="radio"
 											value="Focus"
@@ -372,7 +377,7 @@ const Dashboard = () => {
 										/>
 										Focus
 									</label>
-									<label className="text-[#e61e84] lg:text-[12px] 2xl:text-[15px]">
+									<label className="text-[#e61e84] lg:text-[16px] 2xl:text-[15px]">
 										<input
 											type="radio"
 											value="Lecture"
@@ -386,7 +391,7 @@ const Dashboard = () => {
 							</div>
 							<div>
 								<label
-									className="lg:text-[14px] 2xl:text-[18px] tracking-normal"
+									className="lg:text-[18px] 2xl:text-[18px] tracking-normal"
 									htmlFor="showDescription"
 								>
 									Is this urgent?
@@ -399,12 +404,12 @@ const Dashboard = () => {
 									onChange={handleShowDescriptionChange}
 									className="ml-2"
 								/>
-								<span className="lg:text-[14px] 2xl:text-[18px] ml-1">Yes</span>
+								<span className="lg:text-[18px] 2xl:text-[18px] ml-1">Yes</span>
 							</div>
 							{showDescription && (
 								<div>
 									<label
-										className="lg:text-[14px] 2xl:text-[22px] text-[#e61e84] tracking-normal font-extrabold"
+										className="lg:text-[18px] 2xl:text-[22px] text-[#e61e84] tracking-normal font-extrabold"
 										htmlFor="description"
 									>
 										Urgent Notes:
@@ -414,7 +419,7 @@ const Dashboard = () => {
 										type="description"
 										value={description}
 										onChange={handleDescriptionChange}
-										className="w-full lg:text-[12px] 2xl:text-[18px] px-4 lg:py-1 2xl:py-2 border rounded-md"
+										className="lg:w-[350px] 2xl:w-full lg:text-[16px] 2xl:text-[18px] px-4 lg:py-1 2xl:py-2 border rounded-md"
 										placeholder="Please provide the reason"
 									/>
 								</div>
@@ -431,8 +436,8 @@ const Dashboard = () => {
 					)}
 				</div>
 				<div className="col-span-1 ">
-					<div className="lg:-ml-28 2xl:ml-0">
-						<span className="text-[20px] text-[#e61e84] 2xl:text-[35px] mt-4 font-sans tracking-wide font-extrabold">
+					<div className="lg:-ml-28 lg:pb-5 2xl:pb-0 2xl:ml-0">
+						<span className="lg:text-3xl text-[#e61e84] 2xl:text-[35px] mt-4 font-sans tracking-wide font-extrabold">
 							Select Reservation Date
 						</span>
 					</div>
@@ -447,19 +452,19 @@ const Dashboard = () => {
 							reservations={reservations}
 						/>
 					</div>
-					<div className="grid lg:grid-cols-2 2xl:grid-cols-2 gap-2 lg:gap-x-4 2xl:gap-x-10 font-bold lg:absolute lg:top-[550px] lg:left-[800px] 2xl:top-[810px] 2xl:left-[1300px]">
-						<div className="bg-green-200 text-green-500 2xl:text-[16px] lg:text-[12px] 2xl:p-2 lg:p-1 rounded-lg">
+					<div className="grid lg:grid-cols-2 2xl:grid-cols-2 gap-2 lg:gap-x-4 2xl:gap-x-10 font-bold lg:absolute lg:top-[715px] lg:left-[900px] 2xl:top-[810px] 2xl:left-[1300px]">
+						<div className="bg-green-200 text-green-500 2xl:text-[16px] lg:text-[14px] 2xl:p-2 lg:p-1 rounded-lg">
 							Available - Free to reserve
 						</div>
-						<div className="bg-red-200 text-red-500 2xl:text-[16px] lg:text-[12px] 2xl:p-2 lg:p-1 rounded-lg">
+						<div className="bg-red-200 text-red-500 2xl:text-[16px] lg:text-[14px] 2xl:p-2 lg:p-1 rounded-lg">
 							Unavailable - Cannot reserve
 						</div>
-						<div className="bg-yellow-200 text-yellow-600 2xl:text-[16px] lg:text-[12px] 2xl:p-2 lg:p-1 rounded-lg">
+						<div className="bg-yellow-200 text-yellow-600 2xl:text-[16px] lg:text-[14px] 2xl:p-2 lg:p-1 rounded-lg">
 							Pending - Reservation in progress
 						</div>
 					</div>
 
-					<div className="font-bold lg:absolute lg:top-[450px] lg:left-[400px] 2xl:top-[640px] 2xl:left-[820px] lg:text-[12px] 2xl:text-[16px] ">
+					<div className="font-bold lg:absolute lg:top-[540px] lg:left-[480px] 2xl:top-[640px] 2xl:left-[820px] lg:text-[14px] 2xl:text-[16px] ">
 						<div className="flex items-center mb-4">
 							<div className="bg-green-500 2xl:p-2 lg:p-1 rounded-lg mr-2"></div>
 							<div>

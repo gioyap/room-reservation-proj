@@ -12,8 +12,8 @@ steps:
       [
         "build",
         "-t",
-        "us-west2-docker.pkg.dev/calendarreservation-423300/calendar-reservation/calendar-reservation-image:tag1",
+        "us-west2-docker.pkg.dev/calendarreservation-423300/calendar-reservation/calendar-reservation-image:latest",
         ".",
       ]
 images:
-  - "us-west2-docker.pkg.dev/calendarreservation-423300/calendar-reservation/calendar-reservation-image:tag1"
+  - "us-west2-docker.pkg.dev/calendarreservation-423300/calendar-reservation/calendar-reservation-image:latest"

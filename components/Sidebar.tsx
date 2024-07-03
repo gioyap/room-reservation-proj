@@ -3,7 +3,7 @@ import React from "react";
 
 const Sidebar = () => {
 	return (
-		<div className="lg:w-[150px] 2xl:w-[250px] bg-[#e81e83] h-screen p-3">
+		<div className="lg:w-[200px] 2xl:w-[250px] bg-[#e81e83] h-screen p-3">
 			<div className="flex flex-col items-center mb-8">
 				{/* Additional buttons for navigation */}
 				<a

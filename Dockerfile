@@ -25,9 +25,9 @@ ENV NEXTAUTH_SECRET=ee31rIAF8a0oBPCTJr81r0N5rzS22HEj4e0knj0Xpuk=
 ENV NEXT_PUBLIC_JWT_SECRET=Hwl5iWfJNPCIuA+aFruqKRi3ZWds8mprYMiCegLxNQM=
 ENV NEXT_PUBLIC_GOOGLE_CLIENT_ID=312309817214-hs5bigq0sdv9qqtgbujlkmgnfa22qhgl.apps.googleusercontent.com
 ENV NEXT_PUBLIC_GOOGLE_CLIENT_SECRET=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
-ENV NEXTAUTH_URL=https://calendarreservation-423300.df.r.appspot.com
+ENV NEXTAUTH_URL=https://calendar-reservation-enq3ce7zja-wl.a.run.app
 ENV NEXT_PUBLIC_ADMIN_EMAIL=gioedrianlyap7@gmail.com
-ENV NEXT_PUBLIC_BASE_URL=https://calendarreservation-423300.df.r.appspot.com
+ENV NEXT_PUBLIC_BASE_URL=https://calendar-reservation-enq3ce7zja-wl.a.run.app
 ENV NEXT_PUBLIC_EMAIL_USER=reservation.system05@gmail.com
 ENV NEXT_PUBLIC_EMAIL_PASS="zcol tgqw vpzs qnvl"
 ENV NODE_ENV=production

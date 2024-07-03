@@ -250,7 +250,9 @@ const PendingPage = () => {
 
 	if (loading) {
 		return (
-			<p className="text-center text-gray-500 mt-20 text-xl">Loading...</p>
+			<p className="text-center text-[#e81e83] font-extrabold text-4xl mt-20">
+				Loading...
+			</p>
 		);
 	}
 
@@ -258,9 +260,9 @@ const PendingPage = () => {
 		<div className="flex">
 			<ToastContainer autoClose={4000} />
 			<Sidebar /> {/* Use the Sidebar component */}
-			<div className="flex-1 lg:p-4 xl:p-8 bg-gray-100 min-h-screen">
-				<div className=" lg:pb-2 xl:pb-6">
-					<h1 className=" lg:text-2xl 2xl:text-4xl font-extrabold text-[#e81e83]">
+			<div className="flex-1 lg:p-4 lg:pl-6 lg:pt-10 2xl:p-8 bg-gray-100 min-h-screen">
+				<div className=" lg:pb-6 2xl:pb-8">
+					<h1 className=" lg:text-4xl 2xl:text-5xl font-extrabold text-[#e81e83]">
 						Pending Records
 					</h1>
 				</div>

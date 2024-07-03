@@ -190,7 +190,9 @@ const AcceptedPage = () => {
 
 	if (loading) {
 		return (
-			<p className="text-center text-gray-500 mt-20 text-xl">Loading...</p>
+			<p className="text-center text-[#e81e83] font-extrabold text-4xl mt-20">
+				Loading...
+			</p>
 		);
 	}
 
@@ -198,14 +200,14 @@ const AcceptedPage = () => {
 		<div className="flex">
 			<ToastContainer autoClose={4000} />
 			<Sidebar /> {/* Use the Sidebar component */}
-			<div className="flex-1  lg:p-4 2xl:p-8 bg-gray-100 min-h-screen">
-				<div className="lg:pb-2 2xl:pb-6">
-					<h1 className="lg:text-2xl 2xl:text-4xl font-extrabold text-[#e81e83]">
+			<div className="flex-1 lg:p-4 lg:pl-6 lg:pt-10 2xl:p-8 bg-gray-100 min-h-screen">
+				<div className="lg:pb-6 2xl:pb-8">
+					<h1 className="lg:text-4xl 2xl:text-5xl font-extrabold text-[#e81e83]">
 						Accepted Records
 					</h1>
 				</div>
 				<div className="w-full max-w-8xl mx-auto bg-white shadow-md rounded-lg overflow-hidden">
-					<div className="flex justify-end lg:p-0 xl:p-3">
+					<div className="flex justify-end lg:p-0 2xl:p-3">
 						<label
 							htmlFor="perPage"
 							className="mr-2 text-gray-600 lg:text-[14px] 2xl:text-[16px]"
