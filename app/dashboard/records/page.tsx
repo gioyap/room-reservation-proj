@@ -1,12 +1,16 @@
+"use client";
 import SidebarClient from "../../../components/SidebarClient";
 import React from "react";
 
-const Records = () => {
+const AdminDashboard = () => {
 	return (
-		<div>
-			<SidebarClient /> Still Developing..{" "}
+		<div className="flex">
+			<SidebarClient />
+			<div className="flex justify-center items-center w-full h-screen lg:text-3xl 2xl:text-5xl font-extrabold text-[#e81e83]">
+				Still Developing...
+			</div>
 		</div>
 	);
 };
 
-export default Records;
+export default AdminDashboard;

@@ -1,6 +1,5 @@
 "use client";
 
-import { signOut, useSession } from "next-auth/react";
 import React, { useEffect, useState } from "react";
 import Calendar from "../../components/Calendar"; // Import Calendar component
 import "react-datepicker/dist/react-datepicker.css";
@@ -29,7 +28,6 @@ const departments = [
 const sortedDepartments = departments.sort((a, b) => a.localeCompare(b));
 
 const Dashboard = () => {
-	const { data: session } = useSession();
 	const [selectedDate, setSelectedDate] = useState(new Date());
 	const [fromSelectedTime, setFromSelectedTime] = useState(new Date());
 	const [toSelectedTime, setToSelectedTime] = useState(new Date());
@@ -141,6 +139,28 @@ const Dashboard = () => {
 			toSelectedTime.getSeconds()
 		);
 
+		// Restriction for valid booking times between 8 AM and 6 PM
+		const fromTimeValid =
+			fromSelectedTime.getHours() >= 8 && fromSelectedTime.getHours() < 18;
+		const toTimeValid =
+			toSelectedTime.getHours() >= 8 && toSelectedTime.getHours() <= 18;
+		if (
+			!fromTimeValid ||
+			!toTimeValid ||
+			combinedFromDateTime >= combinedToDateTime
+		) {
+			toast.error(
+				`${fromSelectedTime.toLocaleTimeString([], {
+					hour: "2-digit",
+					minute: "2-digit",
+				})} to ${toSelectedTime.toLocaleTimeString([], {
+					hour: "2-digit",
+					minute: "2-digit",
+				})} is not appropriate. Please check again`
+			);
+			return;
+		}
+
 		// Check if the selected date and time conflict with existing reservations
 		const conflict = reservations.some((reservation: any) => {
 			const resStartDate = new Date(reservation.fromDate);
@@ -174,6 +194,18 @@ const Dashboard = () => {
 		if (conflict) {
 			toast.error(
 				"The selected room is already reserved. Please choose another room or select a different date and time."
+			);
+			return;
+		}
+
+		// Check if the selected time is in the past
+		const currentTime = new Date();
+		if (
+			combinedFromDateTime < currentTime ||
+			combinedToDateTime < currentTime
+		) {
+			toast.error(
+				"You cannot reserve in the past. Please select a future time."
 			);
 			return;
 		}
@@ -235,205 +267,178 @@ const Dashboard = () => {
 		<div className="min-h-screen py-0">
 			<SidebarClient />
 			<ToastContainer autoClose={5000} />
-			{session && (
-				<div className="flex lg:pl-[400px] xl:pl-[550px] 2xl:pl-[850px] gap-2 bg-[#e81e83] lg:py-1 22xl:py-2 items-center justify-between">
-					<div>
-						<h1 className="lg:text-xl 2xl:text-2xl font-bold text-white">
-							Welcome, {session.user?.name}
-						</h1>
-					</div>
-					<div className="relative mr-4">
-						<div className="rounded-full bg-white p-2">
-							<FaUser
-								className="text-[#e61e84] lg:text-lg 2xl:text-2xl cursor-pointer"
-								onClick={() => setDropdownVisible(!dropdownVisible)}
-							/>
-						</div>
-						{dropdownVisible && (
-							<div className="absolute right-14 lg:-mt-8 2xl:-mt-10 w-32 bg-white border rounded-md shadow-lg">
-								<button
-									onClick={() =>
-										signOut({
-											callbackUrl:
-												"https://calendar-reservation-enq3ce7zja-wl.a.run.app/",
-										})
-									}
-									className="w-full px-4 py-2 text-left text-black hover:bg-gray-200 lg:text-[16px] 2xl:text-[16px]"
-								>
-									Logout
-								</button>
-							</div>
-						)}
-					</div>
+			<div className="flex lg:pl-[400px] xl:pl-[550px] 2xl:pl-[850px] gap-2 bg-[#e81e83] lg:py-1 22xl:py-2 items-center justify-between">
+				<div>
+					<h1 className="lg:text-xl 2xl:text-2xl font-bold text-white">
+						Welcome User
+					</h1>
 				</div>
-			)}
+			</div>
 
-			<div className="grid grid-cols-1 md:grid-cols-2 mx-5 lg:px-[80px] 2xl:px-[330px] lg:w-full lg:h-[757px] lg:ml-0 2xl:w-full 2xl:ml-0 2xl:mt-0 2xl:h-[870px] 2xl:pl-14 2xl:pt-12 bg-slate-100 lg:py-6 shadow-md">
+			<div className="grid grid-cols-1 md:grid-cols-2 mx-5 lg:px-[80px] 2xl:px-[330px] lg:w-full lg:h-[763px] lg:ml-0 2xl:w-full 2xl:ml-0 2xl:mt-0 2xl:h-[877px] 2xl:pl-14 2xl:pt-12 bg-slate-100 lg:py-6 shadow-md">
 				<div className="flex flex-col items-start lg:gap-4 2xl:gap-6 px-5 lg:px-10 2xl:px-14">
 					<div className="lg:-ml-10 lg:pb-5 2xl:pb-0 2xl:ml-6">
 						<span className="lg:text-3xl 2xl:text-4xl tracking-wide font-black font-sans text-[#e61e84]">
 							Calendar Reservation
 						</span>
 					</div>
-					{session && (
-						<div className="flex flex-col w-full lg:gap-3 2xl:gap-4 lg:w-[300px] 2xl:w-[600px] lg:-ml-10  2xl:ml-6">
-							<div>
-								<label
-									className="lg:text-[18px] 2xl:text-[22px] text-[#e61e84] tracking-normal font-extrabold"
-									htmlFor="email"
-								>
-									Email:
-								</label>
-								<input
-									id="email"
-									type="text"
-									value={email}
-									onChange={handleEmailChange}
-									className="lg:w-[350px] 2xl:w-full lg:text-[16px] 2xl:text-[18px] lg:px-4 lg:py-1 2xl:py-2 border rounded-md"
-									placeholder="example123@gmail.com"
-								/>
-							</div>
-							<div>
-								<label
-									className="lg:text-[18px] 2xl:text-[22px] text-[#e61e84] tracking-normal font-extrabold"
-									htmlFor="company"
-								>
-									Company:
-								</label>
-								<select
-									id="company"
-									value={company}
-									onChange={handleCompanyChange}
-									className="lg:w-[350px] 2xl:w-full lg:text-[16px] 2xl:text-[18px] lg:px-4 lg:py-1 2xl:py-2 border rounded-md"
-								>
-									{companies.map((comp) => (
-										<option key={comp} value={comp}>
-											{comp}
-										</option>
-									))}
-								</select>
-							</div>
-							<div>
-								<label
-									className="lg:text-[18px] 2xl:text-[22px] text-[#e61e84] tracking-normal font-extrabold"
-									htmlFor="department"
-								>
-									Department:
-								</label>
-								<select
-									id="department"
-									value={department}
-									onChange={handleDepartmentChange}
-									className="lg:w-[350px] 2xl:w-full lg:text-[16px] 2xl:text-[18px] lg:px-4 lg:py-1 2xl:py-2 border rounded-md"
-								>
-									{sortedDepartments.map((dept) => (
-										<option key={dept} value={dept}>
-											{dept}
-										</option>
-									))}
-								</select>
-							</div>
-							<div>
-								<label
-									className="lg:text-[18px] 2xl:text-[22px] text-[#e61e84] tracking-normal font-extrabold"
-									htmlFor="name"
-								>
-									Full Name:
-								</label>
-								<input
-									id="name"
-									type="text"
-									value={name}
-									onChange={handleNameChange}
-									className="lg:w-[350px] 2xl:w-full lg:text-[16px] 2xl:text-[18px] lg:px-4 lg:py-1 2xl:py-2 border rounded-md"
-									placeholder="Please enter your full name"
-								/>
-							</div>
-							<div>
-								<label
-									className="lg:text-[18px] 2xl:text-[22px] text-[#e61e84] tracking-normal font-extrabold"
-									htmlFor="title"
-								>
-									Room:
-								</label>
-								<div className="flex gap-2 pt-2">
-									<label className="text-[#e61e84] lg:text-[16px] 2xl:text-[15px]">
-										<input
-											type="radio"
-											value="Energy"
-											checked={title === "Energy"}
-											onChange={handletitleChange}
-											className="mr-1"
-										/>
-										Energy
-									</label>
-									<label className="text-[#e61e84] lg:text-[16px] 2xl:text-[15px]">
-										<input
-											type="radio"
-											value="Focus"
-											checked={title === "Focus"}
-											onChange={handletitleChange}
-											className="mr-1"
-										/>
-										Focus
-									</label>
-									<label className="text-[#e61e84] lg:text-[16px] 2xl:text-[15px]">
-										<input
-											type="radio"
-											value="Lecture"
-											checked={title === "Lecture"}
-											onChange={handletitleChange}
-											className="mr-1"
-										/>
-										Lecture
-									</label>
-								</div>
-							</div>
-							<div>
-								<label
-									className="lg:text-[18px] 2xl:text-[18px] tracking-normal"
-									htmlFor="showDescription"
-								>
-									Is this urgent?
-								</label>
-								<input
-									id="showDescription"
-									name="showDescription"
-									type="checkbox"
-									checked={showDescription}
-									onChange={handleShowDescriptionChange}
-									className="ml-2"
-								/>
-								<span className="lg:text-[18px] 2xl:text-[18px] ml-1">Yes</span>
-							</div>
-							{showDescription && (
-								<div>
-									<label
-										className="lg:text-[18px] 2xl:text-[22px] text-[#e61e84] tracking-normal font-extrabold"
-										htmlFor="description"
-									>
-										Urgent Notes:
-									</label>
-									<input
-										id="description"
-										type="description"
-										value={description}
-										onChange={handleDescriptionChange}
-										className="lg:w-[350px] 2xl:w-full lg:text-[16px] 2xl:text-[18px] px-4 lg:py-1 2xl:py-2 border rounded-md"
-										placeholder="Please provide the reason"
-									/>
-								</div>
-							)}
-							<form onSubmit={handleContinue}>
-								<button
-									type="submit"
-									className="bg-[#e61e84] lg:mt-0 2xl:mt-2 hover:bg-[#3fa8ee] 2xl:text-[18px] font-extrabold text-white rounded text-[12px] w-auto p-2 uppercase"
-								>
-									Submit
-								</button>
-							</form>
+					<div className="flex flex-col w-full lg:gap-3 2xl:gap-4 lg:w-[300px] 2xl:w-[600px] lg:-ml-10  2xl:ml-6">
+						<div>
+							<label
+								className="lg:text-[18px] 2xl:text-[22px] text-[#e61e84] tracking-normal font-extrabold"
+								htmlFor="email"
+							>
+								Email:
+							</label>
+							<input
+								id="email"
+								type="text"
+								value={email}
+								onChange={handleEmailChange}
+								className="lg:w-[350px] 2xl:w-full lg:text-[16px] 2xl:text-[18px] lg:px-4 lg:py-1 2xl:py-2 border rounded-md"
+								placeholder="example123@gmail.com"
+							/>
 						</div>
-					)}
+						<div>
+							<label
+								className="lg:text-[18px] 2xl:text-[22px] text-[#e61e84] tracking-normal font-extrabold"
+								htmlFor="company"
+							>
+								Company:
+							</label>
+							<select
+								id="company"
+								value={company}
+								onChange={handleCompanyChange}
+								className="lg:w-[350px] 2xl:w-full lg:text-[16px] 2xl:text-[18px] lg:px-4 lg:py-1 2xl:py-2 border rounded-md"
+							>
+								{companies.map((comp) => (
+									<option key={comp} value={comp}>
+										{comp}
+									</option>
+								))}
+							</select>
+						</div>
+						<div>
+							<label
+								className="lg:text-[18px] 2xl:text-[22px] text-[#e61e84] tracking-normal font-extrabold"
+								htmlFor="department"
+							>
+								Department:
+							</label>
+							<select
+								id="department"
+								value={department}
+								onChange={handleDepartmentChange}
+								className="lg:w-[350px] 2xl:w-full lg:text-[16px] 2xl:text-[18px] lg:px-4 lg:py-1 2xl:py-2 border rounded-md"
+							>
+								{sortedDepartments.map((dept) => (
+									<option key={dept} value={dept}>
+										{dept}
+									</option>
+								))}
+							</select>
+						</div>
+						<div>
+							<label
+								className="lg:text-[18px] 2xl:text-[22px] text-[#e61e84] tracking-normal font-extrabold"
+								htmlFor="name"
+							>
+								Full Name:
+							</label>
+							<input
+								id="name"
+								type="text"
+								value={name}
+								onChange={handleNameChange}
+								className="lg:w-[350px] 2xl:w-full lg:text-[16px] 2xl:text-[18px] lg:px-4 lg:py-1 2xl:py-2 border rounded-md"
+								placeholder="Please enter your full name"
+							/>
+						</div>
+						<div>
+							<label
+								className="lg:text-[18px] 2xl:text-[22px] text-[#e61e84] tracking-normal font-extrabold"
+								htmlFor="title"
+							>
+								Room:
+							</label>
+							<div className="flex gap-2 pt-2">
+								<label className="text-[#e61e84] lg:text-[16px] 2xl:text-[15px]">
+									<input
+										type="radio"
+										value="Energy"
+										checked={title === "Energy"}
+										onChange={handletitleChange}
+										className="mr-1"
+									/>
+									Energy
+								</label>
+								<label className="text-[#e61e84] lg:text-[16px] 2xl:text-[15px]">
+									<input
+										type="radio"
+										value="Focus"
+										checked={title === "Focus"}
+										onChange={handletitleChange}
+										className="mr-1"
+									/>
+									Focus
+								</label>
+								<label className="text-[#e61e84] lg:text-[16px] 2xl:text-[15px]">
+									<input
+										type="radio"
+										value="Lecture"
+										checked={title === "Lecture"}
+										onChange={handletitleChange}
+										className="mr-1"
+									/>
+									Lecture
+								</label>
+							</div>
+						</div>
+						<div>
+							<label
+								className="lg:text-[18px] 2xl:text-[18px] tracking-normal"
+								htmlFor="showDescription"
+							>
+								Is this urgent?
+							</label>
+							<input
+								id="showDescription"
+								name="showDescription"
+								type="checkbox"
+								checked={showDescription}
+								onChange={handleShowDescriptionChange}
+								className="ml-2"
+							/>
+							<span className="lg:text-[18px] 2xl:text-[18px] ml-1">Yes</span>
+						</div>
+						{showDescription && (
+							<div>
+								<label
+									className="lg:text-[18px] 2xl:text-[22px] text-[#e61e84] tracking-normal font-extrabold"
+									htmlFor="description"
+								>
+									Urgent Notes:
+								</label>
+								<input
+									id="description"
+									type="description"
+									value={description}
+									onChange={handleDescriptionChange}
+									className="lg:w-[350px] 2xl:w-full lg:text-[16px] 2xl:text-[18px] px-4 lg:py-1 2xl:py-2 border rounded-md"
+									placeholder="Please provide the reason"
+								/>
+							</div>
+						)}
+						<form onSubmit={handleContinue}>
+							<button
+								type="submit"
+								className="bg-[#e61e84] lg:mt-0 2xl:mt-2 hover:bg-[#3fa8ee] 2xl:text-[18px] font-extrabold text-white rounded text-[12px] w-auto p-2 uppercase"
+							>
+								Submit
+							</button>
+						</form>
+					</div>
 				</div>
 				<div className="col-span-1 ">
 					<div className="lg:-ml-28 lg:pb-5 2xl:pb-0 2xl:ml-0">
@@ -452,7 +457,7 @@ const Dashboard = () => {
 							reservations={reservations}
 						/>
 					</div>
-					<div className="grid lg:grid-cols-2 2xl:grid-cols-2 gap-2 lg:gap-x-4 2xl:gap-x-10 font-bold lg:absolute lg:top-[715px] lg:left-[900px] 2xl:top-[810px] 2xl:left-[1300px]">
+					<div className="grid lg:grid-cols-2 2xl:grid-cols-2 gap-2 lg:gap-x-4 2xl:gap-x-10 font-bold lg:absolute lg:top-[700px] lg:left-[900px] 2xl:top-[795px] 2xl:left-[1300px]">
 						<div className="bg-green-200 text-green-500 2xl:text-[16px] lg:text-[14px] 2xl:p-2 lg:p-1 rounded-lg">
 							Available - Free to reserve
 						</div>
@@ -462,33 +467,47 @@ const Dashboard = () => {
 						<div className="bg-yellow-200 text-yellow-600 2xl:text-[16px] lg:text-[14px] 2xl:p-2 lg:p-1 rounded-lg">
 							Pending - Reservation in progress
 						</div>
+						<div className="bg-blue-200 text-gray-600 2xl:text-[16px] lg:text-[14px] 2xl:p-2 lg:p-1 rounded-lg">
+							Unavailable - Past time slot
+						</div>
 					</div>
 
-					<div className="font-bold lg:absolute lg:top-[540px] lg:left-[480px] 2xl:top-[640px] 2xl:left-[820px] lg:text-[14px] 2xl:text-[16px] ">
+					<div className="font-bold lg:absolute lg:top-[520px] lg:left-[480px] 2xl:top-[620px] 2xl:left-[820px] lg:text-[14px] 2xl:text-[16px]">
+						<div className="mb-2 text-[#e61e84] lg:text-[16px] 2xl:text-[18px]">
+							Legend - Color Indicator
+						</div>
 						<div className="flex items-center mb-4">
 							<div className="bg-green-500 2xl:p-2 lg:p-1 rounded-lg mr-2"></div>
 							<div>
-								<p>Booking Confirmed</p>
+								<p>- This date has confirmed bookings</p>
 							</div>
 						</div>
 						<div className="flex items-center mb-4">
-							<div className="bg-[#65fe08] 2xl:p-2 lg:p-1 rounded-lg mr-2"></div>
+							<div className="bg-[#3fa8ee] 2xl:p-2 lg:p-1 rounded-lg mr-2"></div>
 							<div>
-								<p>Booking Confirmed & Pending Reservations</p>
+								<p>- This date has both confirmed and pending bookings</p>
 							</div>
 						</div>
 						<div className="flex items-center mb-4">
 							<div className="bg-yellow-400 2xl:p-2 lg:p-1 rounded-lg mr-2"></div>
 							<div>
-								<p>Pending Reservations</p>
+								<p>- This date has pending bookings</p>
+							</div>
+						</div>
+						<div className="flex items-center mb-4">
+							<div className="bg-red-200 2xl:p-2 lg:p-1 rounded-lg mr-2">
+								<p className="text-red-500">Fully Booked</p>
+							</div>
+							<div>
+								<p>- No rooms available</p>
 							</div>
 						</div>
 						<div className="flex items-center">
-							<div className="bg-red-200 2xl:p-2 lg:p-1 rounded-lg mr-2">
-								<p className=" text-red-500">Fully Booked</p>
+							<div className="bg-blue-100 2xl:p-2 lg:p-1 rounded-lg mr-2">
+								<p className="text-blue-500">10</p>
 							</div>
 							<div>
-								<p>No Room Availability</p>
+								<p>- Present Day</p>
 							</div>
 						</div>
 					</div>

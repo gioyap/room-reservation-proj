@@ -9,30 +9,33 @@ const RedirectComponent = () => {
 	const router = useRouter();
 
 	useEffect(() => {
+		const currentPath = window.location.pathname;
+
 		if (status === "authenticated") {
-			console.log("test", status);
-			const currentPath = window.location.pathname;
+			console.log("Authenticated status:", status);
 			if (session?.user?.isAdmin) {
 				const allowedPaths = [
 					"/admin",
 					"/admin/accepted",
 					"/admin/declined",
 					"/admin/pending",
+					"/adminlandingpage",
 				];
 				if (!allowedPaths.includes(currentPath)) {
 					router.push("/admin");
 				}
-			} else {
-				const allowedPaths = ["/dashboard", "/dashboard/records"];
-				if (!allowedPaths.includes(currentPath)) {
-					router.push("/dashboard");
-				}
 			}
 		} else if (status === "unauthenticated") {
-			const allowedUnauthenticatedPaths = ["/", "/signup"];
-			const currentPath = window.location.pathname;
-			if (!allowedUnauthenticatedPaths.includes(currentPath)) {
-				router.push("/");
+			const allowedUnauthenticatedPaths = [
+				"/",
+				"/dashboard/records",
+				"/adminlandingpage",
+			];
+			if (
+				currentPath !== "/adminlandingpage" &&
+				!allowedUnauthenticatedPaths.includes(currentPath)
+			) {
+				router.push("/adminlandingpage");
 			}
 		}
 	}, [session, status, router]);

@@ -7,7 +7,7 @@ const SidebarClient = () => {
 			<div className="flex flex-col items-center mb-8">
 				{/* Additional buttons for navigation */}
 				<a
-					href="/dashboard"
+					href="/"
 					className="bg-[#ffdc2e] hover:bg-[#3fa8ee] text-black rounded lg:text-[12px] 2xl:text-[20px] w-auto lg:p-2 2xl:p-3 uppercase font-extrabold shadow-lg mb-4"
 				>
 					<IoHomeSharp />

@@ -31,7 +31,7 @@ const Sidebar = () => {
 					Pending Records
 				</a>
 				<a
-					onClick={() => signOut()}
+					onClick={() => signOut({ callbackUrl: "/adminlandingpage" })}
 					className="bg-[#f93e9e] hover:bg-[#3fa8ee] text-white rounded text-[12px] xl:text-[14px] w-auto p-3 uppercase font-extrabold shadow-lg mt-4 cursor-pointer"
 				>
 					Logout

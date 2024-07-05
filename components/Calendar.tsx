@@ -12,6 +12,8 @@ import {
 	setYear,
 	isSameDay,
 	isBefore,
+	startOfDay,
+	isToday,
 } from "date-fns";
 import { Reservation } from "../types/type";
 
@@ -166,7 +168,7 @@ const Calendar: React.FC<CalendarProps> = ({
 
 		if (hasAccepted && hasPending) {
 			// If both "Accepted" and "Pending" reservations exist
-			return "bg-[#65fe08]"; // Apply both colors
+			return "bg-[#3fa8ee]"; // Apply both colors
 		} else if (hasAccepted) {
 			return "bg-green-500";
 		} else if (hasPending) {
@@ -218,7 +220,6 @@ const Calendar: React.FC<CalendarProps> = ({
 
 		return categories.every((category) => isTimeFullyBooked(category));
 	};
-
 	// through this condition the user can see if the date is fully booked, have a reservation details and interactive to the user
 	const getDayClassName = (day: Date) => {
 		const isBooked = isDateBooked(day);
@@ -227,24 +228,38 @@ const Calendar: React.FC<CalendarProps> = ({
 		const isSelected = selectedDateState
 			? isSameDay(day, selectedDateState)
 			: false;
-		const isPast = isBefore(day, new Date());
+		const isPast = isBefore(day, startOfDay(new Date()));
 		const isWeekend = day.getDay() === 0 || day.getDay() === 6; // Sunday or Saturday
+
+		// Calculate current time
+		const currentTime = new Date();
+		const currentHour = currentTime.getHours();
+		const currentMinutes = currentTime.getMinutes();
 
 		let className = "text-center pt-4 ";
 
 		if (isPast || isWeekend) {
 			className += "text-gray-400 bg-gray-100 cursor-not-allowed ";
 		} else {
-			className += isClickable
-				? "selectable-day cursor-pointer hover:text-[#e61e84] "
-				: "";
+			className += isClickable ? "selectable-day cursor-pointer " : "";
 			className += isSelected ? "text-[#e61e84] font-extrabold " : "";
 			className += isFullyBookedDay
-				? "text-red-500 font-extrabold bg-red-100 rounded-lg"
+				? "text-red-500 font-extrabold bg-red-100 rounded-lg "
 				: "";
 			className += isBooked && !isFullyBookedDay ? "booked-day relative " : "";
 			className +=
 				day.getMonth() !== selectedDate.getMonth() ? "text-gray-400" : "";
+
+			// Check if the time slot is in the past relative to the current time (e.g., before 10 AM if current time is 10 AM)
+			if (isSameDay(day, currentTime)) {
+				const dayHour = day.getHours();
+				if (
+					dayHour < currentHour ||
+					(dayHour === currentHour && currentMinutes > 0)
+				) {
+					className += "bg-blue-100 "; // Apply blueish background to indicate past time slots
+				}
+			}
 		}
 
 		return className;
@@ -368,12 +383,14 @@ const Calendar: React.FC<CalendarProps> = ({
 								key={index}
 								className={`day text-center pt-4 ${getDayClassName(day)}`}
 								onClick={() => {
-									if (
-										!isBefore(day, new Date()) &&
-										day.getDay() !== 0 &&
-										day.getDay() !== 6 &&
-										day.getMonth() === currentDate.getMonth() // Ensure the clicked date is in the current month
-									) {
+									// Ensure the clicked date meets all clickable conditions
+									const isClickable =
+										(isToday(day) || !isBefore(day, new Date())) && // Allow today's date or future dates
+										day.getDay() !== 0 && // Not Sunday
+										day.getDay() !== 6 && // Not Saturday
+										day.getMonth() === currentDate.getMonth(); // Same month as the current displayed month
+
+									if (isClickable) {
 										handleDayClick(day);
 									}
 								}}
@@ -504,7 +521,14 @@ const Calendar: React.FC<CalendarProps> = ({
 									const endTime = new Date(startTime);
 									endTime.setHours(startTime.getHours() + 1);
 
-									const isAvailable = (category: string) => {
+									const isAvailable = (
+										category: string,
+										startTime: Date
+									): string => {
+										const currentTime = new Date();
+										const endTime = new Date(startTime);
+										endTime.setHours(startTime.getHours() + 1);
+
 										// Filter reservations for the category, date, and status
 										const reservationsForCategory = bookedDates.filter(
 											(reservation) =>
@@ -538,6 +562,11 @@ const Calendar: React.FC<CalendarProps> = ({
 												)
 										);
 
+										// If the time slot is in the past, return "Unavailable"
+										if (startTime < currentTime) {
+											return "Unavailable";
+										}
+
 										// If there's no accepted reservation but there's a pending one, return "Pending"
 										if (hasPendingReservation) {
 											return "Pending";
@@ -547,44 +576,68 @@ const Calendar: React.FC<CalendarProps> = ({
 										return "Available";
 									};
 
+									const getAvailabilityClass = (
+										availability: string,
+										startTime: Date
+									): string => {
+										const currentTime = new Date();
+
+										// Check if the time slot is in the past
+										const isPastTimeSlot = startTime < currentTime;
+
+										if (isPastTimeSlot) {
+											return "text-gray-500";
+										}
+
+										switch (availability) {
+											case "Available":
+												return "text-green-500 ";
+											case "Pending":
+												return "text-yellow-500";
+											case "Unavailable":
+												return "text-red-500";
+											default:
+												return "";
+										}
+									};
+
+									const energyAvailability = isAvailable("Energy", startTime);
+									const focusAvailability = isAvailable("Focus", startTime);
+									const lectureAvailability = isAvailable("Lecture", startTime);
+
 									return (
 										<tr key={i}>
-											<td className="2xl:p-2 border-b whitespace-nowrap lg:text-[13px] 2xl:text-[14px] lg:p-1.5">
+											<td
+												className={`2xl:p-2 border-b text-black flex font-normal hover:text-black cursor-default whitespace-nowrap lg:text-[13px] 2xl:text-[14px] lg:p-1.5 ${getDayClassName(
+													startTime
+												)}`}
+											>
 												{format(startTime, "h:mm aa")} -{" "}
 												{format(endTime, "h:mm aa")}
 											</td>
 											<td
-												className={`lg:p-1.5 2xl:p-2 border-b whitespace-nowrap lg:text-[13px] 2xl:text-[14px] lg:pl-4 font-bold text-center ${
-													isAvailable("Energy") === "Available"
-														? "text-green-500"
-														: isAvailable("Energy") === "Pending"
-														? "text-yellow-500"
-														: "text-red-500"
-												}`}
+												className={`lg:p-1.5 2xl:p-2 border-b cursor-default whitespace-nowrap lg:text-[13px] 2xl:text-[14px] lg:pl-4 font-bold text-center ${getAvailabilityClass(
+													energyAvailability,
+													startTime
+												)} ${getDayClassName(startTime)}`}
 											>
-												{isAvailable("Energy")}
+												{energyAvailability}
 											</td>
 											<td
-												className={`lg:p-1.5 2xl:p-2 border-b whitespace-nowrap lg:text-[13px] 2xl:text-[14px] lg:pl-4 font-bold text-center ${
-													isAvailable("Focus") === "Available"
-														? "text-green-500"
-														: isAvailable("Focus") === "Pending"
-														? "text-yellow-500"
-														: "text-red-500"
-												}`}
+												className={`lg:p-1.5 2xl:p-2 border-b cursor-default whitespace-nowrap lg:text-[13px] 2xl:text-[14px] lg:pl-4 font-bold text-center ${getAvailabilityClass(
+													focusAvailability,
+													startTime
+												)} ${getDayClassName(startTime)}`}
 											>
-												{isAvailable("Focus")}
+												{focusAvailability}
 											</td>
 											<td
-												className={`lg:p-1.5 2xl:p-2 border-b whitespace-nowrap lg:text-[13px] 2xl:text-[14px] lg:pl-4 font-bold text-center ${
-													isAvailable("Lecture") === "Available"
-														? "text-green-500"
-														: isAvailable("Lecture") === "Pending"
-														? "text-yellow-500"
-														: "text-red-500"
-												}`}
+												className={`lg:p-1.5 2xl:p-2 border-b cursor-default whitespace-nowrap lg:text-[13px] 2xl:text-[14px] lg:pl-4 font-bold text-center ${getAvailabilityClass(
+													lectureAvailability,
+													startTime
+												)} ${getDayClassName(startTime)}`}
 											>
-												{isAvailable("Lecture")}
+												{lectureAvailability}
 											</td>
 										</tr>
 									);
