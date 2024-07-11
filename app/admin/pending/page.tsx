@@ -32,6 +32,48 @@ const PendingPage = () => {
 	const [sortColumn, setSortColumn] = useState<SortColumn>("department");
 	const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
+	// Short polling mechanism
+	// Function to fetch pending reservations from server
+	const fetchPendingReservations = async () => {
+		try {
+			const response = await fetch("/api/status/pending");
+			if (response.ok) {
+				const data = await response.json();
+				if (Array.isArray(data.reservations)) {
+					setReservations(data.reservations);
+					setLoading(false);
+				} else {
+					console.error(
+						"Data.reservations is not an array:",
+						data.reservations
+					);
+					toast.error("Failed to fetch pending reservations");
+				}
+			} else {
+				console.error(
+					"Failed to fetch pending reservations:",
+					response.statusText
+				);
+				toast.error("Failed to fetch pending reservations");
+			}
+		} catch (error) {
+			console.error("Error fetching pending reservations:", error);
+			toast.error("Failed to fetch pending reservations");
+		}
+	};
+
+	// Effect to fetch data initially and set up polling
+	useEffect(() => {
+		// Fetch initial data
+		fetchPendingReservations();
+
+		// Polling interval
+		const intervalId = setInterval(fetchPendingReservations, 2000); // Poll every 2 seconds
+
+		// Cleanup on component unmount
+		return () => clearInterval(intervalId);
+	}, []); // Empty dependency array ensures it only runs once on mount
+
 	// Sorting function
 	const sortTable = (column: SortColumn) => {
 		let newSortOrder: "asc" | "desc" = "asc";
@@ -61,43 +103,6 @@ const PendingPage = () => {
 			return sortOrder === "asc" ? comparison : -comparison;
 		});
 	}
-
-	// Short polling mechanism
-	useEffect(() => {
-		const fetchData = async () => {
-			try {
-				const response = await fetch("/api/status/pending");
-				if (response.ok) {
-					const data = await response.json();
-					if (Array.isArray(data.reservations)) {
-						setReservations(data.reservations);
-					} else {
-						console.error(
-							"Data.reservations is not an array:",
-							data.reservations
-						);
-					}
-				} else {
-					console.error(
-						"Failed to fetch pending reservations:",
-						response.statusText
-					);
-				}
-			} catch (error) {
-				console.error("Error fetching pending reservations:", error);
-			} finally {
-				setLoading(false);
-			}
-		};
-
-		if (session && session.user.isAdmin) {
-			fetchData();
-
-			const intervalId = setInterval(fetchData, 2000); // Poll every 2 seconds
-
-			return () => clearInterval(intervalId); // Clear interval on component unmount
-		}
-	}, [session]);
 
 	const handleAccept = async (id: string, email: string) => {
 		try {

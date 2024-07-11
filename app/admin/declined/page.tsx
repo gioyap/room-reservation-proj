@@ -64,26 +64,31 @@ const DeclinedPage = () => {
 	// Short polling mechanism
 	useEffect(() => {
 		const fetchData = async () => {
+			console.log("Fetching declined reservations..."); // Log when fetching starts
 			try {
 				const response = await fetch("/api/status/declined");
 				if (response.ok) {
 					const data = await response.json();
 					if (Array.isArray(data.reservations)) {
+						console.log("Fetched reservations:", data.reservations);
 						setReservations(data.reservations);
 					} else {
 						console.error(
 							"Data.reservations is not an array:",
 							data.reservations
 						);
+						console.log("Cannot get the new declined reservation");
 					}
 				} else {
 					console.error(
 						"Failed to fetch declined reservations:",
 						response.statusText
 					);
+					console.log("Cannot get the new declined reservation");
 				}
 			} catch (error) {
 				console.error("Error fetching declined reservations:", error);
+				console.log("Cannot get the new declined reservation");
 			} finally {
 				setLoading(false);
 			}

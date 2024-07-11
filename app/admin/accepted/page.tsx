@@ -64,26 +64,31 @@ const AcceptedPage = () => {
 	// Short polling mechanism
 	useEffect(() => {
 		const fetchData = async () => {
+			console.log("Fetching accepted reservations..."); // Log when fetching starts
 			try {
 				const response = await fetch("/api/status/accepted");
 				if (response.ok) {
 					const data = await response.json();
 					if (Array.isArray(data.reservations)) {
+						console.log("Fetched reservations:", data.reservations);
 						setReservations(data.reservations);
 					} else {
 						console.error(
 							"Data.reservations is not an array:",
 							data.reservations
 						);
+						console.log("Cannot get the new accepted reservation");
 					}
 				} else {
 					console.error(
 						"Failed to fetch accepted reservations:",
 						response.statusText
 					);
+					console.log("Cannot get the new accepted reservation");
 				}
 			} catch (error) {
 				console.error("Error fetching accepted reservations:", error);
+				console.log("Cannot get the new accepted reservation");
 			} finally {
 				setLoading(false);
 			}
