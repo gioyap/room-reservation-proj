@@ -13,7 +13,8 @@ const httpServer = createServer(app);
 connect();
 
 const corsOptions = {
-	origin: "http://localhost:3000", // Adjust to your frontend URL
+	origin:
+		"https://reservation-system-git-poll-main-gioyaps-projects.vercel.app/", // Adjust to your frontend URL
 	methods: ["GET", "POST", "PUT", "DELETE"],
 	allowedHeaders: ["Content-Type", "Authorization"],
 };
