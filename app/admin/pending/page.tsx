@@ -1,7 +1,6 @@
 // pages/admin/pending.tsx
 "use client";
 import { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Sidebar from "../../../components/Sidebar";
@@ -24,7 +23,6 @@ interface Reservation {
 type SortColumn = keyof Reservation;
 
 const PendingPage = () => {
-	const { data: session, status } = useSession();
 	const [reservations, setReservations] = useState<Reservation[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [currentPage, setCurrentPage] = useState(1);
@@ -32,47 +30,38 @@ const PendingPage = () => {
 	const [sortColumn, setSortColumn] = useState<SortColumn>("department");
 	const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
-	// Short polling mechanism
-	// Function to fetch pending reservations from server
-	const fetchPendingReservations = async () => {
+	useEffect(() => {
+		fetchBookedDates().then((data) => {
+			setReservations(data);
+		});
+	}, []);
+
+	// Fetch booked dates from the API
+	const fetchBookedDates = async () => {
 		try {
 			const response = await fetch("/api/status/pending");
 			if (response.ok) {
 				const data = await response.json();
 				if (Array.isArray(data.reservations)) {
-					setReservations(data.reservations);
-					setLoading(false);
+					return data.reservations;
 				} else {
 					console.error(
 						"Data.reservations is not an array:",
 						data.reservations
 					);
-					toast.error("Failed to fetch pending reservations");
+					return [];
 				}
 			} else {
-				console.error(
-					"Failed to fetch pending reservations:",
-					response.statusText
-				);
-				toast.error("Failed to fetch pending reservations");
+				console.error("Failed to fetch reservations:", response.statusText);
+				return [];
 			}
 		} catch (error) {
-			console.error("Error fetching pending reservations:", error);
-			toast.error("Failed to fetch pending reservations");
+			console.error("Error fetching reservations:", error);
+			return [];
+		} finally {
+			setLoading(false); // Set loading state to false regardless of success or failure
 		}
 	};
-
-	// Effect to fetch data initially and set up polling
-	useEffect(() => {
-		// Fetch initial data
-		fetchPendingReservations();
-
-		// Polling interval
-		const intervalId = setInterval(fetchPendingReservations, 2000); // Poll every 2 seconds
-
-		// Cleanup on component unmount
-		return () => clearInterval(intervalId);
-	}, []); // Empty dependency array ensures it only runs once on mount
 
 	// Sorting function
 	const sortTable = (column: SortColumn) => {

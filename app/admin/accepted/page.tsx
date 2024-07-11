@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Sidebar from "../../../components/Sidebar";
@@ -23,13 +22,45 @@ interface Reservation {
 type SortColumn = keyof Reservation;
 
 const AcceptedPage = () => {
-	const { data: session, status } = useSession();
 	const [reservations, setReservations] = useState<Reservation[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [currentPage, setCurrentPage] = useState(1);
 	const [reservationsPerPage, setReservationsPerPage] = useState(10);
 	const [sortColumn, setSortColumn] = useState<SortColumn>("department");
 	const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+
+	useEffect(() => {
+		fetchBookedDates().then((data) => {
+			setReservations(data);
+		});
+	}, []);
+
+	// Fetch booked dates from the API
+	const fetchBookedDates = async () => {
+		try {
+			const response = await fetch("/api/status/accepted");
+			if (response.ok) {
+				const data = await response.json();
+				if (Array.isArray(data.reservations)) {
+					return data.reservations;
+				} else {
+					console.error(
+						"Data.reservations is not an array:",
+						data.reservations
+					);
+					return [];
+				}
+			} else {
+				console.error("Failed to fetch reservations:", response.statusText);
+				return [];
+			}
+		} catch (error) {
+			console.error("Error fetching reservations:", error);
+			return [];
+		} finally {
+			setLoading(false); // Set loading state to false regardless of success or failure
+		}
+	};
 
 	// Sorting function
 	const sortTable = (column: SortColumn) => {
@@ -60,48 +91,6 @@ const AcceptedPage = () => {
 			return sortOrder === "asc" ? comparison : -comparison;
 		});
 	}
-
-	// Short polling mechanism
-	useEffect(() => {
-		const fetchData = async () => {
-			console.log("Fetching accepted reservations..."); // Log when fetching starts
-			try {
-				const response = await fetch("/api/status/accepted");
-				if (response.ok) {
-					const data = await response.json();
-					if (Array.isArray(data.reservations)) {
-						console.log("Fetched reservations:", data.reservations);
-						setReservations(data.reservations);
-					} else {
-						console.error(
-							"Data.reservations is not an array:",
-							data.reservations
-						);
-						console.log("Cannot get the new accepted reservation");
-					}
-				} else {
-					console.error(
-						"Failed to fetch accepted reservations:",
-						response.statusText
-					);
-					console.log("Cannot get the new accepted reservation");
-				}
-			} catch (error) {
-				console.error("Error fetching accepted reservations:", error);
-				console.log("Cannot get the new accepted reservation");
-			} finally {
-				setLoading(false);
-			}
-		};
-
-		if (session && session.user.isAdmin) {
-			fetchData();
-
-			const intervalId = setInterval(fetchData, 2000); // Poll every 2 seconds
-
-			return () => clearInterval(intervalId); // Clear interval on component unmount
-		}
-	}, [session]);
 
 	const handleCancel = async (id: string, email: string) => {
 		try {
