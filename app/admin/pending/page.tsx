@@ -7,7 +7,6 @@ import "react-toastify/dist/ReactToastify.css";
 import Sidebar from "../../../components/Sidebar";
 import Pagination from "../../../components/Pagination";
 import { format } from "date-fns";
-import { io, Socket } from "socket.io-client";
 
 interface Reservation {
 	_id: string;
@@ -32,40 +31,6 @@ const PendingPage = () => {
 	const [reservationsPerPage, setReservationsPerPage] = useState(10);
 	const [sortColumn, setSortColumn] = useState<SortColumn>("department");
 	const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
-
-	useEffect(() => {
-		let socket: Socket;
-
-		// Define the socket connection URL based on the environment
-		const socketUrl = "https://calendar-reservation-enq3ce7zja-wl.a.run.app/";
-
-		// Create the socket connection
-		socket = io(socketUrl, {
-			transports: ["websocket"],
-		});
-
-		socket.on("connect", () => {
-			console.log("WebSocket connected");
-		});
-
-		socket.on("newReservation", (data: Reservation) => {
-			console.log("New reservation received:", data);
-			setReservations((prevReservations) => [...prevReservations, data]);
-		});
-
-		socket.on("disconnect", () => {
-			console.log("WebSocket disconnected");
-		});
-
-		socket.on("error", (error: Error) => {
-			console.error("WebSocket error:", error);
-		});
-
-		// Clean up WebSocket on component unmount
-		return () => {
-			socket.disconnect();
-		};
-	}, []);
 
 	// Sorting function
 	const sortTable = (column: SortColumn) => {
@@ -97,14 +62,29 @@ const PendingPage = () => {
 		});
 	}
 
+	// Short polling mechanism
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
-				const response = await fetch("/api/status/pending"); // Adjust your API endpoint accordingly
-				const data = await response.json();
-				setReservations(data.reservations);
+				const response = await fetch("/api/status/pending");
+				if (response.ok) {
+					const data = await response.json();
+					if (Array.isArray(data.reservations)) {
+						setReservations(data.reservations);
+					} else {
+						console.error(
+							"Data.reservations is not an array:",
+							data.reservations
+						);
+					}
+				} else {
+					console.error(
+						"Failed to fetch pending reservations:",
+						response.statusText
+					);
+				}
 			} catch (error) {
-				console.error("Error fetching reservations:", error);
+				console.error("Error fetching pending reservations:", error);
 			} finally {
 				setLoading(false);
 			}
@@ -112,6 +92,10 @@ const PendingPage = () => {
 
 		if (session && session.user.isAdmin) {
 			fetchData();
+
+			const intervalId = setInterval(fetchData, 2000); // Poll every 2 seconds
+
+			return () => clearInterval(intervalId); // Clear interval on component unmount
 		}
 	}, [session]);
 
