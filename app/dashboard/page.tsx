@@ -1,28 +1,28 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Calendar from "../../components/Calendar"; // Import Calendar component
 import "react-datepicker/dist/react-datepicker.css";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { FaUser } from "react-icons/fa";
 import SidebarClient from "../../components/SidebarClient";
 const companies = ["Flawless", "MTSI", "FINA", "Beauty and Butter"];
 import { Reservation } from "../../types/type";
-import { io, Socket } from "socket.io-client";
+import ConfirmationModal from "../../components/ConfirmationModal";
 
 const departments = [
-	"Executives",
-	"MIS",
+	"Executive",
+	"MIS-IT",
 	"Accounting",
 	"SCM",
 	"Procurement",
-	"MART",
+	"MARTD",
 	"HR",
 	"CMRT",
 	"Sales",
 	"Operations",
 	"Audit",
+	"Marketing",
 ];
 
 const sortedDepartments = departments.sort((a, b) => a.localeCompare(b));
@@ -38,42 +38,8 @@ const Dashboard = () => {
 	const [title, setTitle] = useState("");
 	const [description, setDescription] = useState("");
 	const [showDescription, setShowDescription] = useState(false);
-	const [dropdownVisible, setDropdownVisible] = useState(false);
 	const [reservations, setReservations] = useState<Reservation[]>([]);
-
-	useEffect(() => {
-		let socket: Socket;
-
-		// Define the socket connection URL based on the environment
-		const socketUrl = "https://calendar-reservation-enq3ce7zja-wl.a.run.app/";
-
-		// Create the socket connection
-		socket = io(socketUrl, {
-			transports: ["websocket"],
-		});
-
-		socket.on("connect", () => {
-			console.log("WebSocket connected");
-		});
-
-		socket.on("newReservation", (data: Reservation) => {
-			console.log("New reservation received:", data);
-			setReservations((prevReservations) => [...prevReservations, data]);
-		});
-
-		socket.on("disconnect", () => {
-			console.log("WebSocket disconnected");
-		});
-
-		socket.on("error", (error: Error) => {
-			console.error("WebSocket error:", error);
-		});
-
-		// Clean up WebSocket on component unmount
-		return () => {
-			socket.disconnect();
-		};
-	}, []);
+	const [showConfirmationModal, setShowConfirmationModal] = useState(false);
 
 	const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setEmail(e.target.value);
@@ -160,44 +126,6 @@ const Dashboard = () => {
 			);
 			return;
 		}
-
-		// Check if the selected date and time conflict with existing reservations
-		const conflict = reservations.some((reservation: any) => {
-			const resStartDate = new Date(reservation.fromDate);
-			const resEndDate = new Date(reservation.toDate);
-
-			// Check if the selected date conflicts with existing reservation dates
-			const dateConflict =
-				selectedDate.getTime() >= resStartDate.getTime() &&
-				selectedDate.getTime() <= resEndDate.getTime();
-
-			// Check if the selected time conflicts with existing reservation times
-			const timeConflict =
-				(combinedFromDateTime.getTime() >= resStartDate.getTime() &&
-					combinedFromDateTime.getTime() < resEndDate.getTime()) ||
-				(combinedToDateTime.getTime() > resStartDate.getTime() &&
-					combinedToDateTime.getTime() <= resEndDate.getTime()) ||
-				(combinedFromDateTime.getTime() <= resStartDate.getTime() &&
-					combinedToDateTime.getTime() >= resEndDate.getTime());
-
-			// Check if the selected room is already reserved for the same date and time
-			// So the user suppose to find another available room
-			const roomConflict =
-				reservation.title === title &&
-				dateConflict &&
-				timeConflict &&
-				reservation.status === "Accepted";
-
-			return roomConflict;
-		});
-
-		if (conflict) {
-			toast.error(
-				"The selected room is already reserved. Please choose another room or select a different date and time."
-			);
-			return;
-		}
-
 		// Check if the selected time is in the past
 		const currentTime = new Date();
 		if (
@@ -209,6 +137,28 @@ const Dashboard = () => {
 			);
 			return;
 		}
+		// Show confirmation modal before proceeding
+		setShowConfirmationModal(true);
+	};
+
+	const handleConfirmReservation = async () => {
+		const combinedFromDateTime = new Date(
+			selectedDate.getFullYear(),
+			selectedDate.getMonth(),
+			selectedDate.getDate(),
+			fromSelectedTime.getHours(),
+			fromSelectedTime.getMinutes(),
+			fromSelectedTime.getSeconds()
+		);
+
+		const combinedToDateTime = new Date(
+			selectedDate.getFullYear(),
+			selectedDate.getMonth(),
+			selectedDate.getDate(),
+			toSelectedTime.getHours(),
+			toSelectedTime.getMinutes(),
+			toSelectedTime.getSeconds()
+		);
 
 		const reservationData = {
 			email,
@@ -220,7 +170,7 @@ const Dashboard = () => {
 			toDate: combinedToDateTime,
 			description,
 		};
-		//get the reservation data then the system will send it to the admin email
+
 		try {
 			const response = await fetch("/api/reservationDB", {
 				method: "POST",
@@ -231,6 +181,8 @@ const Dashboard = () => {
 			});
 
 			if (response.ok) {
+				// Close confirmation modal after submission
+				setShowConfirmationModal(false);
 				toast.success("Reservation saved successfully!");
 
 				const emailResponse = await fetch("/api/sendEmail", {
@@ -262,6 +214,10 @@ const Dashboard = () => {
 
 		console.log("Reservation Details:", reservationData);
 	};
+	const handleCancelReservation = () => {
+		// Close confirmation modal
+		setShowConfirmationModal(false);
+	};
 
 	return (
 		<div className="min-h-screen py-0">
@@ -288,7 +244,7 @@ const Dashboard = () => {
 								className="lg:text-[18px] 2xl:text-[22px] text-[#e61e84] tracking-normal font-extrabold"
 								htmlFor="email"
 							>
-								Email:
+								Email: <span className="text-red-500">*</span>
 							</label>
 							<input
 								id="email"
@@ -304,7 +260,7 @@ const Dashboard = () => {
 								className="lg:text-[18px] 2xl:text-[22px] text-[#e61e84] tracking-normal font-extrabold"
 								htmlFor="company"
 							>
-								Company:
+								Company: <span className="text-red-500">*</span>
 							</label>
 							<select
 								id="company"
@@ -324,7 +280,7 @@ const Dashboard = () => {
 								className="lg:text-[18px] 2xl:text-[22px] text-[#e61e84] tracking-normal font-extrabold"
 								htmlFor="department"
 							>
-								Department:
+								Department: <span className="text-red-500">*</span>
 							</label>
 							<select
 								id="department"
@@ -344,7 +300,7 @@ const Dashboard = () => {
 								className="lg:text-[18px] 2xl:text-[22px] text-[#e61e84] tracking-normal font-extrabold"
 								htmlFor="name"
 							>
-								Full Name:
+								Full Name: <span className="text-red-500">*</span>
 							</label>
 							<input
 								id="name"
@@ -360,7 +316,7 @@ const Dashboard = () => {
 								className="lg:text-[18px] 2xl:text-[22px] text-[#e61e84] tracking-normal font-extrabold"
 								htmlFor="title"
 							>
-								Room:
+								Room: <span className="text-red-500">*</span>
 							</label>
 							<div className="flex gap-2 pt-2">
 								<label className="text-[#e61e84] lg:text-[16px] 2xl:text-[15px]">
@@ -513,6 +469,13 @@ const Dashboard = () => {
 					</div>
 				</div>
 			</div>
+			<ConfirmationModal
+				isOpen={showConfirmationModal}
+				onRequestClose={handleCancelReservation}
+				onConfirm={handleConfirmReservation}
+				title="Confirm Reservation"
+				message="Are you sure you want to confirm this reservation?"
+			/>
 		</div>
 	);
 };

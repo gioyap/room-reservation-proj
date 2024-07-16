@@ -6,6 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Sidebar from "../../../components/Sidebar";
 import Pagination from "../../../components/Pagination";
 import { format } from "date-fns";
+import ConfirmationModal from "../../../components/ConfirmationModal";
 
 interface Reservation {
 	_id: string;
@@ -28,6 +29,9 @@ const AcceptedPage = () => {
 	const [reservationsPerPage, setReservationsPerPage] = useState(10);
 	const [sortColumn, setSortColumn] = useState<SortColumn>("department");
 	const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+	const [modalIsOpen, setModalIsOpen] = useState(false);
+	const [selectedReservation, setSelectedReservation] =
+		useState<Reservation | null>(null);
 
 	useEffect(() => {
 		fetchBookedDates().then((data) => {
@@ -99,7 +103,7 @@ const AcceptedPage = () => {
 				headers: {
 					"Content-Type": "application/json",
 				},
-				body: JSON.stringify({ id, status: "Accepted" }),
+				body: JSON.stringify({ id, status: "Pending" }),
 			});
 
 			if (!response.ok) {
@@ -150,6 +154,23 @@ const AcceptedPage = () => {
 			console.error("Error declining reservation:", error);
 			toast.error("Failed to decline reservation.");
 		}
+	};
+
+	const openModal = (reservation: Reservation) => {
+		setSelectedReservation(reservation);
+		setModalIsOpen(true);
+	};
+
+	const closeModal = () => {
+		setSelectedReservation(null);
+		setModalIsOpen(false);
+	};
+
+	const confirmDecline = () => {
+		if (selectedReservation) {
+			handleCancel(selectedReservation._id, selectedReservation.email);
+		}
+		closeModal();
 	};
 
 	const indexOfLastReservation = currentPage * reservationsPerPage;
@@ -298,9 +319,7 @@ const AcceptedPage = () => {
 											<td className="lg:py-2 lg:w-[140px] 2xl:w-[120px] lg:pr-6 2xl:px-0 lg:text-[14px] 2xl:text-[16px]">
 												<button
 													className="bg-[#ff7b00] hover:bg-red-700 text-white font-bold py-1 px-6 rounded-full"
-													onClick={() =>
-														handleCancel(reservation._id, reservation.email)
-													}
+													onClick={() => openModal(reservation)}
 												>
 													Cancel
 												</button>
@@ -319,6 +338,15 @@ const AcceptedPage = () => {
 					paginate={paginate}
 				/>
 			</div>
+			{selectedReservation && (
+				<ConfirmationModal
+					isOpen={modalIsOpen}
+					onRequestClose={closeModal}
+					onConfirm={confirmDecline}
+					title="Confirm Cancel"
+					message="Are you sure you want to cancel this accepted reservation?"
+				/>
+			)}
 		</div>
 	);
 };

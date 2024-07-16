@@ -6,6 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Sidebar from "../../../components/Sidebar";
 import Pagination from "../../../components/Pagination";
 import { format } from "date-fns";
+import ConfirmationModal from "../../../components/ConfirmationModal";
 
 interface Reservation {
 	_id: string;
@@ -29,6 +30,10 @@ const PendingPage = () => {
 	const [reservationsPerPage, setReservationsPerPage] = useState(10);
 	const [sortColumn, setSortColumn] = useState<SortColumn>("department");
 	const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+	const [modalIsOpen, setModalIsOpen] = useState(false);
+	const [selectedReservation, setSelectedReservation] =
+		useState<Reservation | null>(null);
+	const [acceptModalIsOpen, setAcceptModalIsOpen] = useState(false);
 
 	useEffect(() => {
 		fetchBookedDates().then((data) => {
@@ -93,8 +98,49 @@ const PendingPage = () => {
 		});
 	}
 
+	// Fetch accepted reservations from the API
+	const fetchAcceptedReservations = async () => {
+		try {
+			const response = await fetch("/api/status/accepted");
+			if (response.ok) {
+				const data = await response.json();
+				if (Array.isArray(data.reservations)) {
+					return data.reservations;
+				} else {
+					console.error(
+						"Data.reservations is not an array:",
+						data.reservations
+					);
+					return [];
+				}
+			} else {
+				console.error(
+					"Failed to fetch accepted reservations:",
+					response.statusText
+				);
+				return [];
+			}
+		} catch (error) {
+			console.error("Error fetching accepted reservations:", error);
+			return [];
+		}
+	};
+
 	const handleAccept = async (id: string, email: string) => {
 		try {
+			// Fetch accepted reservations to compare dates
+			const acceptedReservations = await fetchAcceptedReservations();
+
+			// Check if any accepted reservation has the same date as selectedReservation
+			const hasConflict = acceptedReservations.some((reservation: any) =>
+				isConflict(reservation, selectedReservation)
+			);
+
+			if (hasConflict) {
+				toast.error("This room is already booked.");
+				return;
+			}
+
 			const response = await fetch(`/api/reservationDB?status=Pending`, {
 				method: "PUT",
 				headers: {
@@ -146,6 +192,8 @@ const PendingPage = () => {
 				console.error("Email error:", errorData);
 				toast.error("Failed to send email");
 			}
+
+			// Reload the page after 5 seconds to reflect changes
 			setTimeout(() => {
 				window.location.reload();
 			}, 5000);
@@ -216,6 +264,39 @@ const PendingPage = () => {
 			toast.error("Failed to decline reservation.");
 		}
 	};
+	const openAcceptModal = (reservation: Reservation) => {
+		setSelectedReservation(reservation);
+		setAcceptModalIsOpen(true);
+	};
+
+	const closeAcceptModal = () => {
+		setSelectedReservation(null);
+		setAcceptModalIsOpen(false);
+	};
+
+	const confirmAccept = () => {
+		if (selectedReservation) {
+			handleAccept(selectedReservation._id, selectedReservation.email);
+		}
+		closeAcceptModal();
+	};
+
+	const openModal = (reservation: Reservation) => {
+		setSelectedReservation(reservation);
+		setModalIsOpen(true);
+	};
+
+	const closeModal = () => {
+		setSelectedReservation(null);
+		setModalIsOpen(false);
+	};
+
+	const confirmDecline = () => {
+		if (selectedReservation) {
+			handleDecline(selectedReservation._id, selectedReservation.email);
+		}
+		closeModal();
+	};
 
 	const indexOfLastReservation = currentPage * reservationsPerPage;
 	const indexOfFirstReservation = indexOfLastReservation - reservationsPerPage;
@@ -234,9 +315,29 @@ const PendingPage = () => {
 		);
 	}
 
+	const isConflict = (
+		acceptedReservation: Reservation,
+		pendingReservation: Reservation | null
+	) => {
+		if (!pendingReservation) return false;
+		const acceptedFromDate = new Date(acceptedReservation.fromDate);
+		const acceptedToDate = new Date(acceptedReservation.toDate);
+		const pendingFromDate = new Date(pendingReservation.fromDate);
+		const pendingToDate = new Date(pendingReservation.toDate);
+
+		// Check if the pending reservation overlaps with the accepted reservation
+		const overlaps =
+			(pendingFromDate >= acceptedFromDate &&
+				pendingFromDate < acceptedToDate) ||
+			(pendingToDate > acceptedFromDate && pendingToDate <= acceptedToDate) ||
+			(pendingFromDate <= acceptedFromDate && pendingToDate >= acceptedToDate);
+
+		return overlaps;
+	};
+
 	return (
 		<div className="flex">
-			<ToastContainer autoClose={4000} />
+			<ToastContainer autoClose={5000} />
 			<Sidebar /> {/* Use the Sidebar component */}
 			<div className="flex-1 lg:p-4 lg:pl-6 lg:pt-10 2xl:p-8 bg-gray-100 min-h-screen">
 				<div className=" lg:pb-6 2xl:pb-8">
@@ -367,17 +468,13 @@ const PendingPage = () => {
 											<td className=" lg:py-2 whitespace-nowrap lg:text-[14px] 2xl:text-[16px] ">
 												<button
 													className="bg-green-500 hover:bg-green-700 text-white font-bold lg:py-1 lg:px-2 2xl:py-2 2xl:px-4 rounded mr-2"
-													onClick={() =>
-														handleAccept(reservation._id, reservation.email)
-													}
+													onClick={() => openAcceptModal(reservation)}
 												>
 													Accept
 												</button>
 												<button
 													className="bg-red-500 hover:bg-red-700 text-white font-bold lg:py-1 lg:px-2 2xl:py-2 2xl:px-4 rounded"
-													onClick={() =>
-														handleDecline(reservation._id, reservation.email)
-													}
+													onClick={() => openModal(reservation)}
 												>
 													Decline
 												</button>
@@ -404,6 +501,24 @@ const PendingPage = () => {
 					paginate={paginate}
 				/>
 			</div>
+			{selectedReservation && (
+				<ConfirmationModal
+					isOpen={modalIsOpen}
+					onRequestClose={closeModal}
+					onConfirm={confirmDecline}
+					title="Confirm Decline"
+					message="Are you sure you want to decline this reservation?"
+				/>
+			)}
+			{selectedReservation && (
+				<ConfirmationModal
+					isOpen={acceptModalIsOpen}
+					onRequestClose={closeAcceptModal}
+					onConfirm={confirmAccept}
+					title="Confirm Accept"
+					message="Are you sure you want to accept this reservation?"
+				/>
+			)}
 		</div>
 	);
 };
