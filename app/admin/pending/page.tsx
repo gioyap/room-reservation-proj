@@ -131,7 +131,16 @@ const PendingPage = () => {
 			// Fetch accepted reservations to compare dates
 			const acceptedReservations = await fetchAcceptedReservations();
 
-			// Check if any accepted reservation has the same date as selectedReservation
+			// Find the reservation to be accepted
+			const selectedReservation = reservations.find(
+				(reservation) => reservation._id === id
+			);
+
+			if (!selectedReservation) {
+				throw new Error("Reservation not found");
+			}
+
+			// Check for conflicts
 			const hasConflict = acceptedReservations.some((reservation: any) =>
 				isConflict(reservation, selectedReservation)
 			);
@@ -141,6 +150,25 @@ const PendingPage = () => {
 				return;
 			}
 
+			// Send notification email first
+			const emailResponse = await fetch("/api/sendEmail/adminEmail", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					email,
+					subject: "Reservation Accepted",
+					updatedReservation: selectedReservation,
+					status: "Accepted",
+				}),
+			});
+
+			if (!emailResponse.ok) {
+				throw new Error("Failed to send email");
+			}
+
+			// Email sent successfully, proceed to update reservation status in database
 			const response = await fetch(`/api/reservationDB?status=Pending`, {
 				method: "PUT",
 				headers: {
@@ -153,14 +181,6 @@ const PendingPage = () => {
 				throw new Error("Failed to accept reservation");
 			}
 
-			const updatedReservation = reservations.find(
-				(reservation) => reservation._id === id
-			);
-
-			if (!updatedReservation) {
-				throw new Error("Reservation not found");
-			}
-
 			setReservations((prevReservations) =>
 				prevReservations.map((reservation) =>
 					reservation._id === id
@@ -170,28 +190,6 @@ const PendingPage = () => {
 			);
 
 			toast.success("Reservation accepted successfully!");
-
-			// Send notification email
-			const emailResponse = await fetch("/api/sendEmail/adminEmail", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({
-					email,
-					subject: "Reservation Accepted",
-					updatedReservation,
-					status: "Accepted",
-				}),
-			});
-
-			if (emailResponse.ok) {
-				toast.success("Email sent successfully");
-			} else {
-				const errorData = await emailResponse.json();
-				console.error("Email error:", errorData);
-				toast.error("Failed to send email");
-			}
 
 			// Reload the page after 5 seconds to reflect changes
 			setTimeout(() => {
@@ -205,18 +203,7 @@ const PendingPage = () => {
 
 	const handleDecline = async (id: string, email: string) => {
 		try {
-			const response = await fetch(`/api/reservationDB/`, {
-				method: "PUT",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({ id, status: "Declined" }),
-			});
-
-			if (!response.ok) {
-				throw new Error("Failed to decline reservation");
-			}
-
+			// Find the reservation to be declined
 			const updatedReservation = reservations.find(
 				(reservation) => reservation._id === id
 			);
@@ -225,17 +212,7 @@ const PendingPage = () => {
 				throw new Error("Reservation not found");
 			}
 
-			setReservations((prevReservations) =>
-				prevReservations.map((reservation) =>
-					reservation._id === id
-						? { ...reservation, status: "Declined" }
-						: reservation
-				)
-			);
-
-			toast.success("Reservation declined successfully!");
-
-			// Send notification email
+			// Send notification email first
 			const emailResponse = await fetch("/api/sendEmail/adminEmail", {
 				method: "POST",
 				headers: {
@@ -249,13 +226,34 @@ const PendingPage = () => {
 				}),
 			});
 
-			if (emailResponse.ok) {
-				toast.success("Email sent successfully");
-			} else {
-				const errorData = await emailResponse.json();
-				console.error("Email error:", errorData);
-				toast.error("Failed to send email");
+			if (!emailResponse.ok) {
+				throw new Error("Failed to send email");
 			}
+
+			// Email sent successfully, proceed to update reservation status in database
+			const response = await fetch(`/api/reservationDB/`, {
+				method: "PUT",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ id, status: "Declined" }),
+			});
+
+			if (!response.ok) {
+				throw new Error("Failed to decline reservation");
+			}
+
+			setReservations((prevReservations) =>
+				prevReservations.map((reservation) =>
+					reservation._id === id
+						? { ...reservation, status: "Declined" }
+						: reservation
+				)
+			);
+
+			toast.success("Reservation declined successfully!");
+
+			// Reload the page after 5 seconds to reflect changes
 			setTimeout(() => {
 				window.location.reload();
 			}, 5000);
@@ -264,6 +262,7 @@ const PendingPage = () => {
 			toast.error("Failed to decline reservation.");
 		}
 	};
+
 	const openAcceptModal = (reservation: Reservation) => {
 		setSelectedReservation(reservation);
 		setAcceptModalIsOpen(true);

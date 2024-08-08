@@ -98,6 +98,33 @@ const AcceptedPage = () => {
 
 	const handleCancel = async (id: string, email: string) => {
 		try {
+			const updatedReservation = reservations.find(
+				(reservation) => reservation._id === id
+			);
+
+			if (!updatedReservation) {
+				throw new Error("Reservation not found");
+			}
+
+			// Send notification email first
+			const emailResponse = await fetch("/api/sendEmail/cancelAdmin", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					email,
+					subject: "Reservation Canceled",
+					updatedReservation, // Pass reservation ID to identify which reservation was canceled
+					status: "Accepted",
+				}),
+			});
+
+			if (!emailResponse.ok) {
+				throw new Error("Failed to send email");
+			}
+
+			// Email sent successfully, proceed to update reservation status in database
 			const response = await fetch(`/api/reservationDB`, {
 				method: "PUT",
 				headers: {
@@ -110,49 +137,22 @@ const AcceptedPage = () => {
 				throw new Error("Failed to cancel reservation");
 			}
 
-			const updatedReservation = reservations.find(
-				(reservation) => reservation._id === id
-			);
-
-			if (!updatedReservation) {
-				throw new Error("Reservation not found");
-			}
-
 			setReservations((prevReservations) =>
 				prevReservations.map((reservation) =>
 					reservation._id === id
-						? { ...reservation, status: "Accepted" }
+						? { ...reservation, status: "Pending" } // Adjust status to "Pending" as cancellation
 						: reservation
 				)
 			);
 
 			toast.success("Reservation Canceled successfully!");
 
-			// Send notification email
-			const emailResponse = await fetch("/api/sendEmail/cancelAdmin", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({
-					email,
-					subject: "Reservation Canceled",
-					updatedReservation, // Ensure this object includes all necessary details
-					status: "Accepted",
-				}),
-			});
-
-			if (emailResponse.ok) {
-				toast.success("Email sent successfully");
-			} else {
-				toast.error("Failed to send email");
-			}
 			setTimeout(() => {
 				window.location.reload();
 			}, 5000);
 		} catch (error) {
-			console.error("Error declining reservation:", error);
-			toast.error("Failed to decline reservation.");
+			console.error("Error handling reservation cancellation:", error);
+			toast.error("Failed to cancel reservation.");
 		}
 	};
 

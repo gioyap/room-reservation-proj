@@ -172,6 +172,20 @@ const Dashboard = () => {
 		};
 
 		try {
+			// Attempt to send the email first
+			const emailResponse = await fetch("/api/sendEmail", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(reservationData),
+			});
+
+			if (!emailResponse.ok) {
+				throw new Error("Failed to send email");
+			}
+
+			// If email sending is successful, save the reservation
 			const response = await fetch("/api/reservationDB", {
 				method: "POST",
 				headers: {
@@ -185,24 +199,11 @@ const Dashboard = () => {
 				setShowConfirmationModal(false);
 				toast.success("Reservation saved successfully!");
 
-				const emailResponse = await fetch("/api/sendEmail", {
-					method: "POST",
-					headers: {
-						"Content-Type": "application/json",
-					},
-					body: JSON.stringify(reservationData),
-				});
-
-				if (emailResponse.ok) {
-					toast.success("Email sent successfully");
-				} else {
-					toast.error("Failed to send email");
-				}
 				setTimeout(() => {
 					window.location.reload();
 				}, 5000);
 			} else {
-				toast.error("Failed to save reservation: " + response.statusText);
+				throw new Error("Failed to save reservation: " + response.statusText);
 			}
 		} catch (error) {
 			if (error instanceof Error) {
