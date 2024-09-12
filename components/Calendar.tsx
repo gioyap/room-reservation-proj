@@ -328,10 +328,10 @@ const Calendar: React.FC<CalendarProps> = ({
 	};
 
 	return (
-		<div className="flex gap-x-3 items-start">
+		<div className="gap-x-3 items-start">
 			{/* this is responsible for calendar */}
-			<div className="calendar bg-white lg:p-2 2xl:p-6 rounded shadow mr-2 lg:ml-20 2xl:ml-0">
-				<div className="header text-center lg: 2xl:mb-4 flex justify-between items-center">
+			<div className="calendar lg:p-2 2xl:p-6 rounded mr-2 2xl:ml-0 text-sm px-6 md:px-20 lg:ml-[8rem] xl:ml-[18rem]">
+				<div className="header text-center 2xl:mb-4 flex justify-between items-center pb-4">
 					<button
 						onClick={() => handleMonthChange(-1)}
 						className="arrow-button lg:text-[12px] 2xl:text-[16px]"
@@ -372,7 +372,7 @@ const Calendar: React.FC<CalendarProps> = ({
 						</div>
 					))}
 				</div>
-				<div className="grid grid-cols-7 gap-[-4px] lg:w-[387px] 2xl:w-[400px] lg:h-[300px] 2xl:h-[350px] lg:mb-0 2xl:-mb-4 lg:text-[15px] 2xl:text-[16px]">
+				<div className="grid grid-cols-7 gap-[-4px] lg:w-[387px] xl:w-[500px] lg:h-[300px] 2xl:w-full lg:mb-0 2xl:-mb-4 lg:text-[15px] 2xl:text-[16px]">
 					{days.map((day, index) => {
 						const reservation = bookedDates.find(
 							(res) =>
@@ -411,16 +411,18 @@ const Calendar: React.FC<CalendarProps> = ({
 				</div>
 			</div>
 			{/* Choose the desired time */}
-			<div className="time-table bg-white lg:p-4 lg:pb-6 2xl:p-4 lg:w-[230px] 2xl:w-[280px] rounded shadow flex justify-between">
-				<div className="header text-left mb-0">
-					<span className="lg:text-md 2xl:text-lg font-extrabold text-[#e61e84]">
+			<div className="time-table 2xl:p-4 lg:w-[230px] xl:w-[28rem] lg:gap-x-3 lg:flex lg:justify-between pt-7 md:pt-10 pl-6 lg:pl-36 lg:pt-4 lg:text-lg text-sm md:pl-14 xl:ml-[10rem]">
+				<div className="header text-left mb-4">
+					<span className="lg:text-md 2xl:text-lg font-extrabold text-[#e61e84] pr-4">
 						From:
 					</span>
 					<select
-						value={format(selectedTime, "hh:mm aa")}
+						value={selectedTime ? format(selectedTime, "hh:mm aa") : ""}
 						onChange={handleTimeChange}
 						className="lg:px-1 lg:py-1 2xl:px-3 2xl:py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 lg:text-[14px] 2xl:text-[16px]"
 					>
+						<option value="">-- Select Time --</option>{" "}
+						{/* Default empty option */}
 						{generateTimeOptions().map((time) => (
 							<option key={time} value={time}>
 								{time}
@@ -429,14 +431,16 @@ const Calendar: React.FC<CalendarProps> = ({
 					</select>
 				</div>
 				<div className="header text-left">
-					<span className="lg:text-md 2xl:text-lg font-extrabold text-[#e61e84]">
+					<span className="lg:text-md 2xl:text-lg font-extrabold text-[#e61e84] pr-9">
 						To:
 					</span>
 					<select
-						value={format(toSelectedTime, "hh:mm aa")}
+						value={toSelectedTime ? format(toSelectedTime, "hh:mm aa") : ""}
 						onChange={handleToTimeChange}
 						className="lg:px-1 lg:py-1 2xl:px-3 2xl:py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 lg:text-[14px] 2xl:text-[16px]"
 					>
+						<option value="">-- Select Time --</option>{" "}
+						{/* Default empty option */}
 						{generateTimeOptions().map((time) => (
 							<option key={time} value={time}>
 								{time}
@@ -445,9 +449,10 @@ const Calendar: React.FC<CalendarProps> = ({
 					</select>
 				</div>
 			</div>
+
 			{/* Time selection table */}
-			<div className="lg:w-[480px] 2xl:w-[600px] p-4 border rounded-lg shadow-lg absolute lg:top-[130px] lg:left-[500px] 2xl:top-[140px] 2xl:left-[468px]">
-				<div className="flex gap-x-10 text-center mb-4">
+			<div className="lg:w-[480px] xl:w-[40rem] 2xl:w-[60rem] border border-[#e61e84] rounded-lg shadow-lg lg:absolute lg:top-[30rem] lg:right-[20rem] text-xs mt-10 lg:mt-4 mx-4 md:mx-14 xl:right-[27rem] 2xl:mt-20 2xl:right-[26rem]">
+				<div className="lg:flex lg:gap-x-10 pl-6 my-2 text-sm ">
 					<div>
 						<p className="lg:text-[14px] 2xl:text-[18px] font-extrabold text-[#e61e84]">
 							Selected Date:{" "}
@@ -475,7 +480,7 @@ const Calendar: React.FC<CalendarProps> = ({
 					</div>
 				</div>
 				{clickedDate && (
-					<div>
+					<div className="p-2">
 						<table className="w-full text-left">
 							<thead>
 								<tr>
@@ -488,7 +493,7 @@ const Calendar: React.FC<CalendarProps> = ({
 											showReservationDetails("Energy", selectedDateState)
 										}
 									>
-										<span className="bg-[#e61e84] text-white lg:p-1 lg:px-2 2xl:p-1 2xl:px-4 hover:bg-[#fe81c2] rounded-full">
+										<span className="bg-[#e61e84] text-white px-2 lg:p-1 lg:px-2 2xl:p-1 2xl:px-4 hover:bg-[#fe81c2] rounded-full">
 											Energy
 										</span>
 									</th>
@@ -498,7 +503,7 @@ const Calendar: React.FC<CalendarProps> = ({
 											showReservationDetails("Focus", selectedDateState)
 										}
 									>
-										<span className="bg-[#48cae4] text-white lg:p-1 lg:px-2 2xl:p-1 2xl:px-4 hover:bg-[#90e0ef] rounded-full">
+										<span className="bg-[#48cae4] text-white px-2 lg:p-1 lg:px-2 2xl:p-1 2xl:px-4 hover:bg-[#90e0ef] rounded-full">
 											Focus
 										</span>
 									</th>
@@ -508,7 +513,7 @@ const Calendar: React.FC<CalendarProps> = ({
 											showReservationDetails("Lecture", selectedDateState)
 										}
 									>
-										<span className="bg-[#ffdc2e] text-white lg:p-1 lg:px-2 2xl:p-1 2xl:px-4 hover:bg-[#ffe761] rounded-full">
+										<span className="bg-[#ffdc2e] text-white px-2 lg:p-1 lg:px-2 2xl:p-1 2xl:px-4 hover:bg-[#ffe761] rounded-full">
 											Lecture
 										</span>
 									</th>
@@ -649,11 +654,11 @@ const Calendar: React.FC<CalendarProps> = ({
 			</div>
 			{reservationDetails.length > 0 && (
 				<div className="reservation-details-container">
-					<div className="reservation-details absolute lg:-top-[45px] lg:left-[780px] 2xl:-top-[75px] 2xl:left-[790px] 2xl:w-[290px] bg-white border rounded-lg shadow-lg p-2 pl-4 lg:w-[200px]">
-						<h3 className="lg:text-[15px] 2xl:text-lg font-bold mb-1 text-[#e61e84]">
+					<div className="reservation-details lg:absolute lg:top-[30rem] lg:left-[8rem] xl:left-[18rem] 2xl:left-[16rem] 2xl:top-[34rem] bg-white border rounded-lg shadow-lg p-2 pl-4 lg:w-[22rem] xl:w-[28rem] 2xl:w-[35rem] mx-4 md:mx-14 md:mt-4">
+						<h3 className="lg:text-[15px] 2xl:text-lg font-bold mb-1 text-[#e61e84] text-sm lg:text-lg">
 							Reservation Details
 						</h3>
-						<div className="lg:h-[114px] 2xl:h-[136px] overflow-y-auto">
+						<div className="lg:h-[114px] 2xl:h-[136px] overflow-y-auto text-xs lg:text-sm">
 							<ul>
 								{reservationDetails.map((detail, index) => (
 									<li
