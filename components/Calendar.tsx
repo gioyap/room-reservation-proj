@@ -158,24 +158,24 @@ const Calendar: React.FC<CalendarProps> = ({
 	};
 
 	// Condition color indicator
-	const getBookingStatusColor = (date: Date) => {
-		const reservations = bookedDates.filter(
-			(res) => new Date(res.fromDate).toDateString() === date.toDateString()
-		);
+	// const getBookingStatusColor = (date: Date) => {
+	// 	const reservations = bookedDates.filter(
+	// 		(res) => new Date(res.fromDate).toDateString() === date.toDateString()
+	// 	);
 
-		const hasAccepted = reservations.some((res) => res.status === "Accepted");
-		const hasPending = reservations.some((res) => res.status === "Pending");
+	// 	const hasAccepted = reservations.some((res) => res.status === "Accepted");
+	// 	const hasPending = reservations.some((res) => res.status === "Pending");
 
-		if (hasAccepted && hasPending) {
-			// If both "Accepted" and "Pending" reservations exist
-			return "bg-[#3fa8ee]"; // Apply both colors
-		} else if (hasAccepted) {
-			return "bg-green-500";
-		} else if (hasPending) {
-			return "bg-[#ffca1a]";
-		}
-		return ""; // Default color if not booked
-	};
+	// 	if (hasAccepted && hasPending) {
+	// 		// If both "Accepted" and "Pending" reservations exist
+	// 		return "bg-[#3fa8ee]"; // Apply both colors
+	// 	} else if (hasAccepted) {
+	// 		return "bg-green-500";
+	// 	} else if (hasPending) {
+	// 		return "bg-[#ffca1a]";
+	// 	}
+	// 	return ""; // Default color if not booked
+	// };
 
 	// Check if a date is fully booked
 	const isFullyBooked = (date: Date) => {
@@ -243,10 +243,15 @@ const Calendar: React.FC<CalendarProps> = ({
 		} else {
 			className += isClickable ? "selectable-day cursor-pointer " : "";
 			className += isSelected ? "text-[#e61e84] font-extrabold " : "";
-			className += isFullyBookedDay
-				? "text-red-500 font-extrabold bg-red-100 rounded-lg "
-				: "";
-			className += isBooked && !isFullyBookedDay ? "booked-day relative " : "";
+
+			if (isFullyBookedDay) {
+				className += "text-red-500 font-extrabold bg-red-100 rounded-lg ";
+			} else if (!isFullyBookedDay && isBooked) {
+				className += "booked-day relative ";
+			} else if (!isFullyBookedDay) {
+				className += "text-green-500 bg-green-100 font-bold rounded-lg "; // Apply green background and text if not fully booked
+			}
+
 			className +=
 				day.getMonth() !== selectedDate.getMonth() ? "text-gray-400" : "";
 
@@ -313,15 +318,18 @@ const Calendar: React.FC<CalendarProps> = ({
 	};
 
 	// Function to generate time options in standard format (AM/PM)
-	const generateTimeOptions = (): string[] => {
-		const options: string[] = [];
+	const generateTimeOptions = (): { value: string; label: string }[] => {
+		const options: { value: string; label: string }[] = [
+			{ value: "", label: "--Select Time--" },
+		];
 		for (let i = 8; i <= 18; i++) {
 			for (let j = 0; j < 60; j += 60) {
 				const hour = i > 12 ? i - 12 : i;
 				const ampm = i >= 12 ? "PM" : "AM";
 				const hourString = hour.toString().padStart(2, "0");
 				const minuteString = j.toString().padStart(2, "0");
-				options.push(`${hourString}:${minuteString} ${ampm}`);
+				const timeString = `${hourString}:${minuteString} ${ampm}`;
+				options.push({ value: timeString, label: timeString });
 			}
 		}
 		return options;
@@ -330,7 +338,7 @@ const Calendar: React.FC<CalendarProps> = ({
 	return (
 		<div className="gap-x-3 items-start">
 			{/* this is responsible for calendar */}
-			<div className="calendar lg:p-2 2xl:p-6 rounded mr-2 2xl:ml-0 text-sm px-6 md:px-20 lg:ml-[8rem] xl:ml-[18rem]">
+			<div className="calendar lg:p-2 2xl:p-6 rounded mr-2 text-sm px-6 md:px-20 lg:ml-[8rem] xl:ml-[18rem] 2xl:ml-[10rem] 2xl:w-full">
 				<div className="header text-center 2xl:mb-4 flex justify-between items-center pb-4">
 					<button
 						onClick={() => handleMonthChange(-1)}
@@ -400,9 +408,7 @@ const Calendar: React.FC<CalendarProps> = ({
 								{isDateBooked(day) &&
 									day.getMonth() === selectedDate.getMonth() && (
 										<span
-											className={`absolute lg:w-1.5 lg:h-1.5 2xl:w-2 2xl:h-2 rounded-full top-2 lg:right-6 ${getBookingStatusColor(
-												day
-											)}`}
+											className={`absolute lg:w-1.5 lg:h-1.5 2xl:w-2 2xl:h-2 rounded-full top-2 lg:right-6 ${day}`}
 										></span>
 									)}
 							</div>
@@ -417,15 +423,17 @@ const Calendar: React.FC<CalendarProps> = ({
 						From:
 					</span>
 					<select
-						value={selectedTime ? format(selectedTime, "hh:mm aa") : ""}
+						value={
+							selectedTime && !isNaN(selectedTime.getTime())
+								? format(selectedTime, "hh:mm aa")
+								: ""
+						}
 						onChange={handleTimeChange}
 						className="lg:px-1 lg:py-1 2xl:px-3 2xl:py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 lg:text-[14px] 2xl:text-[16px]"
 					>
-						<option value="">-- Select Time --</option>{" "}
-						{/* Default empty option */}
-						{generateTimeOptions().map((time) => (
-							<option key={time} value={time}>
-								{time}
+						{generateTimeOptions().map(({ value, label }) => (
+							<option key={value} value={value}>
+								{label}
 							</option>
 						))}
 					</select>
@@ -435,15 +443,17 @@ const Calendar: React.FC<CalendarProps> = ({
 						To:
 					</span>
 					<select
-						value={toSelectedTime ? format(toSelectedTime, "hh:mm aa") : ""}
+						value={
+							toSelectedTime && !isNaN(toSelectedTime.getTime())
+								? format(toSelectedTime, "hh:mm aa")
+								: ""
+						}
 						onChange={handleToTimeChange}
 						className="lg:px-1 lg:py-1 2xl:px-3 2xl:py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 lg:text-[14px] 2xl:text-[16px]"
 					>
-						<option value="">-- Select Time --</option>{" "}
-						{/* Default empty option */}
-						{generateTimeOptions().map((time) => (
-							<option key={time} value={time}>
-								{time}
+						{generateTimeOptions().map(({ value, label }) => (
+							<option key={value} value={value}>
+								{label}
 							</option>
 						))}
 					</select>
@@ -451,7 +461,7 @@ const Calendar: React.FC<CalendarProps> = ({
 			</div>
 
 			{/* Time selection table */}
-			<div className="lg:w-[480px] xl:w-[40rem] 2xl:w-[60rem] border border-[#e61e84] rounded-lg shadow-lg lg:absolute lg:top-[30rem] lg:right-[20rem] text-xs mt-10 lg:mt-4 mx-4 md:mx-14 xl:right-[27rem] 2xl:mt-20 2xl:right-[26rem]">
+			<div className="lg:w-[480px] xl:w-[40rem] 2xl:w-[60rem] border border-[#e61e84] rounded-lg shadow-lg lg:absolute lg:top-[30rem] lg:right-[20rem] text-xs mt-10 lg:mt-4 mx-4 md:mx-14 xl:right-[27rem] 2xl:mt-36 2xl:right-[26rem]">
 				<div className="lg:flex lg:gap-x-10 pl-6 my-2 text-sm ">
 					<div>
 						<p className="lg:text-[14px] 2xl:text-[18px] font-extrabold text-[#e61e84]">
@@ -515,6 +525,16 @@ const Calendar: React.FC<CalendarProps> = ({
 									>
 										<span className="bg-[#ffdc2e] text-white px-2 lg:p-1 lg:px-2 2xl:p-1 2xl:px-4 hover:bg-[#ffe761] rounded-full">
 											Lecture
+										</span>
+									</th>
+									<th
+										className="p-2 border-b lg:text-[13px] 2xl:text-[16px] lg:pl-4 2xl:pl-2 cursor-pointer text-center"
+										onClick={() =>
+											showReservationDetails("Zoom", selectedDateState)
+										}
+									>
+										<span className="bg-[#2eff2e] text-white px-2 lg:p-1 lg:px-2 2xl:p-1 2xl:px-4 hover:bg-[#a8ff61] rounded-full">
+											Zoom
 										</span>
 									</th>
 								</tr>
@@ -609,6 +629,7 @@ const Calendar: React.FC<CalendarProps> = ({
 									const energyAvailability = isAvailable("Energy", startTime);
 									const focusAvailability = isAvailable("Focus", startTime);
 									const lectureAvailability = isAvailable("Lecture", startTime);
+									const zoomAvailability = isAvailable("Zoom", startTime);
 
 									return (
 										<tr key={i}>
@@ -625,6 +646,9 @@ const Calendar: React.FC<CalendarProps> = ({
 													energyAvailability,
 													startTime
 												)} ${getDayClassName(startTime)}`}
+												onClick={() =>
+													showReservationDetails("Energy", selectedDateState)
+												}
 											>
 												{energyAvailability}
 											</td>
@@ -633,6 +657,9 @@ const Calendar: React.FC<CalendarProps> = ({
 													focusAvailability,
 													startTime
 												)} ${getDayClassName(startTime)}`}
+												onClick={() =>
+													showReservationDetails("Focus", selectedDateState)
+												}
 											>
 												{focusAvailability}
 											</td>
@@ -641,8 +668,22 @@ const Calendar: React.FC<CalendarProps> = ({
 													lectureAvailability,
 													startTime
 												)} ${getDayClassName(startTime)}`}
+												onClick={() =>
+													showReservationDetails("Lecture", selectedDateState)
+												}
 											>
 												{lectureAvailability}
+											</td>
+											<td
+												className={`lg:p-1.5 2xl:p-2 border-b cursor-default whitespace-nowrap lg:text-[13px] 2xl:text-[14px] lg:pl-4 font-bold text-center ${getAvailabilityClass(
+													zoomAvailability,
+													startTime
+												)} ${getDayClassName(startTime)}`}
+												onClick={() =>
+													showReservationDetails("Zoom", selectedDateState)
+												}
+											>
+												{zoomAvailability}
 											</td>
 										</tr>
 									);
@@ -653,12 +694,12 @@ const Calendar: React.FC<CalendarProps> = ({
 				)}
 			</div>
 			{reservationDetails.length > 0 && (
-				<div className="reservation-details-container">
-					<div className="reservation-details lg:absolute lg:top-[30rem] lg:left-[8rem] xl:left-[18rem] 2xl:left-[16rem] 2xl:top-[34rem] bg-white border rounded-lg shadow-lg p-2 pl-4 lg:w-[22rem] xl:w-[28rem] 2xl:w-[35rem] mx-4 md:mx-14 md:mt-4">
+				<div className="reservation-details-container mt-6 lg:mt-0">
+					<div className="reservation-details lg:absolute lg:top-[30rem] lg:left-[8rem] xl:left-[18rem] 2xl:left-[16rem] 2xl:top-[38rem] bg-white border rounded-lg shadow-lg p-2 pl-4 lg:w-[22rem] xl:w-[28rem] 2xl:w-[35rem] mx-4 md:mx-14 md:mt-4">
 						<h3 className="lg:text-[15px] 2xl:text-lg font-bold mb-1 text-[#e61e84] text-sm lg:text-lg">
 							Reservation Details
 						</h3>
-						<div className="lg:h-[114px] 2xl:h-[136px] overflow-y-auto text-xs lg:text-sm">
+						<div className=" h-[6rem] lg:h-[114px] 2xl:h-[126px] overflow-y-auto text-xs lg:text-sm">
 							<ul>
 								{reservationDetails.map((detail, index) => (
 									<li

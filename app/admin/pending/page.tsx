@@ -37,10 +37,15 @@ const PendingPage = () => {
 
 	useEffect(() => {
 		fetchBookedDates().then((data) => {
-			setReservations(data);
+			// Sort reservations by 'fromDate' or 'createdAt' in descending order
+			const sortedReservations = data.sort(
+				(a: Reservation, b: Reservation) =>
+					new Date(b.fromDate).getTime() - new Date(a.fromDate).getTime()
+			);
+			setReservations(sortedReservations); // Set the sorted reservations
+			setLoading(false); // Ensure loading is set to false after fetching
 		});
 	}, []);
-
 	// Fetch booked dates from the API
 	const fetchBookedDates = async () => {
 		try {

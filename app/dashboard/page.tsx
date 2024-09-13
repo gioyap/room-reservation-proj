@@ -6,7 +6,12 @@ import "react-datepicker/dist/react-datepicker.css";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import SidebarClient from "../../components/SidebarClient";
-const companies = ["Flawless", "MTSI", "FINA", "Beauty and Butter"];
+const companies = [
+	"Flawless",
+	"Mixexpert Trading Services Incorporated",
+	"FINA",
+	"Beauty and Butter",
+];
 import { Reservation } from "../../types/type";
 import ConfirmationModal from "../../components/ConfirmationModal";
 
@@ -18,7 +23,7 @@ const departments = [
 	"Procurement",
 	"MARTD",
 	"HR",
-	"CMRT",
+	"CRMT",
 	"Sales",
 	"Operations",
 	"Audit",
@@ -69,6 +74,40 @@ const Dashboard = () => {
 		e: React.ChangeEvent<HTMLInputElement>
 	) => {
 		setShowDescription(e.target.checked);
+	};
+
+	const checkAvailability = async (
+		fromDateTime: Date,
+		toDateTime: Date,
+		title: string
+	) => {
+		try {
+			const response = await fetch(`/api/reservationDB`);
+
+			if (!response.ok) {
+				throw new Error("Failed to fetch reservations");
+			}
+
+			const data = await response.json();
+			const reservations = data.reservations || [];
+
+			// Check if there is any reservation that overlaps with the desired time and title
+			const isAvailable = !reservations.some(
+				(reservation: any) =>
+					reservation.title === title &&
+					new Date(reservation.fromDate) < toDateTime &&
+					new Date(reservation.toDate) > fromDateTime
+			);
+
+			return isAvailable;
+		} catch (error) {
+			if (error instanceof Error) {
+				toast.error("Error checking availability: " + error.message);
+			} else {
+				toast.error("An unknown error occurred");
+			}
+			return false;
+		}
 	};
 
 	const handleContinue = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -134,6 +173,19 @@ const Dashboard = () => {
 		) {
 			toast.error(
 				"You cannot reserve in the past. Please select a future time."
+			);
+			return;
+		}
+
+		// Check for room availability
+		const isAvailable = await checkAvailability(
+			combinedFromDateTime,
+			combinedToDateTime,
+			title
+		);
+		if (!isAvailable) {
+			toast.error(
+				"This room is fully booked for the selected time. Please choose another time or room."
 			);
 			return;
 		}
@@ -350,6 +402,16 @@ const Dashboard = () => {
 									/>
 									Lecture
 								</label>
+								<label className="text-[#e61e84] lg:text-[16px] 2xl:text-[15px]">
+									<input
+										type="radio"
+										value="Zoom"
+										checked={title === "Zoom"}
+										onChange={handletitleChange}
+										className="mr-1"
+									/>
+									Zoom
+								</label>
 							</div>
 						</div>
 						<div>
@@ -390,7 +452,7 @@ const Dashboard = () => {
 					</div>
 				</div>
 				<div className="col-span-1 ">
-					<div className="lg:pb-5 2xl:pb-0 2xl:ml-0">
+					<div className="lg:pb-5 2xl:pb-0 2xl:ml-0 2xl:flex 2xl:justify-end">
 						<span className=" text-2xl justify-center flex lg:text-3xl text-[#e61e84] 2xl:text-[35px] mt-4 font-sans tracking-wide font-extrabold">
 							Select Reservation Date
 						</span>
@@ -410,7 +472,7 @@ const Dashboard = () => {
 				<form onSubmit={handleContinue}>
 					<button
 						type="submit"
-						className="lg:absolute lg:top-[51rem] lg:right-[23rem] xl:right-[29rem] 2xl:top-[57rem] 2xl:right-[42rem] bg-[#e61e84] lg:mt-0 2xl:mt-2 hover:bg-[#3fa8ee] 2xl:text-[18px] font-extrabold text-white rounded text-[12px] w-auto p-2 uppercase ml-6 mb-10 md:ml-14"
+						className="lg:absolute lg:top-[51rem] lg:right-[23rem] xl:right-[29rem] 2xl:top-[60rem] 2xl:right-[42rem] bg-[#e61e84] lg:mt-0 2xl:mt-2 hover:bg-[#3fa8ee] 2xl:text-[18px] font-extrabold text-white rounded text-[12px] w-auto p-2 uppercase ml-6 mb-10 md:ml-14"
 					>
 						Submit
 					</button>
