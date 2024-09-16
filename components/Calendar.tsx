@@ -248,8 +248,6 @@ const Calendar: React.FC<CalendarProps> = ({
 				className += "text-red-500 font-extrabold bg-red-100 rounded-lg ";
 			} else if (!isFullyBookedDay && isBooked) {
 				className += "booked-day relative ";
-			} else if (!isFullyBookedDay) {
-				className += "text-green-500 bg-green-100 font-bold rounded-lg "; // Apply green background and text if not fully booked
 			}
 
 			className +=
@@ -634,7 +632,7 @@ const Calendar: React.FC<CalendarProps> = ({
 									return (
 										<tr key={i}>
 											<td
-												className={`2xl:p-2 border-b text-black flex font-normal hover:text-black cursor-default whitespace-nowrap lg:text-[13px] 2xl:text-[14px] lg:p-1.5 ${getDayClassName(
+												className={`2xl:p-2 border-b text-black flex font-normal hover:text-black whitespace-nowrap lg:text-[13px] 2xl:text-[14px] lg:p-1.5 ${getDayClassName(
 													startTime
 												)}`}
 											>
@@ -642,7 +640,7 @@ const Calendar: React.FC<CalendarProps> = ({
 												{format(endTime, "h:mm aa")}
 											</td>
 											<td
-												className={`lg:p-1.5 2xl:p-2 border-b cursor-default whitespace-nowrap lg:text-[13px] 2xl:text-[14px] lg:pl-4 font-bold text-center ${getAvailabilityClass(
+												className={`lg:p-1.5 2xl:p-2 border-b whitespace-nowrap lg:text-[13px] 2xl:text-[14px] lg:pl-4 font-bold text-center ${getAvailabilityClass(
 													energyAvailability,
 													startTime
 												)} ${getDayClassName(startTime)}`}
@@ -653,7 +651,7 @@ const Calendar: React.FC<CalendarProps> = ({
 												{energyAvailability}
 											</td>
 											<td
-												className={`lg:p-1.5 2xl:p-2 border-b cursor-default whitespace-nowrap lg:text-[13px] 2xl:text-[14px] lg:pl-4 font-bold text-center ${getAvailabilityClass(
+												className={`lg:p-1.5 2xl:p-2 border-b whitespace-nowrap lg:text-[13px] 2xl:text-[14px] lg:pl-4 font-bold text-center ${getAvailabilityClass(
 													focusAvailability,
 													startTime
 												)} ${getDayClassName(startTime)}`}
@@ -664,7 +662,7 @@ const Calendar: React.FC<CalendarProps> = ({
 												{focusAvailability}
 											</td>
 											<td
-												className={`lg:p-1.5 2xl:p-2 border-b cursor-default whitespace-nowrap lg:text-[13px] 2xl:text-[14px] lg:pl-4 font-bold text-center ${getAvailabilityClass(
+												className={`lg:p-1.5 2xl:p-2 border-b whitespace-nowrap lg:text-[13px] 2xl:text-[14px] lg:pl-4 font-bold text-center ${getAvailabilityClass(
 													lectureAvailability,
 													startTime
 												)} ${getDayClassName(startTime)}`}
@@ -675,10 +673,10 @@ const Calendar: React.FC<CalendarProps> = ({
 												{lectureAvailability}
 											</td>
 											<td
-												className={`lg:p-1.5 2xl:p-2 border-b cursor-default whitespace-nowrap lg:text-[13px] 2xl:text-[14px] lg:pl-4 font-bold text-center ${getAvailabilityClass(
+												className={`lg:p-1.5 2xl:p-2 border-b cursor-pointer whitespace-nowrap lg:text-[13px] 2xl:text-[14px] lg:pl-4 font-extrabold text-center ${getAvailabilityClass(
 													zoomAvailability,
 													startTime
-												)} ${getDayClassName(startTime)}`}
+												)} ${startTime}`}
 												onClick={() =>
 													showReservationDetails("Zoom", selectedDateState)
 												}
