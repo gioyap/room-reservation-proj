@@ -44,6 +44,7 @@ const Dashboard = () => {
 	const [showDescription, setShowDescription] = useState(false);
 	const [reservations, setReservations] = useState<Reservation[]>([]);
 	const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setEmail(e.target.value);
@@ -193,6 +194,9 @@ const Dashboard = () => {
 	};
 
 	const handleConfirmReservation = async () => {
+		if (isSubmitting) return; // Prevent double clicks
+		setIsSubmitting(true); // Disable the button and show loading state
+
 		const combinedFromDateTime = new Date(
 			selectedDate.getFullYear(),
 			selectedDate.getMonth(),
@@ -251,7 +255,7 @@ const Dashboard = () => {
 				toast.success("Reservation saved successfully!");
 
 				setTimeout(() => {
-					window.location.reload();
+					window.location.reload(); // Reload the page after 5 seconds
 				}, 5000);
 			} else {
 				throw new Error("Failed to save reservation: " + response.statusText);
@@ -262,10 +266,14 @@ const Dashboard = () => {
 			} else {
 				toast.error("An unknown error occurred");
 			}
+		} finally {
+			// Re-enable button in all cases (success or failure)
+			setIsSubmitting(false);
 		}
 
 		console.log("Reservation Details:", reservationData);
 	};
+
 	const handleCancelReservation = () => {
 		// Close confirmation modal
 		setShowConfirmationModal(false);
@@ -482,6 +490,7 @@ const Dashboard = () => {
 				onConfirm={handleConfirmReservation}
 				title="Confirm Reservation"
 				message="Are you sure you want to confirm this reservation?"
+				isSubmitting={isSubmitting}
 			/>
 		</div>
 	);

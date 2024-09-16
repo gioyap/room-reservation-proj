@@ -7,6 +7,7 @@ interface ConfirmationModalProps {
 	onConfirm: () => void;
 	title: string;
 	message: string;
+	isSubmitting?: boolean; // Optional isSubmitting prop
 }
 
 const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
@@ -15,6 +16,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
 	onConfirm,
 	title,
 	message,
+	isSubmitting = false, // Default to false
 }) => {
 	return (
 		<Modal
@@ -38,9 +40,14 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
 					</button>
 					<button
 						onClick={onConfirm}
-						className="2xl:px-8 px-4 py-2 bg-[#e81e83] text-white rounded hover:bg-[#b92d73]"
+						className={`2xl:px-8 px-4 py-2 ${
+							isSubmitting
+								? "bg-gray-400 cursor-not-allowed"
+								: "bg-[#e81e83] hover:bg-[#b92d73]"
+						} text-white rounded`}
+						disabled={isSubmitting}
 					>
-						Yes
+						{isSubmitting ? "Loading..." : "Yes"}
 					</button>
 				</div>
 			</div>
