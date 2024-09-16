@@ -343,23 +343,23 @@ const PendingPage = () => {
 		<div className="flex">
 			<ToastContainer autoClose={5000} />
 			<Sidebar /> {/* Use the Sidebar component */}
-			<div className="flex-1 lg:p-4 lg:pl-6 lg:pt-10 2xl:p-8 bg-gray-100 min-h-screen">
-				<div className=" lg:pb-6 2xl:pb-8">
-					<h1 className=" lg:text-4xl 2xl:text-5xl font-extrabold text-[#e81e83]">
+			<div className="flex-1 lg:p-4 lg:pl-6 lg:pt-10 2xl:p-8 bg-gray-100 min-h-screen mt-20 lg:mt-0">
+				<div className="pb-4 lg:pb-6 2xl:pb-8">
+					<h1 className=" text-[1.5rem] md:text-[2rem] text-center lg:text-start lg:text-4xl 2xl:text-5xl font-extrabold text-[#e81e83]">
 						Pending Records
 					</h1>
 				</div>
-				<div className="w-full max-w-8xl mx-auto bg-white shadow-md rounded-lg overflow-hidden">
-					<div className="flex justify-end lg:p-0 2xl:p-3 items-center">
+				<div className="p-2 lg:p-0 w-[20rem] md:w-[40rem] lg:w-full max-w-8xl mx-auto bg-white shadow-md rounded-lg overflow-hidden">
+					<div className="flex justify-end p-1 lg:p-0 2xl:p-3 items-center text-xs xl:text-lg">
 						<label
 							htmlFor="perPage"
-							className="mr-2 text-gray-600 lg:text-[14px] 2xl:text-[16px]"
+							className="mr-2 text-gray-600 text-xs lg:text-[14px] 2xl:text-[16px] pl-2"
 						>
 							Per Page:
 						</label>
 						<select
 							id="perPage"
-							className="bg-white border border-gray-300 rounded-md lg:text-[14px] 2xl:text-[16px]"
+							className="bg-white border border-gray-300 rounded-md text-xs lg:text-[14px] 2xl:text-[16px] pl-2"
 							value={reservationsPerPage}
 							onChange={(e) => setReservationsPerPage(parseInt(e.target.value))}
 						>
@@ -381,7 +381,7 @@ const PendingPage = () => {
 								<thead className="bg-[#e81e83]">
 									<tr>
 										<th
-											className="sticky top-0 lg:pl-4 2xl:pl-8 lg:py-2 text-left lg:text-[12px] 2xl:text-[14px] font-extrabold text-white uppercase tracking-wider cursor-pointer whitespace-nowrap lg:pr-4 2xl:pr-0 "
+											className="sticky top-0 px-2 lg:px-0 lg:pl-4 2xl:pl-8 lg:py-2 text-left text-sm lg:text-[12px] 2xl:text-[14px] font-extrabold text-white uppercase tracking-wider cursor-pointer whitespace-nowrap lg:pr-4 2xl:pr-0 "
 											onClick={() => sortTable("company")}
 										>
 											Company{" "}
@@ -390,7 +390,7 @@ const PendingPage = () => {
 											)}
 										</th>
 										<th
-											className="sticky top-0 lg:py-2 text-left lg:text-[12px] 2xl:text-[14px] font-extrabold text-white uppercase tracking-wider cursor-pointer whitespace-nowrap lg:pr-4 2xl:pr-0 "
+											className="sticky top-0 px-2 lg:px-0 lg:py-2 text-left text-sm lg:text-[12px] 2xl:text-[14px] font-extrabold text-white uppercase tracking-wider cursor-pointer whitespace-nowrap lg:pr-4 2xl:pr-0 "
 											onClick={() => sortTable("department")}
 										>
 											Department{" "}
@@ -399,7 +399,7 @@ const PendingPage = () => {
 											)}
 										</th>
 										<th
-											className="sticky top-0 lg:py-2 text-left lg:text-[12px] 2xl:text-[14px] font-extrabold text-white uppercase tracking-wider cursor-pointer  "
+											className="sticky top-0 px-2 lg:px-0 lg:py-2 text-left text-sm lg:text-[12px] 2xl:text-[14px] font-extrabold text-white uppercase tracking-wider cursor-pointer  "
 											onClick={() => sortTable("name")}
 										>
 											Name{" "}
@@ -408,7 +408,7 @@ const PendingPage = () => {
 											)}
 										</th>
 										<th
-											className="sticky top-0 lg:py-2 text-left lg:text-[12px] 2xl:text-[14px] font-extrabold text-white uppercase tracking-wider cursor-pointer  "
+											className="sticky top-0 px-2 lg:px-0 lg:py-2 text-left text-sm lg:text-[12px] 2xl:text-[14px] font-extrabold text-white uppercase tracking-wider cursor-pointer  "
 											onClick={() => sortTable("title")}
 										>
 											Room{" "}
@@ -417,7 +417,7 @@ const PendingPage = () => {
 											)}
 										</th>
 										<th
-											className="sticky top-0 lg:pl-12 2xl:pl-12 lg:py-2 text-left lg:text-[12px] 2xl:text-[14px] font-extrabold text-white uppercase tracking-wider cursor-pointer  "
+											className="sticky top-0 px-2 lg:px-0 lg:pl-12 2xl:pl-12 lg:py-2 text-left text-sm lg:text-[12px] 2xl:text-[14px] font-extrabold text-white uppercase tracking-wider cursor-pointer  "
 											onClick={() => sortTable("fromDate")}
 										>
 											From{" "}
@@ -425,16 +425,16 @@ const PendingPage = () => {
 												<span>{sortOrder === "asc" ? "▲" : "▼"}</span>
 											)}
 										</th>
-										<th className="sticky top-0 lg:pl-5 2xl:pl-16 lg:py-2 text-left lg:text-[12px] 2xl:text-[14px] font-extrabold text-white uppercase tracking-wider ">
+										<th className="sticky top-0 px-2 lg:px-0 lg:pl-5 2xl:pl-16 lg:py-2 text-left text-sm lg:text-[12px] 2xl:text-[14px] font-extrabold text-white uppercase tracking-wider ">
 											To{" "}
 										</th>
-										<th className="sticky top-0 lg:py-2 text-left lg:text-[12px] 2xl:text-[14px] font-extrabold text-white uppercase tracking-wider ">
+										<th className="sticky top-0 px-2 lg:px-0 lg:py-2 text-left text-sm lg:text-[12px] 2xl:text-[14px] font-extrabold text-white uppercase tracking-wider ">
 											Status
 										</th>
-										<th className="sticky top-0 lg:pl-10 2xl:pl-16 lg:py-2 text-left lg:text-[12px] 2xl:text-[14px] font-extrabold text-white uppercase tracking-wider ">
+										<th className="sticky top-0 px-2 lg:px-0 lg:pl-10 2xl:pl-16 lg:py-2 text-left text-sm lg:text-[12px] 2xl:text-[14px] font-extrabold text-white uppercase tracking-wider ">
 											Action
 										</th>
-										<th className="sticky top-0 lg:py-2 lg:pr-4 2xl:pr-0 text-left lg:text-[12px] 2xl:text-[14px] font-extrabold text-white uppercase tracking-wider ">
+										<th className="sticky top-0 px-2 lg:px-0 lg:py-2 lg:pr-4 2xl:pr-0 text-left text-sm lg:text-[12px] 2xl:text-[14px] font-extrabold text-white uppercase tracking-wider ">
 											Description
 										</th>
 									</tr>
@@ -442,48 +442,48 @@ const PendingPage = () => {
 								<tbody className="bg-white divide-y divide-gray-200">
 									{currentReservations.map((reservation) => (
 										<tr key={reservation._id}>
-											<td className=" lg:pl-4 2xl:pl-8 lg:py-2 lg:w-[240px] 2xl:w-[240px] whitespace-nowrap lg:px-4 2xl:px-0 lg:text-[14px] 2xl:text-[16px]">
+											<td className=" lg:pl-4 2xl:pl-8 lg:py-2 lg:w-[240px] 2xl:w-[240px] whitespace-nowrap lg:px-4 2xl:px-0 text-xs lg:text-[14px] 2xl:text-[16px] pl-2">
 												{reservation.company}
 											</td>
-											<td className=" lg:py-2 lg:w-[250px] 2xl:w-[180px] lg:text-[14px] lg:pr-4 2xl:px-0 whitespace-nowrap 2xl:text-[16px] ">
+											<td className=" lg:py-2 lg:w-[250px] 2xl:w-[180px] lg:text-[14px] lg:pr-4 2xl:px-0 whitespace-nowrap text-xs 2xl:text-[16px] pl-2 ">
 												{reservation.department}
 											</td>
-											<td className=" lg:py-2 lg:w-[250px] 2xl:w-[220px] 2xl:pr-4 lg:pr-4 2xl:px-0 whitespace-nowrap lg:text-[14px] 2xl:text-[16px] ">
+											<td className=" lg:py-2 lg:w-[250px] 2xl:w-[220px] 2xl:pr-4 lg:pr-4 2xl:px-0 whitespace-nowrap text-xs lg:text-[14px] 2xl:text-[16px] pl-2 ">
 												{reservation.name}
 											</td>
-											<td className=" lg:py-2 lg:text-[14px] lg:w-[120px] lg:pr-4 2xl:px-0 2xl:w-[120px] 2xl:text-[16px] ">
+											<td className=" lg:py-2 lg:text-[14px] lg:w-[120px] lg:pr-4 2xl:px-0 2xl:w-[120px] text-xs 2xl:text-[16px] pl-2 ">
 												{reservation.title}
 											</td>
-											<td className=" lg:py-2 lg:w-[240px] 2xl:w-[120px] lg:pr-4 2xl:px-0 whitespace-nowrap lg:text-[14px] 2xl:text-[16px] ">
+											<td className=" lg:py-2 lg:w-[240px] 2xl:w-[120px] lg:pr-4 2xl:px-0 whitespace-nowrap text-xs lg:text-[14px] 2xl:text-[16px] pl-2 ">
 												{new Date(reservation.fromDate).toLocaleString()}
 											</td>
-											<td className=" lg:py-2 lg:w-[240px] 2xl:w-[180px] lg:pr-4 2xl:px-0 whitespace-nowrap lg:text-[14px] 2xl:text-[16px] 2xl:pl-12">
+											<td className=" lg:py-2 lg:w-[240px] 2xl:w-[180px] lg:pr-4 2xl:px-0 whitespace-nowrap text-xs lg:text-[14px] 2xl:text-[16px] pl-2 2xl:pl-12">
 												{format(
 													new Date(reservation.toDate).toLocaleString(),
 													"hh:mm aa"
 												)}
 											</td>
-											<td className=" lg:py-2 lg:w-[140px] 2xl:w-[120px] lg:pr-6 2xl:px-0 lg:text-[14px] 2xl:text-[16px]">
+											<td className=" lg:py-2 lg:w-[140px] 2xl:w-[120px] lg:pr-6 2xl:px-0 text-xs lg:text-[14px] 2xl:text-[16px] pl-2">
 												{reservation.status === "Accepted" ||
 												reservation.status === "Declined"
 													? reservation.status
 													: "Pending"}
 											</td>
-											<td className=" lg:py-2 whitespace-nowrap lg:text-[14px] 2xl:text-[16px] ">
+											<td className=" lg:py-2 whitespace-nowrap text-xs lg:text-[14px] 2xl:text-[16px] pl-2 ">
 												<button
-													className="bg-green-500 hover:bg-green-700 text-white font-bold lg:py-1 lg:px-2 2xl:py-2 2xl:px-4 rounded mr-2"
+													className="bg-green-500 hover:bg-green-700 text-white font-bold px-1 py-1 lg:px-2 2xl:py-2 2xl:px-4 rounded mr-2"
 													onClick={() => openAcceptModal(reservation)}
 												>
 													Accept
 												</button>
 												<button
-													className="bg-red-500 hover:bg-red-700 text-white font-bold lg:py-1 lg:px-2 2xl:py-2 2xl:px-4 rounded"
+													className="bg-red-500 hover:bg-red-700 text-white font-bold px-1 py-1 lg:px-2 2xl:py-2 2xl:px-4 rounded"
 													onClick={() => openModal(reservation)}
 												>
 													Decline
 												</button>
 											</td>
-											<td className=" lg:py-2 lg:pl-10 2xl:pl-12">
+											<td className=" pl-14 lg:py-2 lg:pl-10 2xl:pl-12">
 												{reservation.description ? (
 													<input type="checkbox" checked={true} readOnly />
 												) : (

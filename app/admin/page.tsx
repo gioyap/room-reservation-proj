@@ -1,117 +1,157 @@
+/* eslint-disable react/no-unescaped-entities */
 "use client";
-import Sidebar from "@/components/Sidebar";
-import React from "react";
-import { toast, ToastContainer } from "react-toastify";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 import "react-toastify/dist/ReactToastify.css";
+import { toast, ToastContainer } from "react-toastify";
 
-const ChangePassword = () => {
-	const [oldPassword, setOldPassword] = React.useState("");
-	const [newPassword, setNewPassword] = React.useState("");
-	const [confirmPassword, setConfirmPassword] = React.useState("");
+const Login = () => {
+	const [loading, setLoading] = useState(false);
+	const router = useRouter();
+	const [error, setError] = useState("");
+	const [rememberMe, setRememberMe] = useState(false);
+	const [user, setUser] = useState({
+		email: "",
+		password: "",
+	});
 
-	const handleChangePassword = async (e: React.FormEvent) => {
-		e.preventDefault();
-
-		if (newPassword !== confirmPassword) {
-			toast.error("Passwords do not match.");
-			return;
+	useEffect(() => {
+		// Check if email and password are saved in localStorage
+		const savedEmail = localStorage.getItem("rememberedEmail");
+		const savedPassword = localStorage.getItem("rememberedPassword");
+		if (savedEmail && savedPassword) {
+			setUser({ email: savedEmail, password: savedPassword });
+			setRememberMe(true);
 		}
+	}, []);
 
+	const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+		const { name, value } = event.target;
+		setUser((prevInfo) => ({ ...prevInfo, [name]: value }));
+	};
+
+	const handleRememberMeChange = (
+		event: React.ChangeEvent<HTMLInputElement>
+	) => {
+		setRememberMe(event.target.checked);
+	};
+
+	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+		e.preventDefault();
+		setError("");
+		setLoading(true);
 		try {
-			const response = await fetch("/api/admin", {
-				method: "POST",
-				headers: {
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({ oldPassword, newPassword }),
+			if (!user.email || !user.password) {
+				toast.error("Please fill out all required fields");
+				setLoading(false);
+				return;
+			}
+
+			const res = await signIn("credentials", {
+				email: user.email,
+				password: user.password,
+				redirect: false,
 			});
 
-			const contentType = response.headers.get("content-type");
-			if (contentType && contentType.includes("application/json")) {
-				const data = await response.json();
-
-				if (!response.ok) {
-					throw new Error(data.message || "Something went wrong");
-				}
-
-				toast.success("Password changed successfully");
-			} else {
-				throw new Error("Unexpected response format");
+			if (res?.error) {
+				console.log(res);
+				setError("error");
+				toast.error("Invalid email or password");
+				setLoading(false);
+				return;
 			}
-		} catch (error: any) {
-			console.error(error);
-			toast.error(error.message || "An unexpected error occurred");
+
+			if (rememberMe) {
+				localStorage.setItem("rememberedEmail", user.email);
+				localStorage.setItem("rememberedPassword", user.password);
+			} else {
+				localStorage.removeItem("rememberedEmail");
+				localStorage.removeItem("rememberedPassword");
+			}
+
+			toast.success("Logged in successfully!");
+			setError("");
+			router.push("/admin/pending");
+		} catch (error) {
+			console.log(error);
+			toast.error("An error occurred during login. Please try again.");
+			setError("");
+		} finally {
+			setLoading(false);
 		}
 	};
 
 	return (
-		<div className="flex justify-center items-center h-full p-4">
+		<div className="flex justify-center items-center min-h-screen bg-slate-50 p-8">
+			<ToastContainer autoClose={3000} />
 			<form
-				onSubmit={handleChangePassword}
-				className="w-[300px] md:w-[400px] bg-slate-300 shadow-md rounded-lg p-6"
+				className="flex flex-col md:flex-row lg:gap-4 2xl:gap-8 bg-white rounded-lg shadow-lg overflow-hidden"
+				onSubmit={handleSubmit}
 			>
-				<h2 className="text-2xl font-bold mb-4 text-[#f93e9e]">
-					Change Password
-				</h2>
-				<div className="mb-4">
-					<label className="block text-gray-700 font-semibold mb-2">
-						Old Password
-					</label>
-					<input
-						type="password"
-						placeholder="Old Password"
-						value={oldPassword}
-						onChange={(e) => setOldPassword(e.target.value)}
-						className="w-full p-2 border border-gray-300 rounded"
-					/>
+				<div className="bg-[#f93e9e] text-white flex flex-col justify-between lg:w-[400px] 2xl:w-[500px]">
+					<div className="lg:p-16 lg:pt-36 2xl:p-24 2xl:pt-40">
+						<h1 className="lg:text-3xl 2xl:text-4xl font-extrabold mb-4 whitespace-nowrap">
+							Welcome Admin
+						</h1>
+						<ul className="list-disc list-inside mb-6">
+							<li>Review and approve new reservations</li>
+							<li>Monitor the reservation records</li>
+						</ul>
+					</div>
 				</div>
-				<div className="mb-4">
-					<label className="block text-gray-700 font-semibold mb-2">
-						New Password
-					</label>
-					<input
-						type="password"
-						placeholder="New Password"
-						value={newPassword}
-						onChange={(e) => setNewPassword(e.target.value)}
-						className="w-full p-2 border border-gray-300 rounded"
-					/>
+
+				<div className="lg:p-8 2xl:p-12 flex flex-col lg:gap-4 2xl:gap-6 lg:w-[400px] 2xl:w-[500px]">
+					<h1 className="lg:text-3xl 2xl:text-4xl font-bold lg:mb-2 2xl:mb-4">
+						Sign In
+					</h1>
+					<div>
+						<h2 className="font-extrabold mb-1">Email</h2>
+						<input
+							type="text"
+							name="email"
+							value={user.email}
+							className="w-full bg-slate-100 lg:p-2 lg:px-4 2xl:p-3 2xl:px-5 rounded-full"
+							placeholder="example@123.com"
+							onChange={handleInputChange}
+						/>
+					</div>
+					<div>
+						<h2 className="font-extrabold mb-1">Password</h2>
+						<input
+							type="password"
+							name="password"
+							className="w-full bg-slate-100 lg:p-2 lg:px-4 2xl:p-3 2xl:px-5 rounded-full"
+							placeholder="**********"
+							value={user.password}
+							onChange={handleInputChange}
+						/>
+					</div>
+					<div className="flex items-center lg:mb-2 2xl:mb-4">
+						<input
+							type="checkbox"
+							checked={rememberMe}
+							onChange={handleRememberMeChange}
+							id="rememberMe"
+							className="mr-2"
+						/>
+						<label htmlFor="rememberMe" className="text-sm">
+							Remember Me
+						</label>
+					</div>
+					<div>
+						<button
+							type="submit"
+							className="w-full lg:py-2 2xl:px-10 2xl:py-3 rounded-full bg-[#f93e9e] text-white font-bold"
+							disabled={loading}
+						>
+							{loading ? "Processing..." : "Sign In"}
+						</button>
+					</div>
 				</div>
-				<div className="mb-4">
-					<label className="block text-gray-700 font-semibold mb-2">
-						Confirm New Password
-					</label>
-					<input
-						type="password"
-						placeholder="Confirm New Password"
-						value={confirmPassword}
-						onChange={(e) => setConfirmPassword(e.target.value)}
-						className="w-full p-2 border border-gray-300 rounded"
-					/>
-				</div>
-				<button
-					type="submit"
-					className="w-full bg-[#f93e9e] hover:bg-[#d83e8c] text-white font-bold py-2 px-4 rounded"
-				>
-					Change Password
-				</button>
 			</form>
-			<ToastContainer />
 		</div>
 	);
 };
 
-const AdminDashboard = () => {
-	return (
-		<div className="flex">
-			<Sidebar />
-			<div className="flex flex-col w-full h-screen p-4">
-				<div className="flex-1 flex justify-center items-center">
-					<ChangePassword />
-				</div>
-			</div>
-		</div>
-	);
-};
-
-export default AdminDashboard;
+export default Login;

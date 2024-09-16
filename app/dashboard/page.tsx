@@ -5,7 +5,6 @@ import Calendar from "../../components/Calendar"; // Import Calendar component
 import "react-datepicker/dist/react-datepicker.css";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import SidebarClient from "../../components/SidebarClient";
 const companies = [
 	"Flawless",
 	"Mixexpert Trading Services Incorporated",
@@ -274,7 +273,6 @@ const Dashboard = () => {
 
 	return (
 		<div className=" pb-10">
-			<SidebarClient />
 			<ToastContainer autoClose={5000} />
 			<div className="flex gap-2 bg-[#e81e83] lg:py-1 22xl:py-2 justify-center">
 				<div>

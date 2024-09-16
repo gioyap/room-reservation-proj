@@ -1,4 +1,3 @@
-/* eslint-disable react/no-unescaped-entities */
 "use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -72,7 +71,7 @@ const Login = () => {
 
 			toast.success("Logged in successfully!");
 			setError("");
-			router.push("/admin");
+			router.push("/admin/pending");
 		} catch (error) {
 			console.log(error);
 			toast.error("An error occurred during login. Please try again.");
@@ -83,51 +82,58 @@ const Login = () => {
 	};
 
 	return (
-		<div className="flex justify-center items-center min-h-screen bg-slate-50 p-8">
+		<div className="flex justify-center items-center min-h-screen bg-slate-100 p-4 sm:p-6 md:p-8 lg:p-10">
 			<ToastContainer autoClose={3000} />
 			<form
-				className="flex flex-col md:flex-row lg:gap-4 2xl:gap-8 bg-white rounded-lg shadow-lg overflow-hidden"
+				className="flex flex-col md:flex-row lg:gap-8 xl:gap-12 bg-white rounded-lg shadow-xl overflow-hidden w-full max-w-3xl"
 				onSubmit={handleSubmit}
 			>
-				<div className="bg-[#f93e9e] text-white flex flex-col justify-between lg:w-[400px] 2xl:w-[500px]">
-					<div className="lg:p-16 lg:pt-36 2xl:p-24 2xl:pt-40">
-						<h1 className="lg:text-3xl 2xl:text-4xl font-extrabold mb-4 whitespace-nowrap">
+				<div className="bg-[#f93e9e] text-white flex flex-col justify-between md:w-1/2 lg:w-1/3 p-6 md:p-8 lg:p-10">
+					<div className="mb-6">
+						<h1 className="text-xl md:text-2xl lg:text-3xl xl:text-4xl font-extrabold mb-4">
 							Welcome Admin
 						</h1>
-						<ul className="list-disc list-inside mb-6">
+						<ul className="list-disc list-inside mb-4 text-sm md:text-base">
 							<li>Review and approve new reservations</li>
 							<li>Monitor the reservation records</li>
 						</ul>
 					</div>
 				</div>
 
-				<div className="lg:p-8 2xl:p-12 flex flex-col lg:gap-4 2xl:gap-6 lg:w-[400px] 2xl:w-[500px]">
-					<h1 className="lg:text-3xl 2xl:text-4xl font-bold lg:mb-2 2xl:mb-4">
+				<div className="flex-1 p-6 md:p-8 lg:p-10">
+					<h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4 xl:mb-10 text-[#f93e9e]">
 						Sign In
 					</h1>
-					<div>
-						<h2 className="font-extrabold mb-1">Email</h2>
+					<div className="mb-4">
+						<label className="block text-sm font-semibold mb-1" htmlFor="email">
+							Email
+						</label>
 						<input
 							type="text"
 							name="email"
 							value={user.email}
-							className="w-full bg-slate-100 lg:p-2 lg:px-4 2xl:p-3 2xl:px-5 rounded-full"
+							className="w-full bg-slate-100 p-2 rounded-full"
 							placeholder="example@123.com"
 							onChange={handleInputChange}
 						/>
 					</div>
-					<div>
-						<h2 className="font-extrabold mb-1">Password</h2>
+					<div className="mb-4">
+						<label
+							className="block text-sm font-semibold mb-1"
+							htmlFor="password"
+						>
+							Password
+						</label>
 						<input
 							type="password"
 							name="password"
-							className="w-full bg-slate-100 lg:p-2 lg:px-4 2xl:p-3 2xl:px-5 rounded-full"
+							className="w-full bg-slate-100 p-2 rounded-full"
 							placeholder="**********"
 							value={user.password}
 							onChange={handleInputChange}
 						/>
 					</div>
-					<div className="flex items-center lg:mb-2 2xl:mb-4">
+					<div className="flex items-center mb-4">
 						<input
 							type="checkbox"
 							checked={rememberMe}
@@ -142,7 +148,7 @@ const Login = () => {
 					<div>
 						<button
 							type="submit"
-							className="w-full lg:py-2 2xl:px-10 2xl:py-3 rounded-full bg-[#f93e9e] text-white font-bold"
+							className="w-full py-2 rounded-full bg-[#f93e9e] text-white font-bold"
 							disabled={loading}
 						>
 							{loading ? "Processing..." : "Sign In"}

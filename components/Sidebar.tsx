@@ -1,41 +1,89 @@
+import React, { useState, useRef, useEffect } from "react";
 import { signOut } from "next-auth/react";
-import React from "react";
+import { FaBars, FaTimes } from "react-icons/fa";
 
 const Sidebar = () => {
+	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+	const sidebarRef = useRef<HTMLDivElement>(null);
+
+	const toggleSidebar = () => {
+		setIsSidebarOpen(!isSidebarOpen);
+	};
+
+	useEffect(() => {
+		const handleClickOutside = (event: MouseEvent) => {
+			if (
+				sidebarRef.current &&
+				!sidebarRef.current.contains(event.target as Node)
+			) {
+				setIsSidebarOpen(false);
+			}
+		};
+
+		if (isSidebarOpen) {
+			document.addEventListener("mousedown", handleClickOutside);
+		} else {
+			document.removeEventListener("mousedown", handleClickOutside);
+		}
+
+		return () => {
+			document.removeEventListener("mousedown", handleClickOutside);
+		};
+	}, [isSidebarOpen]);
+
 	return (
-		<div className="lg:w-[200px] 2xl:w-[250px] bg-[#e81e83] h-screen p-3">
-			<div className="flex flex-col items-center mb-8">
-				{/* Additional buttons for navigation */}
-				<a
-					href="/admin"
-					className="bg-[#f93e9e] hover:bg-[#3fa8ee] text-white rounded text-[12px] xl:text-[14px] w-auto p-3 uppercase font-extrabold shadow-lg mb-4 cursor-pointer"
+		<div className="relative lg:flex lg:flex-col lg:w-[200px] 2xl:w-[250px]">
+			{/* Mobile and Tablet View Hamburger Button */}
+			<div className="lg:hidden fixed top-0 left-0 p-3 z-50">
+				<button
+					onClick={toggleSidebar}
+					className="p-2 text-white bg-[#f93e9e] rounded-full focus:outline-none"
 				>
-					Admin Dashboard
-				</a>
-				<a
-					href="/admin/accepted"
-					className="bg-[#f93e9e] hover:bg-[#3fa8ee] text-white rounded text-[12px] xl:text-[14px] w-auto p-3 uppercase font-extrabold shadow-lg mb-4 cursor-pointer"
-				>
-					Accepted Records
-				</a>
-				<a
-					href="/admin/declined"
-					className="bg-[#f93e9e] hover:bg-[#3fa8ee] text-white rounded text-[12px] xl:text-[14px] w-auto p-3 uppercase font-extrabold shadow-lg mb-4 cursor-pointer"
-				>
-					Declined Records
-				</a>
-				<a
-					href="/admin/pending"
-					className="bg-[#f93e9e] hover:bg-[#3fa8ee] text-white rounded text-[12px] xl:text-[14px] w-auto p-3 uppercase font-extrabold shadow-lg cursor-pointer"
-				>
-					Pending Records
-				</a>
-				<a
-					onClick={() => signOut({ callbackUrl: "/adminlandingpage" })}
-					className="bg-[#f93e9e] hover:bg-[#3fa8ee] text-white rounded text-[12px] xl:text-[14px] w-auto p-3 uppercase font-extrabold shadow-lg mt-4 cursor-pointer"
-				>
-					Logout
-				</a>
+					{isSidebarOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
+				</button>
+			</div>
+
+			{/* Sidebar Content */}
+			<div
+				ref={sidebarRef}
+				className={`fixed top-0 left-0 h-screen bg-[#e81e83] p-3 transition-transform duration-300 ease-in-out z-40 lg:relative lg:translate-x-0 ${
+					isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+				} lg:w-[200px] 2xl:w-[250px]`}
+				style={{ width: "100%", maxWidth: "250px" }}
+			>
+				<div className="flex flex-col items-center mb-8">
+					{/* Additional buttons for navigation */}
+					<a
+						href="/admin/accepted"
+						className="bg-[#f93e9e] hover:bg-[#3fa8ee] text-white rounded text-[12px] xl:text-[14px] w-auto p-3 uppercase font-extrabold shadow-lg mb-4 cursor-pointer"
+					>
+						Accepted Records
+					</a>
+					<a
+						href="/admin/declined"
+						className="bg-[#f93e9e] hover:bg-[#3fa8ee] text-white rounded text-[12px] xl:text-[14px] w-auto p-3 uppercase font-extrabold shadow-lg mb-4 cursor-pointer"
+					>
+						Declined Records
+					</a>
+					<a
+						href="/admin/pending"
+						className="bg-[#f93e9e] hover:bg-[#3fa8ee] text-white rounded text-[12px] xl:text-[14px] w-auto p-3 uppercase font-extrabold shadow-lg cursor-pointer"
+					>
+						Pending Records
+					</a>
+					<a
+						href="/admin/settings"
+						className="bg-[#f93e9e] hover:bg-[#3fa8ee] text-white rounded text-[12px] xl:text-[14px] w-auto p-3 uppercase font-extrabold shadow-lg mt-4 cursor-pointer"
+					>
+						Settings
+					</a>
+					<a
+						onClick={() => signOut({ callbackUrl: "/adminlandingpage" })}
+						className="bg-[#f93e9e] hover:bg-[#3fa8ee] text-white rounded text-[12px] xl:text-[14px] w-auto p-3 uppercase font-extrabold shadow-lg mt-4 cursor-pointer"
+					>
+						Logout
+					</a>
+				</div>
 			</div>
 		</div>
 	);

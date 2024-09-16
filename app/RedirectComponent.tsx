@@ -15,22 +15,16 @@ const RedirectComponent = () => {
 			console.log("Authenticated status:", status);
 			if (session?.user?.isAdmin) {
 				const allowedPaths = [
-					"/admin",
 					"/admin/accepted",
 					"/admin/declined",
 					"/admin/pending",
-					"/adminlandingpage",
 				];
 				if (!allowedPaths.includes(currentPath)) {
-					router.push("/admin");
+					router.push("/adminlandingpage");
 				}
 			}
 		} else if (status === "unauthenticated") {
-			const allowedUnauthenticatedPaths = [
-				"/",
-				"/dashboard/records",
-				"/adminlandingpage",
-			];
+			const allowedUnauthenticatedPaths = ["/", "/adminlandingpage", "/admin"];
 			if (
 				currentPath !== "/adminlandingpage" &&
 				!allowedUnauthenticatedPaths.includes(currentPath)

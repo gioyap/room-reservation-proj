@@ -4,8 +4,6 @@ import { connect } from "../utils/config/database";
 import User from "../utils/models/auth";
 import bcryptjs from "bcryptjs";
 
-const adminEmail = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
-
 export const authOptions: NextAuthOptions = {
 	providers: [
 		CredentialsProvider({
@@ -23,10 +21,8 @@ export const authOptions: NextAuthOptions = {
 						console.log("No user found with email:", email);
 						return null;
 					}
-					if (email !== adminEmail) {
-						console.log("Non-admin attempted to sign in:", email);
-						return null;
-					}
+
+					// Check password
 					const passwordsMatch = await bcryptjs.compare(
 						password,
 						user.password
@@ -35,7 +31,8 @@ export const authOptions: NextAuthOptions = {
 						console.log("Password does not match for email:", email);
 						return null;
 					}
-					console.log("Admin authenticated:", email);
+
+					console.log("User authenticated:", email);
 					return user;
 				} catch (error) {
 					console.log("Error during credentials authorization:", error);
@@ -47,21 +44,20 @@ export const authOptions: NextAuthOptions = {
 	session: {
 		strategy: "jwt",
 	},
-
 	callbacks: {
 		async signIn({ user }: { user: any }) {
-			return user.email === adminEmail;
+			// Allow all users to sign in, no admin check
+			return true;
 		},
-
 		async jwt({ token, user }: { token: any; user: any }) {
 			if (user) {
 				token.email = user.email;
 				token.name = user.name;
-				token.isAdmin = user.email === adminEmail;
+				// Add isAdmin flag based on user role in your database if needed
+				token.isAdmin = user.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL;
 			}
 			return token;
 		},
-
 		async session({ session, token }: { session: any; token: any }) {
 			if (session.user) {
 				session.user.email = token.email;
@@ -71,9 +67,8 @@ export const authOptions: NextAuthOptions = {
 			return session;
 		},
 	},
-
 	secret: process.env.NEXTAUTH_SECRET!,
 	pages: {
-		signIn: "/adminlandingpage",
+		signIn: "/adminlandingpage", // Adjust this path as needed
 	},
 };
