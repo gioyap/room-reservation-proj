@@ -53,8 +53,6 @@ export const authOptions: NextAuthOptions = {
 			if (user) {
 				token.email = user.email;
 				token.name = user.name;
-				// Add isAdmin flag based on user role in your database if needed
-				token.isAdmin = user.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL;
 			}
 			return token;
 		},
@@ -62,7 +60,6 @@ export const authOptions: NextAuthOptions = {
 			if (session.user) {
 				session.user.email = token.email;
 				session.user.name = token.name;
-				session.user.isAdmin = token.isAdmin;
 			}
 			return session;
 		},
