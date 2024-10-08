@@ -25,6 +25,9 @@ const config: Config = {
 				extrabold: "800",
 				black: "900",
 			},
+			screens: {
+				"custom-1240": "1240px",
+			},
 		},
 	},
 	plugins: [],

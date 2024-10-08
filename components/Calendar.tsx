@@ -378,7 +378,7 @@ const Calendar: React.FC<CalendarProps> = ({
 						</div>
 					))}
 				</div>
-				<div className="grid grid-cols-7 gap-[-4px] lg:w-[387px] xl:w-[500px] lg:h-[300px] 2xl:w-full lg:mb-0 2xl:-mb-4 lg:text-[15px] 2xl:text-[16px]">
+				<div className="grid grid-cols-7 gap-[-4px] lg:w-[387px] custom-1240:w-[30rem] xl:w-[500px] lg:h-[300px] 2xl:w-full lg:mb-0 2xl:-mb-4 lg:text-[15px] 2xl:text-[16px]">
 					{days.map((day, index) => {
 						const reservation = bookedDates.find(
 							(res) =>
@@ -459,7 +459,7 @@ const Calendar: React.FC<CalendarProps> = ({
 			</div>
 
 			{/* Time selection table */}
-			<div className="lg:w-[480px] xl:w-[40rem] 2xl:w-[60rem] border border-[#e61e84] rounded-lg shadow-lg lg:absolute lg:top-[30rem] lg:right-[20rem] text-xs mt-10 lg:mt-4 mx-4 md:mx-14 xl:right-[27rem] 2xl:mt-36 2xl:right-[26rem]">
+			<div className=" lg:w-[550px] xl:w-[40rem] 2xl:w-[60rem] border border-[#e61e84] rounded-lg shadow-lg lg:absolute lg:top-[30rem] lg:right-[18rem] text-xs mt-10 lg:mt-4 mx-4 md:mx-14 xl:right-[27rem] 2xl:mt-36 2xl:right-[26rem] overflow-x-auto custom-1240:w-[40rem] custom-1240:right-[23rem]">
 				<div className="lg:flex lg:gap-x-10 pl-6 my-2 text-sm ">
 					<div>
 						<p className="lg:text-[14px] 2xl:text-[18px] font-extrabold text-[#e61e84]">
@@ -673,7 +673,7 @@ const Calendar: React.FC<CalendarProps> = ({
 												{lectureAvailability}
 											</td>
 											<td
-												className={`lg:p-1.5 2xl:p-2 border-b cursor-pointer whitespace-nowrap lg:text-[13px] 2xl:text-[14px] lg:pl-4 font-extrabold text-center ${getAvailabilityClass(
+												className={`lg:p-1.5 2xl:p-2 border-b whitespace-nowrap lg:text-[13px] 2xl:text-[14px] lg:pl-4 font-extrabold text-center ${getAvailabilityClass(
 													zoomAvailability,
 													startTime
 												)} ${startTime}`}
@@ -693,7 +693,7 @@ const Calendar: React.FC<CalendarProps> = ({
 			</div>
 			{reservationDetails.length > 0 && (
 				<div className="reservation-details-container mt-6 lg:mt-0">
-					<div className="reservation-details lg:absolute lg:top-[30rem] lg:left-[8rem] xl:left-[18rem] 2xl:left-[16rem] 2xl:top-[38rem] bg-white border rounded-lg shadow-lg p-2 pl-4 lg:w-[22rem] xl:w-[28rem] 2xl:w-[35rem] mx-4 md:mx-14 md:mt-4">
+					<div className="reservation-details lg:absolute lg:top-[30rem] lg:left-[11rem] xl:left-[18rem] 2xl:left-[16rem] 2xl:top-[38rem] bg-white border rounded-lg shadow-lg p-2 pl-4 lg:w-[20rem] xl:w-[28rem] 2xl:w-[35rem] mx-4 md:mx-14 md:mt-4 custom-1240:left-[12rem]">
 						<h3 className="lg:text-[15px] 2xl:text-lg font-bold mb-1 text-[#e61e84] text-sm lg:text-lg">
 							Reservation Details
 						</h3>
