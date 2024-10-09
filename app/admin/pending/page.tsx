@@ -28,7 +28,7 @@ const PendingPage = () => {
 	const [loading, setLoading] = useState(true);
 	const [currentPage, setCurrentPage] = useState(1);
 	const [reservationsPerPage, setReservationsPerPage] = useState(10);
-	const [sortColumn, setSortColumn] = useState<SortColumn>("department");
+	const [sortColumn, setSortColumn] = useState<SortColumn | null>(null);
 	const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 	const [modalIsOpen, setModalIsOpen] = useState(false);
 	const [selectedReservation, setSelectedReservation] =
@@ -36,14 +36,14 @@ const PendingPage = () => {
 	const [acceptModalIsOpen, setAcceptModalIsOpen] = useState(false);
 
 	useEffect(() => {
+		// The _id is timestamp which responsible for latest data fetching
 		fetchBookedDates().then((data) => {
-			// Sort reservations by 'fromDate' or 'createdAt' in descending order
 			const sortedReservations = data.sort(
 				(a: Reservation, b: Reservation) =>
-					new Date(b.fromDate).getTime() - new Date(a.fromDate).getTime()
+					new Date(a._id).getTime() - new Date(b._id).getTime()
 			);
-			setReservations(sortedReservations); // Set the sorted reservations
-			setLoading(false); // Ensure loading is set to false after fetching
+			setReservations(sortedReservations);
+			setLoading(false);
 		});
 	}, []);
 	// Fetch booked dates from the API
@@ -301,10 +301,11 @@ const PendingPage = () => {
 		}
 		closeModal();
 	};
-
+	// This is responsible for every latest data should be at the first row of the table
+	const reversedReservations = sortedReservations.reverse();
 	const indexOfLastReservation = currentPage * reservationsPerPage;
 	const indexOfFirstReservation = indexOfLastReservation - reservationsPerPage;
-	const currentReservations = sortedReservations.slice(
+	const currentReservations = reversedReservations.slice(
 		indexOfFirstReservation,
 		indexOfLastReservation
 	);
@@ -443,7 +444,10 @@ const PendingPage = () => {
 									{currentReservations.map((reservation) => (
 										<tr key={reservation._id}>
 											<td className=" lg:pl-4 2xl:pl-8 lg:py-2 lg:w-[240px] 2xl:w-[240px] whitespace-nowrap lg:px-4 2xl:px-0 text-xs lg:text-[14px] 2xl:text-[16px] pl-2">
-												{reservation.company}
+												{reservation.company ===
+												"Mixexpert Trading Services Incorporated"
+													? "MTSI"
+													: reservation.company}
 											</td>
 											<td className=" lg:py-2 lg:w-[250px] 2xl:w-[180px] lg:text-[14px] lg:pr-4 2xl:px-0 whitespace-nowrap text-xs 2xl:text-[16px] pl-2 ">
 												{reservation.department}

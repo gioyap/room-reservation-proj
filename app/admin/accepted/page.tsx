@@ -27,15 +27,21 @@ const AcceptedPage = () => {
 	const [loading, setLoading] = useState(true);
 	const [currentPage, setCurrentPage] = useState(1);
 	const [reservationsPerPage, setReservationsPerPage] = useState(10);
-	const [sortColumn, setSortColumn] = useState<SortColumn>("department");
+	const [sortColumn, setSortColumn] = useState<SortColumn | null>(null);
 	const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 	const [modalIsOpen, setModalIsOpen] = useState(false);
 	const [selectedReservation, setSelectedReservation] =
 		useState<Reservation | null>(null);
 
 	useEffect(() => {
+		// The _id is timestamp which responsible for latest data fetching
 		fetchBookedDates().then((data) => {
-			setReservations(data);
+			const sortedReservations = data.sort(
+				(a: Reservation, b: Reservation) =>
+					new Date(a._id).getTime() - new Date(b._id).getTime()
+			);
+			setReservations(sortedReservations);
+			setLoading(false);
 		});
 	}, []);
 
@@ -172,10 +178,11 @@ const AcceptedPage = () => {
 		}
 		closeModal();
 	};
-
+	//this is responsible for every latest data should be at the first of the table
+	const reversedReservations = sortedReservations.reverse();
 	const indexOfLastReservation = currentPage * reservationsPerPage;
 	const indexOfFirstReservation = indexOfLastReservation - reservationsPerPage;
-	const currentReservations = sortedReservations.slice(
+	const currentReservations = reversedReservations.slice(
 		indexOfFirstReservation,
 		indexOfLastReservation
 	);
@@ -291,7 +298,10 @@ const AcceptedPage = () => {
 									{currentReservations.map((reservation) => (
 										<tr key={reservation._id}>
 											<td className="lg:pl-4 2xl:pl-8 lg:py-2 lg:w-[220px] 2xl:w-[200px] whitespace-nowrap lg:px-4 2xl:px-0 lg:text-[14px] 2xl:text-[16px] pl-2 text-xs ">
-												{reservation.company}
+												{reservation.company ===
+												"Mixexpert Trading Services Incorporated"
+													? "MTSI"
+													: reservation.company}
 											</td>
 											<td className="lg:py-2 lg:w-[200px] 2xl:w-[150px] lg:text-[14px] lg:pr-4 2xl:px-0 whitespace-nowrap 2xl:text-[16px] pl-2 text-xs  ">
 												{reservation.department}
