@@ -463,7 +463,7 @@ const Dashboard = () => {
 							Select Reservation Date
 						</span>
 					</div>
-					<div className="py-5 lg:absolute lg:left-[400px] custom-1240:left-[32rem] xl:left-[380px] 2xl:relative 2xl:left-0">
+					<div className="py-5 lg:absolute lg:left-[400px] custom-1240:left-[32rem] custom-1345:left-[26rem] xl:left-[380px] 2xl:relative 2xl:left-0">
 						<Calendar
 							selectedDate={selectedDate}
 							onChange={setSelectedDate}
@@ -478,7 +478,7 @@ const Dashboard = () => {
 				<form onSubmit={handleContinue}>
 					<button
 						type="submit"
-						className="lg:absolute lg:top-[51rem] lg:right-[20rem] xl:right-[29rem] 2xl:top-[60rem] 2xl:right-[42rem] bg-[#e61e84] lg:mt-0 2xl:mt-2 hover:bg-[#3fa8ee] 2xl:text-[18px] font-extrabold text-white rounded text-[12px] w-auto p-2 uppercase ml-6 mb-10 md:ml-14 custom-1240:right-[26rem]"
+						className="lg:absolute lg:top-[51rem] lg:right-[20rem] xl:right-[29rem] 2xl:top-[60rem] 2xl:right-[42rem] bg-[#e61e84] lg:mt-0 2xl:mt-2 hover:bg-[#3fa8ee] 2xl:text-[18px] font-extrabold text-white rounded text-[12px] w-auto p-2 uppercase ml-6 mb-10 md:ml-14 custom-1240:right-[26rem] custom-1345:right-[34rem]"
 					>
 						Submit
 					</button>
