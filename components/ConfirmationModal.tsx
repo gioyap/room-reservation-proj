@@ -7,7 +7,9 @@ interface ConfirmationModalProps {
 	onConfirm: () => void;
 	title: string;
 	message: string;
-	isSubmitting?: boolean; // Optional isSubmitting prop
+	processedBy?: string;
+	isSubmitting?: boolean;
+	onProcessedByChange?: (value: string) => void;
 }
 
 const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
@@ -16,7 +18,9 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
 	onConfirm,
 	title,
 	message,
-	isSubmitting = false, // Default to false
+	processedBy,
+	isSubmitting = false,
+	onProcessedByChange,
 }) => {
 	return (
 		<Modal
@@ -31,6 +35,26 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
 				<p className="mb-6 text-[12px] lg:text-[14px] 2xl:text-[16px]">
 					{message}
 				</p>
+				{/* processedBy information displayed here */}
+				<div className="mb-6">
+					<label className="block text-sm font-medium text-gray-700 mb-2">
+						Processed By
+					</label>
+					<select
+						className="block w-full px-4 py-2 border rounded-md"
+						value={processedBy || ""} // Fallback to an empty string if undefined
+						onChange={(e) => {
+							if (onProcessedByChange) {
+								onProcessedByChange(e.target.value); // Update the state on change
+							}
+						}}
+					>
+						<option value="">Select an admin</option>
+						<option value="Ms. Olive Enriquez">Ms. Olive Enriquez</option>
+						<option value="Ms. Beth Haylo">Ms. Beth Haylo</option>
+						<option value="Ms. Hazel Cabundo">Ms. Hazel Cabundoc</option>
+					</select>
+				</div>
 				<div className="flex justify-end space-x-4">
 					<button
 						onClick={onRequestClose}
@@ -43,7 +67,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
 						className={`2xl:px-8 px-4 py-2 ${
 							isSubmitting
 								? "bg-gray-400 cursor-not-allowed"
-								: "bg-[#e81e83] hover:bg-[#b92d73]"
+								: "bg-[#3f3f3f] hover:bg-[#686868]"
 						} text-white rounded`}
 						disabled={isSubmitting}
 					>

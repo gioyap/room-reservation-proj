@@ -36,6 +36,10 @@ const ReservationSchema = new mongoose.Schema({
 	description: {
 		type: String,
 	},
+	processedBy: {
+		type: String,
+		required: false,
+	},
 });
 
 ReservationSchema.index({ status: 1 });

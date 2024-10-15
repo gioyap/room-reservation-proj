@@ -88,7 +88,7 @@ const Login = () => {
 				className="flex flex-col md:flex-row lg:gap-8 xl:gap-12 bg-white rounded-lg shadow-xl overflow-hidden w-full max-w-3xl"
 				onSubmit={handleSubmit}
 			>
-				<div className="bg-[#f93e9e] text-white flex flex-col justify-between md:w-1/2 lg:w-1/3 p-6 md:p-8 lg:p-10">
+				<div className="bg-[#3f3f3f] text-white flex flex-col justify-between md:w-1/2 lg:w-1/3 p-6 md:p-8 lg:p-10">
 					<div className="mb-6">
 						<h1 className="text-xl md:text-2xl lg:text-3xl xl:text-4xl font-extrabold mb-4">
 							Welcome Admin
@@ -101,7 +101,7 @@ const Login = () => {
 				</div>
 
 				<div className="flex-1 p-6 md:p-8 lg:p-10">
-					<h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4 xl:mb-10 text-[#f93e9e]">
+					<h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4 xl:mb-10 text-[#3f3f3f]">
 						Sign In
 					</h1>
 					<div className="mb-4">
@@ -148,7 +148,7 @@ const Login = () => {
 					<div>
 						<button
 							type="submit"
-							className="w-full py-2 rounded-full bg-[#f93e9e] text-white font-bold"
+							className="w-full py-2 rounded-full bg-[#3f3f3f] text-white font-bold"
 							disabled={loading}
 						>
 							{loading ? "Processing..." : "Sign In"}

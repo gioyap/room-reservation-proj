@@ -45,6 +45,7 @@ export async function POST(request: NextRequest) {
                         <th>Room</th>
                         <th>From</th>
                         <th>To</th>
+						<th>Processed By</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -61,6 +62,7 @@ export async function POST(request: NextRequest) {
 									updatedReservation.toDate,
 									timeZone
 								)}</td>
+						<td>${updatedReservation.processedBy}</td>
                     </tr>
                 </tbody>
             </table>

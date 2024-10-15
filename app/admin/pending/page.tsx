@@ -19,6 +19,7 @@ interface Reservation {
 	status: string;
 	email: string;
 	description: any;
+	processedBy: string;
 }
 
 type SortColumn = keyof Reservation;
@@ -34,6 +35,7 @@ const PendingPage = () => {
 	const [selectedReservation, setSelectedReservation] =
 		useState<Reservation | null>(null);
 	const [acceptModalIsOpen, setAcceptModalIsOpen] = useState(false);
+	const [processedBy, setProcessedBy] = useState<string>("");
 
 	useEffect(() => {
 		// The _id is timestamp which responsible for latest data fetching
@@ -131,7 +133,11 @@ const PendingPage = () => {
 		}
 	};
 
-	const handleAccept = async (id: string, email: string) => {
+	const handleAccept = async (
+		id: string,
+		email: string,
+		processedBy: string
+	) => {
 		try {
 			// Fetch accepted reservations to compare dates
 			const acceptedReservations = await fetchAcceptedReservations();
@@ -164,7 +170,10 @@ const PendingPage = () => {
 				body: JSON.stringify({
 					email,
 					subject: "Reservation Accepted",
-					updatedReservation: selectedReservation,
+					updatedReservation: {
+						...selectedReservation,
+						processedBy,
+					},
 					status: "Accepted",
 				}),
 			});
@@ -206,7 +215,11 @@ const PendingPage = () => {
 		}
 	};
 
-	const handleDecline = async (id: string, email: string) => {
+	const handleDecline = async (
+		id: string,
+		email: string,
+		processedBy: string
+	) => {
 		try {
 			// Find the reservation to be declined
 			const updatedReservation = reservations.find(
@@ -226,7 +239,10 @@ const PendingPage = () => {
 				body: JSON.stringify({
 					email,
 					subject: "Reservation Declined",
-					updatedReservation,
+					updatedReservation: {
+						...updatedReservation,
+						processedBy,
+					},
 					status: "Declined",
 				}),
 			});
@@ -280,24 +296,34 @@ const PendingPage = () => {
 
 	const confirmAccept = () => {
 		if (selectedReservation) {
-			handleAccept(selectedReservation._id, selectedReservation.email);
+			handleAccept(
+				selectedReservation._id,
+				selectedReservation.email,
+				processedBy
+			);
 		}
 		closeAcceptModal();
 	};
 
 	const openModal = (reservation: Reservation) => {
 		setSelectedReservation(reservation);
+		setProcessedBy(reservation.processedBy || "");
 		setModalIsOpen(true);
 	};
 
 	const closeModal = () => {
 		setSelectedReservation(null);
+		setProcessedBy("");
 		setModalIsOpen(false);
 	};
 
 	const confirmDecline = () => {
 		if (selectedReservation) {
-			handleDecline(selectedReservation._id, selectedReservation.email);
+			handleDecline(
+				selectedReservation._id,
+				selectedReservation.email,
+				processedBy
+			);
 		}
 		closeModal();
 	};
@@ -314,7 +340,7 @@ const PendingPage = () => {
 
 	if (loading) {
 		return (
-			<p className="text-center text-[#e81e83] font-extrabold text-4xl mt-20">
+			<p className="text-center text-[#3f3f3f] font-extrabold text-4xl mt-20">
 				Loading...
 			</p>
 		);
@@ -346,7 +372,7 @@ const PendingPage = () => {
 			<Sidebar /> {/* Use the Sidebar component */}
 			<div className="flex-1 lg:p-4 lg:pl-6 lg:pt-10 2xl:p-8 bg-gray-100 min-h-screen mt-20 lg:mt-0">
 				<div className="pb-4 lg:pb-6 2xl:pb-8">
-					<h1 className=" text-[1.5rem] md:text-[2rem] text-center lg:text-start lg:text-4xl 2xl:text-5xl font-extrabold text-[#e81e83]">
+					<h1 className=" text-[1.5rem] md:text-[2rem] text-center lg:text-start lg:text-4xl 2xl:text-5xl font-extrabold text-[#3f3f3f]">
 						Pending Records
 					</h1>
 				</div>
@@ -379,7 +405,7 @@ const PendingPage = () => {
 							}
 						>
 							<table className="min-w-full divide-y divide-gray-200">
-								<thead className="bg-[#e81e83]">
+								<thead className="bg-[#3f3f3f]">
 									<tr>
 										<th
 											className="sticky top-0 px-2 lg:px-0 lg:pl-4 2xl:pl-8 lg:py-2 text-left text-sm lg:text-[12px] 2xl:text-[14px] font-extrabold text-white uppercase tracking-wider cursor-pointer whitespace-nowrap lg:pr-4 2xl:pr-0 "
@@ -516,6 +542,8 @@ const PendingPage = () => {
 					onConfirm={confirmDecline}
 					title="Confirm Decline"
 					message="Are you sure you want to decline this reservation?"
+					processedBy={processedBy}
+					onProcessedByChange={setProcessedBy}
 				/>
 			)}
 			{selectedReservation && (
@@ -525,6 +553,8 @@ const PendingPage = () => {
 					onConfirm={confirmAccept}
 					title="Confirm Accept"
 					message="Are you sure you want to accept this reservation?"
+					processedBy={processedBy}
+					onProcessedByChange={setProcessedBy}
 				/>
 			)}
 		</div>

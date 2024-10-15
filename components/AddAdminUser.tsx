@@ -39,9 +39,9 @@ const AddAdminUser = () => {
 		<div className="max-w-md mx-auto mt-10">
 			<form
 				onSubmit={handleSubmit}
-				className="bg-slate-300 p-6 rounded-lg shadow-md xl:w-[30rem]"
+				className="bg-slate-300 p-6 rounded-lg shadow-md lg:w-[20rem] xl:w-[30rem]"
 			>
-				<h2 className="lg:text-2xl font-bold mb-4 text-[#f93e9e]">
+				<h2 className="lg:text-2xl font-bold mb-4 text-[#3f3f3f]">
 					Add Admin User
 				</h2>
 
@@ -79,7 +79,7 @@ const AddAdminUser = () => {
 
 				<button
 					type="submit"
-					className="w-full bg-[#f93e9e] hover:bg-[#d83e8c] font-bold text-white p-2 rounded text-xs xl:text-lg"
+					className="w-full bg-[#3f3f3f] hover:bg-[#818181] font-bold text-white p-2 rounded text-xs xl:text-lg"
 					disabled={loading}
 				>
 					{loading ? "Saving..." : "Add Admin"}

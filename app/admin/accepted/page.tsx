@@ -18,6 +18,7 @@ interface Reservation {
 	toDate: string;
 	status: string;
 	email: string;
+	processedBy: string;
 }
 
 type SortColumn = keyof Reservation;
@@ -32,6 +33,7 @@ const AcceptedPage = () => {
 	const [modalIsOpen, setModalIsOpen] = useState(false);
 	const [selectedReservation, setSelectedReservation] =
 		useState<Reservation | null>(null);
+	const [processedBy, setProcessedBy] = useState<string>("");
 
 	useEffect(() => {
 		// The _id is timestamp which responsible for latest data fetching
@@ -102,7 +104,11 @@ const AcceptedPage = () => {
 		});
 	}
 
-	const handleCancel = async (id: string, email: string) => {
+	const handleCancel = async (
+		id: string,
+		email: string,
+		processedBy: string
+	) => {
 		try {
 			const updatedReservation = reservations.find(
 				(reservation) => reservation._id === id
@@ -121,7 +127,10 @@ const AcceptedPage = () => {
 				body: JSON.stringify({
 					email,
 					subject: "Reservation Canceled",
-					updatedReservation, // Pass reservation ID to identify which reservation was canceled
+					updatedReservation: {
+						...updatedReservation,
+						processedBy,
+					},
 					status: "Accepted",
 				}),
 			});
@@ -174,7 +183,11 @@ const AcceptedPage = () => {
 
 	const confirmDecline = () => {
 		if (selectedReservation) {
-			handleCancel(selectedReservation._id, selectedReservation.email);
+			handleCancel(
+				selectedReservation._id,
+				selectedReservation.email,
+				processedBy
+			);
 		}
 		closeModal();
 	};
@@ -191,7 +204,7 @@ const AcceptedPage = () => {
 
 	if (loading) {
 		return (
-			<p className="text-center text-[#e81e83] font-extrabold text-4xl mt-20">
+			<p className="text-center text-[#3f3f3f] font-extrabold text-4xl mt-20">
 				Loading...
 			</p>
 		);
@@ -203,7 +216,7 @@ const AcceptedPage = () => {
 			<Sidebar /> {/* Use the Sidebar component */}
 			<div className="flex-1 lg:p-4 lg:pl-6 lg:pt-10 2xl:p-8 bg-gray-100 min-h-screen mt-20 lg:mt-0">
 				<div className="lg:pb-6 2xl:pb-8">
-					<h1 className=" text-[1.5rem] md:text-[2rem] lg:text-4xl 2xl:text-5xl font-extrabold text-[#e81e83] text-center lg:text-start">
+					<h1 className=" text-[1.5rem] md:text-[2rem] lg:text-4xl 2xl:text-5xl font-extrabold text-[#3f3f3f] text-center lg:text-start">
 						Accepted Records
 					</h1>
 				</div>
@@ -236,7 +249,7 @@ const AcceptedPage = () => {
 							}
 						>
 							<table className="min-w-full divide-y divide-gray-200">
-								<thead className="bg-[#e81e83]">
+								<thead className="bg-[#3f3f3f]">
 									<tr>
 										<th
 											className="sticky text-xs px-2 top-0 lg:pl-4 2xl:pl-8 lg:py-2 text-left lg:text-[12px] 2xl:text-[14px] font-extrabold text-white uppercase tracking-wider cursor-pointer whitespace-nowrap lg:pr-4 2xl:pr-0 "
@@ -355,6 +368,8 @@ const AcceptedPage = () => {
 					onConfirm={confirmDecline}
 					title="Confirm Cancel"
 					message="Are you sure you want to cancel this accepted reservation?"
+					processedBy={processedBy}
+					onProcessedByChange={setProcessedBy}
 				/>
 			)}
 		</div>

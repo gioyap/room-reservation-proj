@@ -110,7 +110,7 @@ const DeclinedPage = () => {
 
 	if (loading) {
 		return (
-			<p className="text-center mt-20 text-[#e81e83] font-extrabold text-4xl">
+			<p className="text-center mt-20 text-[#3f3f3f] font-extrabold text-4xl">
 				Loading...
 			</p>
 		);
@@ -122,7 +122,7 @@ const DeclinedPage = () => {
 			<Sidebar /> {/* Use the Sidebar component */}
 			<div className="flex-1 lg:p-4 lg:pl-6 lg:pt-10 2xl:p-8 bg-gray-100 min-h-screen mt-20 lg:mt-0">
 				<div className="lg:pb-6 2xl:pb-8">
-					<h1 className=" text-[1.5rem] md:text-[2rem] lg:text-4xl 2xl:text-5xl text-center lg:text-start font-extrabold text-[#e81e83]">
+					<h1 className=" text-[1.5rem] md:text-[2rem] lg:text-4xl 2xl:text-5xl text-center lg:text-start font-extrabold text-[#3f3f3f]">
 						Declined Records
 					</h1>
 				</div>
@@ -155,7 +155,7 @@ const DeclinedPage = () => {
 							}
 						>
 							<table className="min-w-full divide-y divide-gray-200">
-								<thead className="bg-[#e81e83]">
+								<thead className="bg-[#3f3f3f]">
 									<tr>
 										<th
 											className="sticky px-2 top-0 lg:pl-4 2xl:pl-8 lg:py-2 text-left lg:text-[12px] 2xl:text-[14px] font-extrabold text-white uppercase tracking-wider cursor-pointer whitespace-nowrap text-xs lg:pr-4 2xl:pr-0 "

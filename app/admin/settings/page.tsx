@@ -50,16 +50,16 @@ const AdminPage = () => {
 		<div className="flex">
 			<Sidebar />
 			<div className="flex flex-col w-full h-screen p-4">
-				<h1 className="text-[2rem] xl:text-[3rem] font-bold text-center mt-5 lg:mt-10 text-[#f93e9e]">
+				<h1 className="text-[2rem] xl:text-[3rem] font-bold text-center mt-5 lg:mt-10 text-[#3f3f3f]">
 					Settings
 				</h1>
-				<div className="lg:flex lg:flex-row gap-4 mt-6 xl:mt-10">
+				<div className="lg:flex lg:flex-row mt-6 xl:mt-10">
 					<div className="flex-1 flex justify-center items-start">
 						<form
 							onSubmit={handleChangePassword}
 							className="w-full lg:w-[20rem] xl:w-[50rem] max-w-md bg-slate-300 shadow-md rounded-lg p-6"
 						>
-							<h2 className="lg:text-2xl font-bold mb-4 text-[#f93e9e]">
+							<h2 className="lg:text-2xl font-bold mb-4 text-[#3f3f3f]">
 								Change Password
 							</h2>
 							<div className="mb-4 text-xs xl:text-lg">
@@ -100,7 +100,7 @@ const AdminPage = () => {
 							</div>
 							<button
 								type="submit"
-								className="w-full bg-[#f93e9e] hover:bg-[#d83e8c] text-white font-bold py-2 px-4 rounded text-xs xl:text-lg"
+								className="w-full bg-[#3f3f3f] hover:bg-[#818181] text-white font-bold py-2 px-4 rounded text-xs xl:text-lg"
 							>
 								Change Password
 							</button>

@@ -10,4 +10,5 @@ export type Reservation = {
 	description?: string;
 	status: string;
 	_id: string;
+	processedBy: string;
 };

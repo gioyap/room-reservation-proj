@@ -282,7 +282,7 @@ const Dashboard = () => {
 	return (
 		<div className=" pb-10">
 			<ToastContainer autoClose={5000} />
-			<div className="flex gap-2 bg-[#e81e83] lg:py-1 22xl:py-2 justify-center">
+			<div className="flex gap-2 bg-[#3f3f3f] lg:py-1 22xl:py-2 justify-center">
 				<div>
 					<h1 className="text-2xl lg:text-xl 2xl:text-2xl font-bold text-white">
 						Welcome User
@@ -293,14 +293,14 @@ const Dashboard = () => {
 			<div className="h-screen grid grid-cols-1 lg:grid-cols-2 lg:px-[80px] 2xl:px-[330px] lg:w-full lg:h-[763px] lg:ml-0 2xl:w-full 2xl:ml-0 2xl:mt-0 2xl:h-[877px] 2xl:pl-14 2xl:pt-12 lg:py-6">
 				<div className="flex flex-col items-start lg:gap-4 2xl:gap-6 pl-6 lg:px-10 2xl:px-14">
 					<div className="lg:-ml-10 lg:pb-5 2xl:pb-0 2xl:ml-6 py-4 ml-8 md:ml-[14rem]">
-						<span className="text-2xl lg:text-3xl 2xl:text-4xl tracking-wide font-black font-sans text-[#e61e84]">
+						<span className="text-2xl lg:text-3xl 2xl:text-4xl tracking-wide font-black font-sans text-[#3f3f3f]">
 							Calendar Reservation
 						</span>
 					</div>
 					<div className="flex flex-col w-full lg:gap-3 2xl:gap-4 lg:w-[300px] 2xl:w-[600px] lg:-ml-10 2xl:ml-6 gap-4 md:ml-12">
 						<div>
 							<label
-								className="lg:text-[18px] 2xl:text-[22px] text-[#e61e84] tracking-normal font-extrabold"
+								className="lg:text-[18px] 2xl:text-[22px] text-[#3f3f3f] tracking-normal font-extrabold"
 								htmlFor="email"
 							>
 								Email:
@@ -310,13 +310,13 @@ const Dashboard = () => {
 								type="text"
 								value={email}
 								onChange={handleEmailChange}
-								className="lg:w-[350px] xl:w-[28rem] 2xl:w-full lg:text-[16px] 2xl:text-[18px] lg:px-4 lg:py-1 2xl:py-2 border rounded-md ml-4 text-sm p-1 border-[#e61e84]"
+								className="lg:w-[350px] xl:w-[28rem] 2xl:w-full lg:text-[16px] 2xl:text-[18px] lg:px-4 lg:py-1 2xl:py-2 border rounded-md ml-4 text-sm p-1 border-[#3f3f3f]"
 								placeholder="example123@gmail.com"
 							/>
 						</div>
 						<div>
 							<label
-								className="lg:text-[18px] 2xl:text-[22px] text-[#e61e84] tracking-normal font-extrabold"
+								className="lg:text-[18px] 2xl:text-[22px] text-[#3f3f3f] tracking-normal font-extrabold"
 								htmlFor="company"
 							>
 								Company:
@@ -325,7 +325,7 @@ const Dashboard = () => {
 								id="company"
 								value={company}
 								onChange={handleCompanyChange}
-								className="lg:w-[350px] xl:w-[28rem] 2xl:w-full lg:text-[16px] 2xl:text-[18px] lg:px-4 lg:py-1 2xl:py-2 border rounded-md ml-4 text-sm p-1 border-[#e61e84]"
+								className="lg:w-[350px] xl:w-[28rem] 2xl:w-full lg:text-[16px] 2xl:text-[18px] lg:px-4 lg:py-1 2xl:py-2 border rounded-md ml-4 text-sm p-1 border-[#3f3f3f]"
 							>
 								{companies.map((comp) => (
 									<option key={comp} value={comp}>
@@ -336,7 +336,7 @@ const Dashboard = () => {
 						</div>
 						<div>
 							<label
-								className="lg:text-[18px] 2xl:text-[22px] text-[#e61e84] tracking-normal font-extrabold"
+								className="lg:text-[18px] 2xl:text-[22px] text-[#3f3f3f] tracking-normal font-extrabold"
 								htmlFor="department"
 							>
 								Department:
@@ -345,7 +345,7 @@ const Dashboard = () => {
 								id="department"
 								value={department}
 								onChange={handleDepartmentChange}
-								className="lg:w-[350px] xl:w-[28rem] 2xl:w-full lg:text-[16px] 2xl:text-[18px] lg:px-4 lg:py-1 2xl:py-2 border rounded-md ml-4 text-sm p-1 border-[#e61e84]"
+								className="lg:w-[350px] xl:w-[28rem] 2xl:w-full lg:text-[16px] 2xl:text-[18px] lg:px-4 lg:py-1 2xl:py-2 border rounded-md ml-4 text-sm p-1 border-[#3f3f3f]"
 							>
 								{sortedDepartments.map((dept) => (
 									<option key={dept} value={dept}>
@@ -356,7 +356,7 @@ const Dashboard = () => {
 						</div>
 						<div>
 							<label
-								className="lg:text-[18px] 2xl:text-[22px] text-[#e61e84] tracking-normal font-extrabold"
+								className="lg:text-[18px] 2xl:text-[22px] text-[#3f3f3f] tracking-normal font-extrabold"
 								htmlFor="name"
 							>
 								Full Name:
@@ -366,19 +366,19 @@ const Dashboard = () => {
 								type="text"
 								value={name}
 								onChange={handleNameChange}
-								className="lg:w-[350px] xl:w-[28rem] 2xl:w-full lg:text-[16px] 2xl:text-[18px] lg:px-4 lg:py-1 2xl:py-2 border rounded-md ml-4 text-sm p-1 border-[#e61e84]"
+								className="lg:w-[350px] xl:w-[28rem] 2xl:w-full lg:text-[16px] 2xl:text-[18px] lg:px-4 lg:py-1 2xl:py-2 border rounded-md ml-4 text-sm p-1 border-[#3f3f3f]"
 								placeholder="Please enter your full name"
 							/>
 						</div>
 						<div>
 							<label
-								className="lg:text-[18px] 2xl:text-[22px] text-[#e61e84] tracking-normal font-extrabold"
+								className="lg:text-[18px] 2xl:text-[22px] text-[#3f3f3f] tracking-normal font-extrabold"
 								htmlFor="title"
 							>
 								Room:
 							</label>
 							<div className="flex gap-2 pt-2">
-								<label className="text-[#e61e84] lg:text-[16px] 2xl:text-[15px]">
+								<label className="text-[#3f3f3f] lg:text-[16px] 2xl:text-[15px]">
 									<input
 										type="radio"
 										value="Energy"
@@ -388,7 +388,7 @@ const Dashboard = () => {
 									/>
 									Energy
 								</label>
-								<label className="text-[#e61e84] lg:text-[16px] 2xl:text-[15px]">
+								{/* <label className="text-[#3f3f3f] lg:text-[16px] 2xl:text-[15px]">
 									<input
 										type="radio"
 										value="Focus"
@@ -397,8 +397,8 @@ const Dashboard = () => {
 										className="mr-1"
 									/>
 									Focus
-								</label>
-								<label className="text-[#e61e84] lg:text-[16px] 2xl:text-[15px]">
+								</label> */}
+								<label className="text-[#3f3f3f] lg:text-[16px] 2xl:text-[15px]">
 									<input
 										type="radio"
 										value="Lecture"
@@ -408,7 +408,7 @@ const Dashboard = () => {
 									/>
 									Lecture
 								</label>
-								<label className="text-[#e61e84] lg:text-[16px] 2xl:text-[15px]">
+								<label className="text-[#3f3f3f] lg:text-[16px] 2xl:text-[15px]">
 									<input
 										type="radio"
 										value="Zoom"
@@ -440,7 +440,7 @@ const Dashboard = () => {
 						{showDescription && (
 							<div className="xl:absolute xl:top-[40rem]">
 								<label
-									className="lg:text-[18px] 2xl:text-[22px] text-[#e61e84] tracking-normal font-extrabold"
+									className="lg:text-[18px] 2xl:text-[22px] text-[#3f3f3f] tracking-normal font-extrabold"
 									htmlFor="description"
 								>
 									Urgent Notes:
@@ -450,7 +450,7 @@ const Dashboard = () => {
 									type="description"
 									value={description}
 									onChange={handleDescriptionChange}
-									className="lg:w-[350px] xl:w-[28rem] 2xl:w-full lg:text-[16px] 2xl:text-[18px] px-4 lg:py-1 2xl:py-2 border rounded-md"
+									className="lg:w-[350px] xl:w-[28rem] 2xl:w-full lg:text-[16px] 2xl:text-[18px] px-4 lg:py-1 2xl:py-2 border border-[#3f3f3f] rounded-md"
 									placeholder="Please provide the reason"
 								/>
 							</div>
@@ -459,7 +459,7 @@ const Dashboard = () => {
 				</div>
 				<div className="col-span-1 ">
 					<div className="lg:pb-5 2xl:pb-0 2xl:ml-0 2xl:flex 2xl:justify-end">
-						<span className=" text-2xl justify-center flex lg:text-3xl text-[#e61e84] 2xl:text-[35px] mt-4 font-sans tracking-wide font-extrabold">
+						<span className=" text-2xl justify-center flex lg:text-3xl text-[#3f3f3f] 2xl:text-[35px] mt-4 font-sans tracking-wide font-extrabold">
 							Select Reservation Date
 						</span>
 					</div>
@@ -478,7 +478,7 @@ const Dashboard = () => {
 				<form onSubmit={handleContinue}>
 					<button
 						type="submit"
-						className="lg:absolute lg:top-[51rem] lg:right-[20rem] xl:right-[29rem] 2xl:top-[60rem] 2xl:right-[42rem] bg-[#e61e84] lg:mt-0 2xl:mt-2 hover:bg-[#3fa8ee] 2xl:text-[18px] font-extrabold text-white rounded text-[12px] w-auto p-2 uppercase ml-6 mb-10 md:ml-14 custom-1240:right-[26rem] custom-1345:right-[34rem]"
+						className="lg:absolute lg:top-[51rem] lg:right-[20rem] xl:right-[29rem] 2xl:top-[60rem] 2xl:right-[42rem] bg-[#3f3f3f] lg:mt-0 2xl:mt-2 hover:bg-[#686868] 2xl:text-[18px] font-extrabold text-white rounded text-[12px] w-auto p-2 uppercase ml-6 mb-10 md:ml-14 custom-1240:right-[26rem] custom-1345:right-[34rem]"
 					>
 						Submit
 					</button>

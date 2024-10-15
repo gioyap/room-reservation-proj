@@ -417,7 +417,7 @@ const Calendar: React.FC<CalendarProps> = ({
 			{/* Choose the desired time */}
 			<div className="time-table 2xl:p-4 lg:w-[230px] xl:w-[28rem] lg:gap-x-3 lg:flex lg:justify-between pt-7 md:pt-10 pl-6 lg:pl-36 lg:pt-4 lg:text-lg text-sm md:pl-14 xl:ml-[10rem]">
 				<div className="header text-left mb-4">
-					<span className="lg:text-md 2xl:text-lg font-extrabold text-[#e61e84] pr-4">
+					<span className="lg:text-md 2xl:text-lg font-extrabold text-[#3f3f3f] pr-4">
 						From:
 					</span>
 					<select
@@ -437,7 +437,7 @@ const Calendar: React.FC<CalendarProps> = ({
 					</select>
 				</div>
 				<div className="header text-left">
-					<span className="lg:text-md 2xl:text-lg font-extrabold text-[#e61e84] pr-9">
+					<span className="lg:text-md 2xl:text-lg font-extrabold text-[#3f3f3f] pr-9">
 						To:
 					</span>
 					<select
@@ -459,10 +459,10 @@ const Calendar: React.FC<CalendarProps> = ({
 			</div>
 
 			{/* Time selection table */}
-			<div className=" lg:w-[550px] xl:w-[40rem] 2xl:w-[60rem] border border-[#e61e84] rounded-lg shadow-lg lg:absolute lg:top-[30rem] lg:right-[18rem] text-xs mt-10 lg:mt-4 mx-4 md:mx-14 xl:right-[27rem] 2xl:mt-36 2xl:right-[26rem] overflow-x-auto custom-1240:w-[40rem] custom-1240:right-[23rem] custom-1345:right-[28rem]">
+			<div className=" lg:w-[550px] xl:w-[40rem] 2xl:w-[60rem] border border-[#3f3f3f] rounded-lg shadow-lg lg:absolute lg:top-[30rem] lg:right-[18rem] text-xs mt-10 lg:mt-4 mx-4 md:mx-14 xl:right-[27rem] 2xl:mt-36 2xl:right-[26rem] overflow-x-auto custom-1240:w-[40rem] custom-1240:right-[23rem] custom-1345:right-[28rem]">
 				<div className="lg:flex lg:gap-x-10 pl-6 my-2 text-sm ">
 					<div>
-						<p className="lg:text-[14px] 2xl:text-[18px] font-extrabold text-[#e61e84]">
+						<p className="lg:text-[14px] 2xl:text-[18px] font-extrabold text-[#3f3f3f]">
 							Selected Date:{" "}
 							<span className="2xl:text-[16px] lg:text-[12px] text-black font-normal">
 								{selectedDateState ? selectedDate.toDateString() : "None"}
@@ -470,7 +470,7 @@ const Calendar: React.FC<CalendarProps> = ({
 						</p>
 					</div>
 					<div>
-						<p className="lg:text-[14px] 2xl:text-[18px] font-extrabold text-[#e61e84]">
+						<p className="lg:text-[14px] 2xl:text-[18px] font-extrabold text-[#3f3f3f]">
 							From:{" "}
 							<span className="2xl:text-[16px] lg:text-[12px] text-black font-normal">
 								{formattedSelectedTime}
@@ -479,7 +479,7 @@ const Calendar: React.FC<CalendarProps> = ({
 						<p className="lg:text-[12px] 2xl:text-[16px]"></p>
 					</div>
 					<div>
-						<p className="lg:text-[14px] 2xl:text-[18px] font-extrabold text-[#e61e84]">
+						<p className="lg:text-[14px] 2xl:text-[18px] font-extrabold text-[#3f3f3f]">
 							To:{" "}
 							<span className="2xl:text-[16px] lg:text-[12px] text-black font-normal">
 								{formattedToSelectedTime}
@@ -492,7 +492,7 @@ const Calendar: React.FC<CalendarProps> = ({
 						<table className="w-full text-left">
 							<thead>
 								<tr>
-									<th className="p-2 lg:pl-0 2xl:pl-2 border-b lg:text-[13px] 2xl:text-[16px]">
+									<th className="p-2 lg:pl-0 2xl:pl-2 border-b lg:text-[13px] 2xl:text-[16px] text-[#3f3f3f]">
 										Time
 									</th>
 									<th
@@ -501,7 +501,7 @@ const Calendar: React.FC<CalendarProps> = ({
 											showReservationDetails("Energy", selectedDateState)
 										}
 									>
-										<span className="bg-[#e61e84] text-white px-2 lg:p-1 lg:px-2 2xl:p-1 2xl:px-4 hover:bg-[#fe81c2] rounded-full">
+										<span className="bg-[#3f3f3f] text-white px-2 lg:p-1 lg:px-2 2xl:p-1 2xl:px-4 hover:bg-[#686868] rounded-full">
 											Energy
 										</span>
 									</th>
@@ -511,7 +511,7 @@ const Calendar: React.FC<CalendarProps> = ({
 											showReservationDetails("Focus", selectedDateState)
 										}
 									>
-										<span className="bg-[#48cae4] text-white px-2 lg:p-1 lg:px-2 2xl:p-1 2xl:px-4 hover:bg-[#90e0ef] rounded-full">
+										<span className="bg-[#3f3f3f] text-white px-2 lg:p-1 lg:px-2 2xl:p-1 2xl:px-4 hover:bg-[#686868] rounded-full">
 											Focus
 										</span>
 									</th>
@@ -521,7 +521,7 @@ const Calendar: React.FC<CalendarProps> = ({
 											showReservationDetails("Lecture", selectedDateState)
 										}
 									>
-										<span className="bg-[#ffdc2e] text-white px-2 lg:p-1 lg:px-2 2xl:p-1 2xl:px-4 hover:bg-[#ffe761] rounded-full">
+										<span className="bg-[#3f3f3f] text-white px-2 lg:p-1 lg:px-2 2xl:p-1 2xl:px-4 hover:bg-[#686868] rounded-full">
 											Lecture
 										</span>
 									</th>
@@ -531,7 +531,7 @@ const Calendar: React.FC<CalendarProps> = ({
 											showReservationDetails("Zoom", selectedDateState)
 										}
 									>
-										<span className="bg-[#2eff2e] text-white px-2 lg:p-1 lg:px-2 2xl:p-1 2xl:px-4 hover:bg-[#a8ff61] rounded-full">
+										<span className="bg-[#3f3f3f] text-white px-2 lg:p-1 lg:px-2 2xl:p-1 2xl:px-4 hover:bg-[#686868] rounded-full">
 											Zoom
 										</span>
 									</th>
@@ -676,7 +676,7 @@ const Calendar: React.FC<CalendarProps> = ({
 												className={`lg:p-1.5 2xl:p-2 border-b whitespace-nowrap lg:text-[13px] 2xl:text-[14px] lg:pl-4 font-extrabold text-center ${getAvailabilityClass(
 													zoomAvailability,
 													startTime
-												)} ${startTime}`}
+												)} ${getDayClassName(startTime)}`}
 												onClick={() =>
 													showReservationDetails("Zoom", selectedDateState)
 												}
@@ -694,7 +694,7 @@ const Calendar: React.FC<CalendarProps> = ({
 			{reservationDetails.length > 0 && (
 				<div className="reservation-details-container mt-6 lg:mt-0">
 					<div className="reservation-details lg:absolute lg:top-[30rem] lg:left-[11rem] xl:left-[18rem] 2xl:left-[16rem] 2xl:top-[38rem] bg-white border rounded-lg shadow-lg p-2 pl-4 lg:w-[20rem] xl:w-[28rem] 2xl:w-[35rem] mx-4 md:mx-14 md:mt-4 custom-1240:left-[12rem] custom-1345:left-[17rem]">
-						<h3 className="lg:text-[15px] 2xl:text-lg font-bold mb-1 text-[#e61e84] text-sm lg:text-lg">
+						<h3 className="lg:text-[15px] 2xl:text-lg font-bold mb-1 text-[#3f3f3f] text-sm lg:text-lg">
 							Reservation Details
 						</h3>
 						<div className=" h-[6rem] lg:h-[114px] 2xl:h-[126px] overflow-y-auto text-xs lg:text-sm">
@@ -705,23 +705,23 @@ const Calendar: React.FC<CalendarProps> = ({
 										className="lg:mb-2 2xl:mb-4 lg:text-[13px] 2xl:text-[16px]"
 									>
 										<p>
-											<strong className="text-[#e61e84]">Name:</strong>{" "}
+											<strong className="text-[#3f3f3f]">Name:</strong>{" "}
 											{detail.name}
 										</p>
 										<p>
-											<strong className="text-[#e61e84]">Room:</strong>{" "}
+											<strong className="text-[#3f3f3f]">Room:</strong>{" "}
 											{detail.title}
 										</p>
 										<p>
-											<strong className="text-[#e61e84]">From:</strong>{" "}
+											<strong className="text-[#3f3f3f]">From:</strong>{" "}
 											{format(new Date(detail.fromDate), "hh:mm aa")}
 										</p>
 										<p>
-											<strong className="text-[#e61e84]">To:</strong>{" "}
+											<strong className="text-[#3f3f3f]">To:</strong>{" "}
 											{format(new Date(detail.toDate), "hh:mm aa")}
 										</p>
 										<p className="mb-1">
-											<strong className="text-[#e61e84]">Status:</strong>{" "}
+											<strong className="text-[#3f3f3f]">Status:</strong>{" "}
 											<span
 												className={`inline-block py-1 px-2 rounded-lg font-bold ${
 													detail.status === "Pending"
