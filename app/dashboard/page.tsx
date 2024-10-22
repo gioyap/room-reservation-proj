@@ -282,15 +282,29 @@ const Dashboard = () => {
 	return (
 		<div className=" pb-10">
 			<ToastContainer autoClose={5000} />
-			<div className="flex gap-2 bg-[#3f3f3f] lg:py-1 22xl:py-2 justify-center">
-				<div>
-					<h1 className="text-2xl lg:text-xl 2xl:text-2xl font-bold text-white">
-						Welcome User
-					</h1>
+			<div className="flex justify-center pt-2 lg:hidden">
+				<img src="mobile.png" alt="header" />
+			</div>
+			<div className="lg:flex justify-center pt-2 hidden 2xl:hidden">
+				<img src="tablet.png" alt="header" />
+			</div>
+			<div className="2xl:flex justify-center pt-2 hidden">
+				<img src="desktop.png" alt="header" />
+			</div>
+
+			<div className="absolute right-0 top-0">
+				<div className="hidden md:block md:size-64 lg:size-72 xl:size-80 2xl:size-96 -mr-36 mt-4 md:-mr-28 md:-mt-10 lg:-mr-44 lg:-mt-20">
+					<img src="design.png" alt="top" />
 				</div>
 			</div>
 
-			<div className="h-screen grid grid-cols-1 lg:grid-cols-2 lg:px-[80px] 2xl:px-[330px] lg:w-full lg:h-[763px] lg:ml-0 2xl:w-full 2xl:ml-0 2xl:mt-0 2xl:h-[877px] 2xl:pl-14 2xl:pt-12 lg:py-6">
+			<div className="absolute left-0 bottom-0">
+				<div className="hidden md:block md:size-64 lg:size-72 xl:size-80 2xl:size-96 md:-ml-48 md:-mb-[20rem] lg:-ml-48 lg:-mb-[20rem] xl:-mb-[18rem] 2xl:-mb-[25rem]">
+					<img src="design2.png" alt="top" />
+				</div>
+			</div>
+
+			<div className="h-screen grid grid-cols-1 lg:grid-cols-2 lg:px-[80px] 2xl:px-[330px] lg:w-full lg:h-[763px] lg:ml-0 2xl:w-full 2xl:ml-0 2xl:mt-0 2xl:h-[877px] 2xl:pl-14 2xl:pt-10 lg:py-6">
 				<div className="flex flex-col items-start lg:gap-4 2xl:gap-6 pl-6 lg:px-10 2xl:px-14">
 					<div className="lg:-ml-10 lg:pb-5 2xl:pb-0 2xl:ml-6 py-4 ml-8 md:ml-[14rem]">
 						<span className="text-2xl lg:text-3xl 2xl:text-4xl tracking-wide font-black font-sans text-[#3f3f3f]">
@@ -325,7 +339,7 @@ const Dashboard = () => {
 								id="company"
 								value={company}
 								onChange={handleCompanyChange}
-								className="lg:w-[350px] xl:w-[28rem] 2xl:w-full lg:text-[16px] 2xl:text-[18px] lg:px-4 lg:py-1 2xl:py-2 border rounded-md ml-4 text-sm p-1 border-[#3f3f3f]"
+								className="w-[10rem] lg:w-[350px] xl:w-[28rem] 2xl:w-full lg:text-[16px] 2xl:text-[18px] lg:px-4 lg:py-1 2xl:py-2 border rounded-md ml-4 text-sm p-1 border-[#3f3f3f]"
 							>
 								{companies.map((comp) => (
 									<option key={comp} value={comp}>
