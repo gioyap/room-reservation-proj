@@ -370,6 +370,7 @@ const AcceptedPage = () => {
 					message="Are you sure you want to cancel this accepted reservation?"
 					processedBy={processedBy}
 					onProcessedByChange={setProcessedBy}
+					isAdmin={true}
 				/>
 			)}
 		</div>

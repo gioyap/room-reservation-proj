@@ -291,12 +291,12 @@ const Dashboard = () => {
 			<div className="2xl:flex justify-center pt-2 hidden">
 				<img src="desktop.png" alt="header" />
 			</div>
-
+			{/* 
 			<div className="absolute right-0 top-0">
-				<div className="hidden md:block md:size-64 lg:size-72 xl:size-80 2xl:size-96 -mr-36 mt-4 md:-mr-28 md:-mt-10 lg:-mr-44 lg:-mt-20">
+				<div className="hidden lg:block md:size-64 lg:size-72 xl:size-80 2xl:size-96 -mr-36 mt-4 md:-mr-28 md:-mt-10 lg:-mr-44 lg:-mt-20">
 					<img src="design.png" alt="top" />
 				</div>
-			</div>
+			</div> */}
 
 			<div className="absolute left-0 bottom-0">
 				<div className="hidden md:block md:size-64 lg:size-72 xl:size-80 2xl:size-96 md:-ml-48 md:-mb-[20rem] lg:-ml-48 lg:-mb-[20rem] xl:-mb-[18rem] 2xl:-mb-[25rem]">
@@ -381,7 +381,7 @@ const Dashboard = () => {
 								value={name}
 								onChange={handleNameChange}
 								className="lg:w-[350px] xl:w-[28rem] 2xl:w-full lg:text-[16px] 2xl:text-[18px] lg:px-4 lg:py-1 2xl:py-2 border rounded-md ml-4 text-sm p-1 border-[#3f3f3f]"
-								placeholder="Please enter your full name"
+								placeholder="Enter your full name"
 							/>
 						</div>
 						<div>
@@ -452,7 +452,7 @@ const Dashboard = () => {
 							<span className="lg:text-[18px] 2xl:text-[18px] ml-1">Yes</span>
 						</div>
 						{showDescription && (
-							<div className="xl:absolute xl:top-[40rem]">
+							<div>
 								<label
 									className="lg:text-[18px] 2xl:text-[22px] text-[#3f3f3f] tracking-normal font-extrabold"
 									htmlFor="description"
@@ -464,8 +464,8 @@ const Dashboard = () => {
 									type="description"
 									value={description}
 									onChange={handleDescriptionChange}
-									className="lg:w-[350px] xl:w-[28rem] 2xl:w-full lg:text-[16px] 2xl:text-[18px] px-4 lg:py-1 2xl:py-2 border border-[#3f3f3f] rounded-md"
-									placeholder="Please provide the reason"
+									className=" w-40 lg:w-[350px] xl:w-[28rem] 2xl:w-full lg:text-[16px] 2xl:text-[18px] px-4 lg:py-1 2xl:py-2 border border-[#3f3f3f] rounded-md ml-4"
+									placeholder="Why urgent"
 								/>
 							</div>
 						)}
@@ -492,7 +492,7 @@ const Dashboard = () => {
 				<form onSubmit={handleContinue}>
 					<button
 						type="submit"
-						className="lg:absolute lg:top-[51rem] lg:right-[20rem] xl:right-[29rem] 2xl:top-[60rem] 2xl:right-[42rem] bg-[#3f3f3f] lg:mt-0 2xl:mt-2 hover:bg-[#686868] 2xl:text-[18px] font-extrabold text-white rounded text-[12px] w-auto p-2 uppercase ml-6 mb-10 md:ml-14 custom-1240:right-[26rem] custom-1345:right-[34rem]"
+						className="lg:absolute lg:top-[54rem] lg:right-[24rem] xl:right-[34rem] 2xl:top-[63rem] 2xl:right-[58rem] bg-[#3f3f3f] lg:mt-0 2xl:mt-2 hover:bg-[#686868] 2xl:text-[18px] font-extrabold text-white rounded text-[12px] w-auto p-2 uppercase ml-6 mb-10 md:ml-14 custom-1240:right-[26rem] custom-1345:right-[34rem]"
 					>
 						Submit
 					</button>
@@ -505,6 +505,7 @@ const Dashboard = () => {
 				title="Confirm Reservation"
 				message="Are you sure you want to confirm this reservation?"
 				isSubmitting={isSubmitting}
+				isAdmin={false}
 			/>
 		</div>
 	);

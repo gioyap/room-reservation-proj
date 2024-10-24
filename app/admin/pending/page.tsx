@@ -544,6 +544,7 @@ const PendingPage = () => {
 					message="Are you sure you want to decline this reservation?"
 					processedBy={processedBy}
 					onProcessedByChange={setProcessedBy}
+					isAdmin={true}
 				/>
 			)}
 			{selectedReservation && (
@@ -555,6 +556,7 @@ const PendingPage = () => {
 					message="Are you sure you want to accept this reservation?"
 					processedBy={processedBy}
 					onProcessedByChange={setProcessedBy}
+					isAdmin={true}
 				/>
 			)}
 		</div>

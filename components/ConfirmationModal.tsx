@@ -10,6 +10,7 @@ interface ConfirmationModalProps {
 	processedBy?: string;
 	isSubmitting?: boolean;
 	onProcessedByChange?: (value: string) => void;
+	isAdmin?: boolean;
 }
 
 const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
@@ -21,6 +22,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
 	processedBy,
 	isSubmitting = false,
 	onProcessedByChange,
+	isAdmin = false,
 }) => {
 	return (
 		<Modal
@@ -36,25 +38,27 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
 					{message}
 				</p>
 				{/* processedBy information displayed here */}
-				<div className="mb-6">
-					<label className="block text-sm font-medium text-gray-700 mb-2">
-						Processed By
-					</label>
-					<select
-						className="block w-full px-4 py-2 border rounded-md"
-						value={processedBy || ""} // Fallback to an empty string if undefined
-						onChange={(e) => {
-							if (onProcessedByChange) {
-								onProcessedByChange(e.target.value); // Update the state on change
-							}
-						}}
-					>
-						<option value="">Select an admin</option>
-						<option value="Ms. Olive Enriquez">Ms. Olive Enriquez</option>
-						<option value="Ms. Beth Haylo">Ms. Beth Haylo</option>
-						<option value="Ms. Hazel Cabundo">Ms. Hazel Cabundoc</option>
-					</select>
-				</div>
+				{isAdmin && (
+					<div className="mb-6">
+						<label className="block text-sm font-medium text-gray-700 mb-2">
+							Processed By
+						</label>
+						<select
+							className="block w-full px-4 py-2 border rounded-md"
+							value={processedBy || ""} // Fallback to an empty string if undefined
+							onChange={(e) => {
+								if (onProcessedByChange) {
+									onProcessedByChange(e.target.value); // Update the state on change
+								}
+							}}
+						>
+							<option value="">Select an admin</option>
+							<option value="Ms. Olive Enriquez">Ms. Olive Enriquez</option>
+							<option value="Ms. Beth Haylo">Ms. Beth Haylo</option>
+							<option value="Ms. Hazel Cabundo">Ms. Hazel Cabundoc</option>
+						</select>
+					</div>
+				)}
 				<div className="flex justify-end space-x-4">
 					<button
 						onClick={onRequestClose}

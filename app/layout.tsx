@@ -6,7 +6,7 @@ export const metadata: Metadata = {
 	title: "Calendar Reservation",
 	description: "Booking Calendar System in Head Office of Flawless",
 	icons: {
-		icon: "/favicon.png", // Path to your favicon (usually located in the public folder)
+		icon: "/mobile.png", // Path to your favicon (usually located in the public folder)
 	},
 };
 
