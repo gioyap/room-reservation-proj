@@ -7,7 +7,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 const companies = [
 	"Flawless",
-	"Mixexpert Trading Services Incorporated",
+	"Mixexpert Trading Services and Inc.",
 	"FINA",
 	"Beauty and Butter",
 ];
@@ -124,6 +124,13 @@ const Dashboard = () => {
 		) {
 			toast.error("Please fill out all required fields.");
 			return;
+		}
+
+		const emailRegex =
+			/^[a-zA-Z0-9._%+-]+@(beautyandbutter\.com|mixexpert\.com\.ph|flawless\.ph|finafranchising\.com|gmail\.com)$/;
+		if (!emailRegex.test(email)) {
+			toast.error("Please input a valid email");
+			return; // Prevent submission
 		}
 
 		const combinedFromDateTime = new Date(

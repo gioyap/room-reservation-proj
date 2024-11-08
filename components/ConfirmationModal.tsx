@@ -1,5 +1,6 @@
 import React from "react";
 import Modal from "react-modal";
+import { toast } from "react-toastify"; // Ensure you have react-toastify installed
 
 interface ConfirmationModalProps {
 	isOpen: boolean;
@@ -24,6 +25,14 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
 	onProcessedByChange,
 	isAdmin = false,
 }) => {
+	const handleConfirm = () => {
+		if (isAdmin && (!processedBy || processedBy === "")) {
+			toast.error("Please select an admin.");
+			return;
+		}
+		onConfirm();
+	};
+
 	return (
 		<Modal
 			isOpen={isOpen}
@@ -45,10 +54,10 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
 						</label>
 						<select
 							className="block w-full px-4 py-2 border rounded-md"
-							value={processedBy || ""} // Fallback to an empty string if undefined
+							value={processedBy || ""}
 							onChange={(e) => {
 								if (onProcessedByChange) {
-									onProcessedByChange(e.target.value); // Update the state on change
+									onProcessedByChange(e.target.value);
 								}
 							}}
 						>
@@ -67,7 +76,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
 						No
 					</button>
 					<button
-						onClick={onConfirm}
+						onClick={handleConfirm}
 						className={`2xl:px-8 px-4 py-2 ${
 							isSubmitting
 								? "bg-gray-400 cursor-not-allowed"
