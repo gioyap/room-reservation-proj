@@ -16,17 +16,18 @@ import ConfirmationModal from "../../components/ConfirmationModal";
 
 const departments = [
 	"Executive",
-	"MIS-IT",
+	"Operations",
 	"Accounting",
+	"Audit",
+	"Sales",
+	"Marketing",
+	"HR",
 	"SCM",
 	"Procurement",
-	"MARTD",
-	"HR",
+	"MIS-IT",
 	"CRMT",
-	"Sales",
-	"Operations",
-	"Audit",
-	"Marketing",
+	"MARTD",
+	"BDD",
 ];
 
 const sortedDepartments = departments.sort((a, b) => a.localeCompare(b));
