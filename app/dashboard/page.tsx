@@ -499,7 +499,7 @@ const Dashboard = () => {
 				<form onSubmit={handleContinue}>
 					<button
 						type="submit"
-						className="lg:absolute lg:top-[54rem] lg:right-[24rem] xl:right-[34rem] 2xl:top-[63rem] bg-[#3f3f3f] lg:mt-0 2xl:mt-2 hover:bg-[#686868] 2xl:text-[18px] font-extrabold text-white rounded text-[12px] w-auto p-2 uppercase ml-6 mb-10 md:ml-14 custom-1240:right-[26rem] custom-1345:right-[34rem] custom-1536:right-[40rem] custom-1700:right-[59rem]"
+						className="lg:absolute lg:top-[54rem] lg:right-[24rem] xl:right-[34rem] 2xl:top-[63rem] bg-[#3f3f3f] lg:mt-0 2xl:mt-2 hover:bg-[#686868] 2xl:text-[18px] font-extrabold text-white rounded text-[12px] w-auto p-2 uppercase ml-6 mb-10 md:ml-14 custom-1240:right-[26rem] custom-1345:right-[34rem] custom-1536:right-[34rem] custom-1700:right-[59rem]"
 					>
 						Submit
 					</button>

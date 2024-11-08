@@ -459,7 +459,7 @@ const Calendar: React.FC<CalendarProps> = ({
 			</div>
 
 			{/* Time selection table */}
-			<div className=" lg:w-[470px] xl:w-[30rem] 2xl:w-[45rem] border border-[#3f3f3f] rounded-lg shadow-lg lg:absolute lg:top-[30rem] lg:right-[17rem] text-xs mt-10 lg:mt-4 mx-4 md:mx-28 xl:right-[27rem] 2xl:mt-36 custom-1536:right-[20rem] custom-1700:right-[38rem] overflow-x-auto custom-1240:w-[40rem] custom-1240:right-[23rem] custom-1345:right-[28rem]">
+			<div className=" lg:w-[470px] xl:w-[30rem] 2xl:w-[45rem] border border-[#3f3f3f] rounded-lg shadow-lg lg:absolute lg:top-[30rem] lg:right-[17rem] text-xs mt-10 lg:mt-4 mx-4 md:mx-28 xl:right-[27rem] 2xl:mt-36 custom-1536:right-[14rem] custom-1700:right-[38rem] overflow-x-auto custom-1240:w-[40rem] custom-1240:right-[23rem] custom-1345:right-[28rem]">
 				<div className="lg:flex lg:gap-x-10 pl-6 my-2 text-sm ">
 					<div>
 						<p className="lg:text-[14px] 2xl:text-[18px] font-extrabold text-[#3f3f3f]">
@@ -693,7 +693,7 @@ const Calendar: React.FC<CalendarProps> = ({
 			</div>
 			{reservationDetails.length > 0 && (
 				<div className="reservation-details-container mt-6 lg:mt-0">
-					<div className="reservation-details lg:absolute lg:top-[30rem] lg:left-[8rem] xl:left-[15rem] 2xl:top-[38rem] bg-white border rounded-lg shadow-lg p-2 pl-4 lg:w-[20rem] xl:w-[28rem] 2xl:w-[35rem] mx-4 md:mx-14 md:mt-4 custom-1240:left-[12rem] custom-1345:left-[17rem] custom-1536:left-[10rem] custom-1700:left-[1rem]">
+					<div className="reservation-details lg:absolute lg:top-[30rem] lg:left-[8rem] xl:left-[15rem] 2xl:top-[38rem] bg-white border rounded-lg shadow-lg p-2 pl-4 lg:w-[20rem] xl:w-[28rem] 2xl:w-[35rem] mx-4 md:mx-14 md:mt-4 custom-1240:left-[12rem] custom-1345:left-[17rem] custom-1536:left-[13rem] custom-1700:left-[1rem]">
 						<h3 className="lg:text-[15px] 2xl:text-lg font-bold mb-1 text-[#3f3f3f] text-sm lg:text-lg">
 							Reservation Details
 						</h3>
