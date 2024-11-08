@@ -402,7 +402,7 @@ const Dashboard = () => {
 									/>
 									Energy
 								</label>
-								{/* <label className="text-[#3f3f3f] lg:text-[16px] 2xl:text-[15px]">
+								<label className="text-[#3f3f3f] lg:text-[16px] 2xl:text-[15px]">
 									<input
 										type="radio"
 										value="Focus"
@@ -411,8 +411,8 @@ const Dashboard = () => {
 										className="mr-1"
 									/>
 									Focus
-								</label> */}
-								<label className="text-[#3f3f3f] lg:text-[16px] 2xl:text-[15px]">
+								</label>
+								{/* <label className="text-[#3f3f3f] lg:text-[16px] 2xl:text-[15px]">
 									<input
 										type="radio"
 										value="Lecture"
@@ -421,7 +421,7 @@ const Dashboard = () => {
 										className="mr-1"
 									/>
 									Lecture
-								</label>
+								</label> */}
 								<label className="text-[#3f3f3f] lg:text-[16px] 2xl:text-[15px]">
 									<input
 										type="radio"
@@ -492,7 +492,7 @@ const Dashboard = () => {
 				<form onSubmit={handleContinue}>
 					<button
 						type="submit"
-						className="lg:absolute lg:top-[54rem] lg:right-[24rem] xl:right-[34rem] 2xl:top-[63rem] 2xl:right-[58rem] bg-[#3f3f3f] lg:mt-0 2xl:mt-2 hover:bg-[#686868] 2xl:text-[18px] font-extrabold text-white rounded text-[12px] w-auto p-2 uppercase ml-6 mb-10 md:ml-14 custom-1240:right-[26rem] custom-1345:right-[34rem]"
+						className="lg:absolute lg:top-[54rem] lg:right-[24rem] xl:right-[34rem] 2xl:top-[63rem] bg-[#3f3f3f] lg:mt-0 2xl:mt-2 hover:bg-[#686868] 2xl:text-[18px] font-extrabold text-white rounded text-[12px] w-auto p-2 uppercase ml-6 mb-10 md:ml-14 custom-1240:right-[26rem] custom-1345:right-[34rem] custom-1536:right-[40rem] custom-1700:right-[59rem]"
 					>
 						Submit
 					</button>

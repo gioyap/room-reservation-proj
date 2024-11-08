@@ -28,6 +28,8 @@ const config: Config = {
 			screens: {
 				"custom-1240": "1240px",
 				"custom-1345": "1345px",
+				"custom-1536": "1536px",
+				"custom-1700": "1700px",
 			},
 		},
 	},
