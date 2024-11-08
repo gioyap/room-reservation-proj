@@ -17,6 +17,7 @@ interface Reservation {
 	toDate: string;
 	status: string;
 	email: string;
+	// processedBy: string;
 }
 
 type SortColumn = keyof Reservation;
@@ -208,6 +209,9 @@ const DeclinedPage = () => {
 										<th className="sticky px-2 text-xs top-0 lg:pl-4 lg:py-2 text-left lg:text-[12px] 2xl:text-[14px] font-extrabold text-white uppercase tracking-wider ">
 											Status
 										</th>
+										{/* <th className="sticky px-2 text-xs top-0 lg:pl-4 lg:py-2 text-left lg:text-[12px] 2xl:text-[14px] font-extrabold text-white uppercase tracking-wider ">
+											ProcessedBy
+										</th> */}
 									</tr>
 								</thead>
 								<tbody className="bg-white divide-y divide-gray-200">
@@ -242,6 +246,9 @@ const DeclinedPage = () => {
 													{reservation.status}
 												</span>
 											</td>
+											{/* <td className="lg:py-2 lg:w-[140px] 2xl:w-[150px] lg:pr-6 2xl:px-0 lg:text-[14px] 2xl:text-[16px] pl-2 text-xs ">
+												{reservation.processedBy}
+											</td> */}
 										</tr>
 									))}
 								</tbody>
