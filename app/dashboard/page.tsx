@@ -95,6 +95,7 @@ const Dashboard = () => {
 			// Check if there is any reservation that overlaps with the desired time and title
 			const isAvailable = !reservations.some(
 				(reservation: any) =>
+					reservation.status === "Accepted" &&
 					reservation.title === title &&
 					new Date(reservation.fromDate) < toDateTime &&
 					new Date(reservation.toDate) > fromDateTime
