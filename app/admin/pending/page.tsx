@@ -188,7 +188,7 @@ const PendingPage = () => {
 				headers: {
 					"Content-Type": "application/json",
 				},
-				body: JSON.stringify({ id, status: "Accepted" }),
+				body: JSON.stringify({ id, status: "Accepted", processedBy }),
 			});
 
 			if (!response.ok) {
@@ -198,7 +198,7 @@ const PendingPage = () => {
 			setReservations((prevReservations) =>
 				prevReservations.map((reservation) =>
 					reservation._id === id
-						? { ...reservation, status: "Accepted" }
+						? { ...reservation, status: "Accepted", processedBy }
 						: reservation
 				)
 			);
@@ -257,7 +257,7 @@ const PendingPage = () => {
 				headers: {
 					"Content-Type": "application/json",
 				},
-				body: JSON.stringify({ id, status: "Declined" }),
+				body: JSON.stringify({ id, status: "Declined", processedBy }),
 			});
 
 			if (!response.ok) {
@@ -267,7 +267,7 @@ const PendingPage = () => {
 			setReservations((prevReservations) =>
 				prevReservations.map((reservation) =>
 					reservation._id === id
-						? { ...reservation, status: "Declined" }
+						? { ...reservation, status: "Declined", processedBy }
 						: reservation
 				)
 			);
@@ -471,7 +471,7 @@ const PendingPage = () => {
 										<tr key={reservation._id}>
 											<td className=" lg:pl-4 2xl:pl-8 lg:py-2 lg:w-[240px] 2xl:w-[240px] whitespace-nowrap lg:px-4 2xl:px-0 text-xs lg:text-[14px] 2xl:text-[16px] pl-2">
 												{reservation.company ===
-												"Mixexpert Trading Services Incorporated"
+												"Mixexpert Trading Services and Inc."
 													? "MTSI"
 													: reservation.company}
 											</td>

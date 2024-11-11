@@ -17,7 +17,7 @@ interface Reservation {
 	toDate: string;
 	status: string;
 	email: string;
-	// processedBy: string;
+	processedBy: string;
 }
 
 type SortColumn = keyof Reservation;
@@ -159,7 +159,7 @@ const DeclinedPage = () => {
 								<thead className="bg-[#3f3f3f]">
 									<tr>
 										<th
-											className="sticky px-2 top-0 lg:pl-4 2xl:pl-8 lg:py-2 text-left lg:text-[12px] 2xl:text-[14px] font-extrabold text-white uppercase tracking-wider cursor-pointer whitespace-nowrap text-xs lg:pr-4 2xl:pr-0 "
+											className="sticky px-2 top-0 lg:pl-4 2xl:pl-8 lg:py-2 text-center lg:text-[12px] 2xl:text-[14px] font-extrabold text-white uppercase tracking-wider cursor-pointer whitespace-nowrap text-xs lg:pr-4 2xl:pr-0 "
 											onClick={() => sortTable("company")}
 										>
 											Company{" "}
@@ -168,7 +168,7 @@ const DeclinedPage = () => {
 											)}
 										</th>
 										<th
-											className="sticky px-2 top-0 lg:py-2 text-left lg:text-[12px] 2xl:text-[14px] font-extrabold text-white uppercase tracking-wider cursor-pointer whitespace-nowrap text-xs lg:pr-4 2xl:pr-0  "
+											className="sticky px-2 top-0 lg:py-2 text-center lg:text-[12px] 2xl:text-[14px] font-extrabold text-white uppercase tracking-wider cursor-pointer whitespace-nowrap text-xs lg:pr-4 2xl:pr-0  "
 											onClick={() => sortTable("department")}
 										>
 											Department{" "}
@@ -177,7 +177,7 @@ const DeclinedPage = () => {
 											)}
 										</th>
 										<th
-											className="sticky px-2 text-xs top-0 lg:py-2 text-left lg:text-[12px] 2xl:text-[14px] font-extrabold text-white uppercase tracking-wider cursor-pointer  "
+											className="sticky px-2 text-xs top-0 lg:py-2 text-center lg:text-[12px] 2xl:text-[14px] font-extrabold text-white uppercase tracking-wider cursor-pointer  "
 											onClick={() => sortTable("name")}
 										>
 											Name{" "}
@@ -186,7 +186,7 @@ const DeclinedPage = () => {
 											)}
 										</th>
 										<th
-											className="sticky px-2 text-xs top-0 lg:py-2 text-left lg:text-[12px] 2xl:text-[14px] font-extrabold text-white uppercase tracking-wider cursor-pointer  "
+											className="sticky px-2 text-xs top-0 lg:py-2 text-center lg:text-[12px] 2xl:text-[14px] font-extrabold text-white uppercase tracking-wider cursor-pointer  "
 											onClick={() => sortTable("title")}
 										>
 											Room{" "}
@@ -195,7 +195,7 @@ const DeclinedPage = () => {
 											)}
 										</th>
 										<th
-											className="sticky px-2 text-xs top-0 lg:pl-12 2xl:pl-12 lg:py-2 text-left lg:text-[12px] 2xl:text-[14px] font-extrabold text-white uppercase tracking-wider cursor-pointer  "
+											className="sticky px-2 text-xs top-0 lg:pl-12 2xl:pl-12 lg:py-2 text-center lg:text-[12px] 2xl:text-[14px] font-extrabold text-white uppercase tracking-wider cursor-pointer  "
 											onClick={() => sortTable("fromDate")}
 										>
 											From{" "}
@@ -203,52 +203,52 @@ const DeclinedPage = () => {
 												<span>{sortOrder === "asc" ? "▲" : "▼"}</span>
 											)}
 										</th>
-										<th className="sticky px-2 text-xs top-0 lg:pl-12 2xl:pl-16 lg:py-2 text-left lg:text-[12px] 2xl:text-[14px] font-extrabold text-white uppercase tracking-wider ">
+										<th className="sticky px-2 text-xs top-0 lg:pl-12 2xl:pl-16 lg:py-2 text-center lg:text-[12px] 2xl:text-[14px] font-extrabold text-white uppercase tracking-wider ">
 											To{" "}
 										</th>
-										<th className="sticky px-2 text-xs top-0 lg:pl-4 lg:py-2 text-left lg:text-[12px] 2xl:text-[14px] font-extrabold text-white uppercase tracking-wider ">
+										<th className="sticky px-2 text-xs top-0 lg:pl-4 lg:py-2 text-center lg:text-[12px] 2xl:text-[14px] font-extrabold text-white uppercase tracking-wider ">
 											Status
 										</th>
-										{/* <th className="sticky px-2 text-xs top-0 lg:pl-4 lg:py-2 text-left lg:text-[12px] 2xl:text-[14px] font-extrabold text-white uppercase tracking-wider ">
+										<th className="sticky px-2 text-xs top-0 lg:pl-4 lg:py-2 text-center lg:text-[12px] 2xl:text-[14px] font-extrabold text-white uppercase tracking-wider ">
 											ProcessedBy
-										</th> */}
+										</th>
 									</tr>
 								</thead>
 								<tbody className="bg-white divide-y divide-gray-200">
 									{currentReservations.map((reservation) => (
 										<tr key={reservation._id}>
-											<td className="lg:pl-4 2xl:pl-8 lg:py-2 lg:w-[240px] 2xl:w-[220px] whitespace-nowrap text-xs lg:px-4 2xl:px-0 lg:text-[14px] 2xl:text-[16px] pl-2">
+											<td className="lg:pl-4 2xl:pl-8 lg:py-2 lg:w-[240px] 2xl:w-[220px] whitespace-nowrap text-xs lg:px-4 2xl:px-0 lg:text-[14px] 2xl:text-[16px] pl-2 text-center">
 												{reservation.company ===
-												"Mixexpert Trading Services Incorporated"
+												"Mixexpert Trading Services and Inc."
 													? "MTSI"
 													: reservation.company}
 											</td>
-											<td className="lg:py-2 lg:w-[200px] 2xl:w-[160px] lg:text-[14px] lg:pr-4 2xl:px-0 whitespace-nowrap text-xs 2xl:text-[16px] pl-2 ">
+											<td className="lg:py-2 lg:w-[200px] 2xl:w-[160px] lg:text-[14px] lg:pr-4 2xl:px-0 whitespace-nowrap text-xs 2xl:text-[16px] pl-2 text-center ">
 												{reservation.department}
 											</td>
-											<td className=" lg:py-2 lg:w-[250px] 2xl:w-[200px] 2xl:pr-4 lg:pr-4 2xl:px-0 whitespace-nowrap text-xs lg:text-[14px] 2xl:text-[16px] pl-2 ">
+											<td className=" lg:py-2 lg:w-[250px] 2xl:w-[200px] 2xl:pr-4 lg:pr-4 2xl:px-0 whitespace-nowrap text-xs lg:text-[14px] 2xl:text-[16px] pl-2 text-center ">
 												{reservation.name}
 											</td>
-											<td className="  lg:py-2 lg:text-[14px] lg:w-[120px] lg:pr-4 2xl:px-0 2xl:w-[100px] 2xl:text-[16px] pl-2 ">
+											<td className="  lg:py-2 lg:text-[14px] lg:w-[120px] lg:pr-4 2xl:px-0 2xl:w-[100px] 2xl:text-[16px] pl-2 text-center ">
 												{reservation.title}
 											</td>
-											<td className="lg:py-2 lg:w-[140px] 2xl:w-[220px] lg:pr-4 2xl:px-0 whitespace-nowrap text-xs lg:text-[14px] 2xl:text-[16px] pl-2 ">
+											<td className="lg:py-2 lg:w-[140px] 2xl:w-[220px] lg:pr-4 2xl:px-0 whitespace-nowrap text-xs lg:text-[14px] 2xl:text-[16px] pl-2 text-center ">
 												{new Date(reservation.fromDate).toLocaleString()}
 											</td>
-											<td className=" lg:py-2 lg:w-[150px] 2xl:w-[220px] lg:pr-4 2xl:px-0 whitespace-nowrap text-xs lg:text-[14px] 2xl:text-[16px] pl-2 2xl:pl-10 lg:pl-7">
+											<td className=" lg:py-2 lg:w-[150px] 2xl:w-[220px] lg:pr-4 2xl:px-0 whitespace-nowrap text-xs lg:text-[14px] 2xl:text-[16px] pl-2 text-center 2xl:pl-10 lg:pl-7">
 												{format(
 													new Date(reservation.toDate).toLocaleString(),
 													"hh:mm aa"
 												)}
 											</td>
-											<td className=" lg:py-2 lg:w-[140px] 2xl:w-[120px] lg:pr-6 2xl:px-0 lg:text-[14px] 2xl:text-[16px] pl-2">
+											<td className=" lg:py-2 lg:w-[140px] 2xl:w-[120px] lg:pr-6 2xl:px-0 text-xs lg:text-[14px] 2xl:text-[16px] pl-2 text-center">
 												<span className="bg-red-600 font-bold rounded-full px-4 py-1 text-white">
 													{reservation.status}
 												</span>
 											</td>
-											{/* <td className="lg:py-2 lg:w-[140px] 2xl:w-[150px] lg:pr-6 2xl:px-0 lg:text-[14px] 2xl:text-[16px] pl-2 text-xs ">
+											<td className="lg:py-2 lg:w-[140px] 2xl:w-[150px] lg:pr-6 2xl:px-0 lg:text-[14px] 2xl:text-[16px] pl-2 text-center text-xs ">
 												{reservation.processedBy}
-											</td> */}
+											</td>
 										</tr>
 									))}
 								</tbody>

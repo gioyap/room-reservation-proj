@@ -256,7 +256,7 @@ const AcceptedPage = () => {
 								<thead className="bg-[#3f3f3f]">
 									<tr>
 										<th
-											className="sticky text-xs px-2 top-0 lg:pl-4 2xl:pl-8 lg:py-2 text-left lg:text-[12px] 2xl:text-[14px] font-extrabold text-white uppercase tracking-wider cursor-pointer whitespace-nowrap lg:pr-4 2xl:pr-0 "
+											className="sticky text-xs text-center px-2 top-0 lg:pl-4 2xl:pl-8 lg:py-2 lg:text-[12px] 2xl:text-[14px] font-extrabold text-white uppercase tracking-wider cursor-pointer whitespace-nowrap lg:pr-4 2xl:pr-0 "
 											onClick={() => sortTable("company")}
 										>
 											Company{" "}
@@ -265,7 +265,7 @@ const AcceptedPage = () => {
 											)}
 										</th>
 										<th
-											className="sticky text-xs px-2 top-0 lg:py-2 text-left lg:text-[12px] 2xl:text-[14px] font-extrabold text-white uppercase tracking-wider cursor-pointer whitespace-nowrap lg:pr-4 2xl:pr-0  "
+											className="sticky text-xs text-center px-2 top-0 lg:py-2 lg:text-[12px] 2xl:text-[14px] font-extrabold text-white uppercase tracking-wider cursor-pointer whitespace-nowrap lg:pr-4 2xl:pr-0  "
 											onClick={() => sortTable("department")}
 										>
 											Department{" "}
@@ -274,7 +274,7 @@ const AcceptedPage = () => {
 											)}
 										</th>
 										<th
-											className="sticky text-xs px-2 top-0 lg:py-2 text-left lg:text-[12px] 2xl:text-[14px] font-extrabold text-white uppercase tracking-wider cursor-pointer  "
+											className="sticky text-xs text-center px-2 top-0 lg:py-2 lg:text-[12px] 2xl:text-[14px] font-extrabold text-white uppercase tracking-wider cursor-pointer  "
 											onClick={() => sortTable("name")}
 										>
 											Name{" "}
@@ -283,7 +283,7 @@ const AcceptedPage = () => {
 											)}
 										</th>
 										<th
-											className="sticky text-xs px-2 top-0 lg:py-2 text-left lg:text-[12px] 2xl:text-[14px] font-extrabold text-white uppercase tracking-wider cursor-pointer  "
+											className="sticky text-xs text-center px-2 top-0 lg:py-2 lg:text-[12px] 2xl:text-[14px] font-extrabold text-white uppercase tracking-wider cursor-pointer  "
 											onClick={() => sortTable("title")}
 										>
 											Room{" "}
@@ -292,7 +292,7 @@ const AcceptedPage = () => {
 											)}
 										</th>
 										<th
-											className="sticky text-xs px-2 top-0 lg:pl-12 2xl:pl-12 lg:py-2 text-left lg:text-[12px] 2xl:text-[14px] font-extrabold text-white uppercase tracking-wider cursor-pointer "
+											className="sticky text-xs text-center px-2 top-0 lg:pl-12 2xl:pl-12 lg:py-2 lg:text-[12px] 2xl:text-[14px] font-extrabold text-white uppercase tracking-wider cursor-pointer "
 											onClick={() => sortTable("fromDate")}
 										>
 											From{" "}
@@ -300,53 +300,53 @@ const AcceptedPage = () => {
 												<span>{sortOrder === "asc" ? "▲" : "▼"}</span>
 											)}
 										</th>
-										<th className="sticky text-xs px-2 top-0 lg:pl-12 2xl:pl-16 lg:py-2 text-left lg:text-[12px] 2xl:text-[14px] font-extrabold text-white uppercase tracking-wider ">
+										<th className="sticky text-xs text-center px-2 top-0 lg:pl-12 2xl:pl-16 lg:py-2 lg:text-[12px] 2xl:text-[14px] font-extrabold text-white uppercase tracking-wider ">
 											To{" "}
 										</th>
-										<th className="sticky text-xs px-2 top-0 lg:pl-4 lg:py-2 text-left lg:text-[12px] 2xl:text-[14px] font-extrabold text-white uppercase tracking-wider ">
+										<th className="sticky text-xs text-center px-2 top-0 lg:pl-4 lg:py-2 lg:text-[12px] 2xl:text-[14px] font-extrabold text-white uppercase tracking-wider ">
 											Status
 										</th>
-										<th className="sticky text-xs px-2 top-0 lg:pl-4 lg:py-2 text-left lg:text-[12px] 2xl:text-[14px] font-extrabold text-white uppercase tracking-wider ">
+										<th className="sticky text-xs text-center px-2 top-0 lg:pl-4 lg:py-2 lg:text-[12px] 2xl:text-[14px] font-extrabold text-white uppercase tracking-wider ">
 											Action
 										</th>
-										{/* <th className="sticky text-xs px-2 top-0 lg:pl-4 lg:py-2 text-left lg:text-[12px] 2xl:text-[14px] font-extrabold text-white uppercase tracking-wider ">
+										<th className="sticky text-xs text-center px-2 top-0 lg:pl-4 lg:py-2 lg:text-[12px] 2xl:text-[14px] font-extrabold text-white uppercase tracking-wider ">
 											Processed By
-										</th> */}
+										</th>
 									</tr>
 								</thead>
 								<tbody className="bg-white divide-y divide-gray-200">
 									{currentReservations.map((reservation) => (
 										<tr key={reservation._id}>
-											<td className="lg:pl-4 2xl:pl-8 lg:py-2 lg:w-[220px] 2xl:w-[200px] whitespace-nowrap lg:px-4 2xl:px-0 lg:text-[14px] 2xl:text-[16px] pl-2 text-xs ">
+											<td className="lg:pl-4 2xl:pl-8 lg:py-2 lg:w-[220px] 2xl:w-[200px] whitespace-nowrap lg:px-4 2xl:px-0 lg:text-[14px] 2xl:text-[16px] pl-2 text-xs text-center ">
 												{reservation.company ===
-												"Mixexpert Trading Services Incorporated"
+												"Mixexpert Trading Services and Inc."
 													? "MTSI"
 													: reservation.company}
 											</td>
-											<td className="lg:py-2 lg:w-[200px] 2xl:w-[150px] lg:text-[14px] lg:pr-4 2xl:px-0 whitespace-nowrap 2xl:text-[16px] pl-2 text-xs  ">
+											<td className="lg:py-2 lg:w-[200px] 2xl:w-[150px] lg:text-[14px] lg:pr-4 2xl:px-0 whitespace-nowrap 2xl:text-[16px] pl-2 text-xs text-center  ">
 												{reservation.department}
 											</td>
-											<td className=" lg:py-2 lg:w-[250px] 2xl:w-[200px] 2xl:pr-4 lg:pr-4 2xl:px-0 whitespace-nowrap lg:text-[14px] 2xl:text-[16px] pl-2 text-xs  ">
+											<td className=" lg:py-2 lg:w-[250px] 2xl:w-[200px] 2xl:pr-4 lg:pr-4 2xl:px-0 whitespace-nowrap lg:text-[14px] 2xl:text-[16px] pl-2 text-xs text-center  ">
 												{reservation.name}
 											</td>
-											<td className=" lg:py-2 lg:text-[14px] lg:w-[120px] lg:pr-4 2xl:px-0 2xl:w-[100px] 2xl:text-[16px] pl-2 text-xs  ">
+											<td className=" lg:py-2 lg:text-[14px] lg:w-[120px] lg:pr-4 2xl:px-0 2xl:w-[100px] 2xl:text-[16px] pl-2 text-xs text-center  ">
 												{reservation.title}
 											</td>
-											<td className="lg:py-2 lg:w-[140px] 2xl:w-[100px] lg:pr-4 2xl:px-0 whitespace-nowrap lg:text-[14px] 2xl:text-[16px] pl-2 text-xs  ">
+											<td className="lg:py-2 lg:w-[140px] 2xl:w-[100px] lg:pr-4 2xl:px-0 whitespace-nowrap lg:text-[14px] 2xl:text-[16px] pl-2 text-xs text-center  ">
 												{new Date(reservation.fromDate).toLocaleString()}
 											</td>
-											<td className=" lg:pl-7 2xl:pl-10 lg:py-2 lg:w-[180px] 2xl:w-[150px] lg:pr-4 2xl:px-0 whitespace-nowrap lg:text-[14px] 2xl:text-[16px] pl-2 text-xs  ">
+											<td className=" lg:pl-7 2xl:pl-10 lg:py-2 lg:w-[180px] 2xl:w-[150px] lg:pr-4 2xl:px-0 whitespace-nowrap lg:text-[14px] 2xl:text-[16px] pl-2 text-xs text-center  ">
 												{format(
 													new Date(reservation.toDate).toLocaleString(),
 													"hh:mm aa"
 												)}
 											</td>
-											<td className="lg:py-2 lg:w-[140px] 2xl:w-[150px] lg:pr-6 2xl:px-0 lg:text-[14px] 2xl:text-[16px] pl-2 text-xs ">
+											<td className="lg:py-2 lg:w-[140px] 2xl:w-[150px] lg:pr-6 2xl:px-0 lg:text-[14px] 2xl:text-[16px] pl-2 text-xs text-center ">
 												<span className="bg-green-600 rounded-full px-4 py-1 text-white font-bold">
 													{reservation.status}
 												</span>
 											</td>
-											<td className="lg:py-2 lg:w-[140px] 2xl:w-[120px] lg:pr-6 2xl:px-0 lg:text-[14px] 2xl:text-[16px] pl-2 text-xs ">
+											<td className="lg:py-2 lg:w-[140px] 2xl:w-[120px] lg:pr-6 2xl:px-0 lg:text-[14px] 2xl:text-[16px] pl-2 text-xs text-center ">
 												<button
 													className="bg-[#ff7b00] hover:bg-red-700 text-white font-bold py-1 px-6 rounded-full"
 													onClick={() => openModal(reservation)}
@@ -354,9 +354,9 @@ const AcceptedPage = () => {
 													Cancel
 												</button>
 											</td>
-											{/* <td className="lg:py-2 lg:w-[140px] 2xl:w-[150px] lg:pr-6 2xl:px-0 lg:text-[14px] 2xl:text-[16px] pl-2 text-xs ">
+											<td className="lg:py-2 lg:w-[140px] 2xl:w-[150px] lg:pr-6 2xl:px-0 lg:text-[14px] 2xl:text-[16px] pl-2 text-xs text-center ">
 												{reservation.processedBy}
-											</td> */}
+											</td>
 										</tr>
 									))}
 								</tbody>

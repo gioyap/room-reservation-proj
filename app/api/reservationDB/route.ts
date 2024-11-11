@@ -101,7 +101,7 @@ export async function POST(request: NextRequest) {
 export async function PUT(request: NextRequest) {
 	try {
 		await connect();
-		const { id, status } = await request.json();
+		const { id, status, processedBy } = await request.json();
 
 		if (!id || !status) {
 			return NextResponse.json(
@@ -113,7 +113,7 @@ export async function PUT(request: NextRequest) {
 		// Update the status of the reservation in the database
 		const updatedReservation = await Reservation.findByIdAndUpdate(
 			id,
-			{ status },
+			{ status, processedBy },
 			{ new: true } // Return the updated document
 		);
 
