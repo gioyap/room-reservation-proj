@@ -152,8 +152,10 @@ const PendingPage = () => {
 			}
 
 			// Check for conflicts
-			const hasConflict = acceptedReservations.some((reservation: any) =>
-				isConflict(reservation, selectedReservation)
+			const hasConflict = acceptedReservations.some(
+				(reservation: any) =>
+					reservation.title === selectedReservation.title &&
+					isConflict(reservation, selectedReservation)
 			);
 
 			if (hasConflict) {
