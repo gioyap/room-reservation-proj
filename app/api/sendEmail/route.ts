@@ -33,7 +33,6 @@ export async function POST(request: NextRequest) {
 		const htmlContent = `
 		<div style="background-color: white; padding: 20px; border-radius: 10px; text-align: center;">
 					<h1 style="color: #e61e84; font-size: 42px;">New Reservation</h1>
-					<p style="color: #e61e84; font-size: 20px;">Your reservation has been accepted.</p>
 					<div style="display: flex; justify-content: center;">
 						<table border="1" cellpadding="10" cellspacing="0" style="border-collapse: collapse; margin: 0 auto;">
 							<thead>
@@ -59,7 +58,6 @@ export async function POST(request: NextRequest) {
 						</table>
 					</div>
 			${descriptionContent}
-			<p style="text-align: center; color: #e61e84; font-size: 18px;">This is a new reservation, please let me know if this is accepted or declined.</p>
 			<p style="text-align: center; color: #e61e84; font-size: 18px;">Go to the Admin Dashboard to be able to accept or deny the request. Thank you.</p>
 		</div>
 		`;
