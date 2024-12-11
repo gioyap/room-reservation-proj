@@ -206,20 +206,35 @@ const Calendar: React.FC<CalendarProps> = ({
 				(res) => res.title === category
 			);
 
-			let totalBookedTime = 0;
+			// Create a map to track 30-minute slots (20 slots in total)
+			const slots = Array(20).fill(false); // false means slot is available
+
+			// Mark slots as booked based on reservations
 			reservationsForCategory.forEach((reservation) => {
 				const from = new Date(reservation.fromDate);
 				const to = new Date(reservation.toDate);
-				if (from >= workingHours.start && to <= workingHours.end) {
-					totalBookedTime += (to.getTime() - from.getTime()) / (1000 * 60 * 60); // Calculate total booked time in hours
+
+				for (
+					let time = new Date(from);
+					time < to;
+					time.setMinutes(time.getMinutes() + 30)
+				) {
+					const slotIndex = Math.floor(
+						(time.getHours() * 60 + time.getMinutes() - 480) / 30
+					); // 480 minutes = 8 AM
+					if (slotIndex >= 0 && slotIndex < slots.length) {
+						slots[slotIndex] = true; // Mark the slot as booked
+					}
 				}
 			});
 
-			return totalBookedTime >= 10; // 8 AM to 6 PM is 10 hours
+			// Check if all slots are booked
+			return slots.every((slot) => slot);
 		};
 
 		return categories.every((category) => isTimeFullyBooked(category));
 	};
+
 	// through this condition the user can see if the date is fully booked, have a reservation details and interactive to the user
 	const getDayClassName = (day: Date) => {
 		const isBooked = isDateBooked(day);
@@ -256,9 +271,10 @@ const Calendar: React.FC<CalendarProps> = ({
 			// Check if the time slot is in the past relative to the current time (e.g., before 10 AM if current time is 10 AM)
 			if (isSameDay(day, currentTime)) {
 				const dayHour = day.getHours();
+				const dayMinutes = day.getMinutes();
 				if (
 					dayHour < currentHour ||
-					(dayHour === currentHour && currentMinutes > 0)
+					(dayHour === currentHour && dayMinutes < currentMinutes)
 				) {
 					className += "bg-blue-100 "; // Apply blueish background to indicate past time slots
 				}
@@ -316,12 +332,14 @@ const Calendar: React.FC<CalendarProps> = ({
 	};
 
 	// Function to generate time options in standard format (AM/PM)
+	// Function to generate time options in standard format (AM/PM) every 30 minutes
 	const generateTimeOptions = (): { value: string; label: string }[] => {
 		const options: { value: string; label: string }[] = [
 			{ value: "", label: "--Select Time--" },
 		];
+
 		for (let i = 8; i <= 18; i++) {
-			for (let j = 0; j < 60; j += 60) {
+			for (let j = 0; j < 60; j += 30) {
 				const hour = i > 12 ? i - 12 : i;
 				const ampm = i >= 12 ? "PM" : "AM";
 				const hourString = hour.toString().padStart(2, "0");
@@ -330,6 +348,7 @@ const Calendar: React.FC<CalendarProps> = ({
 				options.push({ value: timeString, label: timeString });
 			}
 		}
+
 		return options;
 	};
 
@@ -450,7 +469,7 @@ const Calendar: React.FC<CalendarProps> = ({
 						className="lg:px-1 lg:py-1 2xl:px-3 2xl:py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 lg:text-[14px] 2xl:text-[16px]"
 					>
 						{generateTimeOptions().map(({ value, label }) => (
-							<option key={value} value={value}>
+							<option key={value} value={value} className="">
 								{label}
 							</option>
 						))}
@@ -488,7 +507,7 @@ const Calendar: React.FC<CalendarProps> = ({
 					</div>
 				</div>
 				{clickedDate && (
-					<div className="p-2">
+					<div className="p-2 h-96 lg:h-72 xl:h-80 2xl:h-96">
 						<table className="w-full text-left">
 							<thead>
 								<tr>
@@ -538,11 +557,13 @@ const Calendar: React.FC<CalendarProps> = ({
 								</tr>
 							</thead>
 							<tbody>
-								{Array.from({ length: 10 }, (_, i) => {
+								{Array.from({ length: 20 }, (_, i) => {
 									const startTime = new Date(clickedDate);
-									startTime.setHours(8 + i, 0, 0, 0);
+									startTime.setHours(8, 0, 0, 0); // Set start time to 8:00 AM
+									startTime.setMinutes(i * 30); // Increment by 30 minutes
+
 									const endTime = new Date(startTime);
-									endTime.setHours(startTime.getHours() + 1);
+									endTime.setMinutes(startTime.getMinutes() + 30); // Set end time 30 minutes after start time
 
 									const isAvailable = (
 										category: string,
@@ -550,7 +571,7 @@ const Calendar: React.FC<CalendarProps> = ({
 									): string => {
 										const currentTime = new Date();
 										const endTime = new Date(startTime);
-										endTime.setHours(startTime.getHours() + 1);
+										endTime.setMinutes(startTime.getMinutes() + 30);
 
 										// Filter reservations for the category, date, and status
 										const reservationsForCategory = bookedDates.filter(
@@ -604,8 +625,6 @@ const Calendar: React.FC<CalendarProps> = ({
 										startTime: Date
 									): string => {
 										const currentTime = new Date();
-
-										// Check if the time slot is in the past
 										const isPastTimeSlot = startTime < currentTime;
 
 										if (isPastTimeSlot) {
@@ -614,7 +633,7 @@ const Calendar: React.FC<CalendarProps> = ({
 
 										switch (availability) {
 											case "Available":
-												return "text-green-500 ";
+												return "text-green-500";
 											case "Pending":
 												return "text-yellow-500";
 											case "Unavailable":
