@@ -331,7 +331,6 @@ const Calendar: React.FC<CalendarProps> = ({
 		setReservationDetails(reservations);
 	};
 
-	// Function to generate time options in standard format (AM/PM)
 	// Function to generate time options in standard format (AM/PM) every 30 minutes
 	const generateTimeOptions = (): { value: string; label: string }[] => {
 		const options: { value: string; label: string }[] = [
