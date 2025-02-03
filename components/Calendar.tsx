@@ -179,7 +179,7 @@ const Calendar: React.FC<CalendarProps> = ({
 
 	// Check if a date is fully booked
 	const isFullyBooked = (date: Date) => {
-		const categories = ["Energy", "Focus", "Lecture"];
+		const categories = ["Energy", "Focus", "Passion"];
 		const reservationsForDate = bookedDates.filter(
 			(reservation) =>
 				new Date(reservation.fromDate).toDateString() === date.toDateString() &&
@@ -533,16 +533,16 @@ const Calendar: React.FC<CalendarProps> = ({
 											Focus
 										</span>
 									</th>
-									{/* <th
+									<th
 										className="p-2 border-b lg:text-[13px] 2xl:text-[16px] lg:pl-4 2xl:pl-2 cursor-pointer text-center"
 										onClick={() =>
-											showReservationDetails("Lecture", selectedDateState)
+											showReservationDetails("Passion", selectedDateState)
 										}
 									>
 										<span className="bg-[#3f3f3f] text-white px-2 lg:p-1 lg:px-2 2xl:p-1 2xl:px-4 hover:bg-[#686868] rounded-full">
-											Lecture
+											Passion
 										</span>
-									</th> */}
+									</th>
 									<th
 										className="p-2 border-b lg:text-[13px] 2xl:text-[16px] lg:pl-4 2xl:pl-2 cursor-pointer text-center"
 										onClick={() =>
@@ -644,7 +644,7 @@ const Calendar: React.FC<CalendarProps> = ({
 
 									const energyAvailability = isAvailable("Energy", startTime);
 									const focusAvailability = isAvailable("Focus", startTime);
-									// const lectureAvailability = isAvailable("Lecture", startTime);
+									const lectureAvailability = isAvailable("Passion", startTime);
 									const zoomAvailability = isAvailable("Zoom", startTime);
 
 									return (
@@ -679,17 +679,17 @@ const Calendar: React.FC<CalendarProps> = ({
 											>
 												{focusAvailability}
 											</td>
-											{/* <td
+											<td
 												className={`lg:p-1.5 2xl:p-2 border-b whitespace-nowrap lg:text-[13px] 2xl:text-[14px] lg:pl-4 font-bold text-center ${getAvailabilityClass(
 													lectureAvailability,
 													startTime
 												)} ${getDayClassName(startTime)}`}
 												onClick={() =>
-													showReservationDetails("Lecture", selectedDateState)
+													showReservationDetails("Passion", selectedDateState)
 												}
 											>
 												{lectureAvailability}
-											</td> */}
+											</td>
 											<td
 												className={`lg:p-1.5 2xl:p-2 border-b whitespace-nowrap lg:text-[13px] 2xl:text-[14px] lg:pl-4 font-extrabold text-center ${getAvailabilityClass(
 													zoomAvailability,
