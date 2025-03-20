@@ -63,7 +63,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
 						>
 							<option value="">Select an admin</option>
 							<option value="Ms. Olive Enriquez">Ms. Olive Enriquez</option>
-							<option value="Ms. Beth Haylo">Ms. Beth Haylo</option>
+							<option value="Ms. Jasmine Ola">Ms. Jasmine Ola</option>
 							<option value="Ms. Hazel Cabundo">Ms. Hazel Cabundoc</option>
 							<option value="MIS-IT">MIS-IT</option>
 						</select>
