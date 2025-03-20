@@ -421,16 +421,16 @@ const Dashboard = () => {
 									/>
 									Focus
 								</label>
-								{/* <label className="text-[#3f3f3f] lg:text-[16px] 2xl:text-[15px]">
+								<label className="text-[#3f3f3f] lg:text-[16px] 2xl:text-[15px]">
 									<input
 										type="radio"
-										value="Lecture"
-										checked={title === "Lecture"}
+										value="Passion"
+										checked={title === "Passion"}
 										onChange={handletitleChange}
 										className="mr-1"
 									/>
-									Lecture
-								</label> */}
+									Passion
+								</label>
 								<label className="text-[#3f3f3f] lg:text-[16px] 2xl:text-[15px]">
 									<input
 										type="radio"
