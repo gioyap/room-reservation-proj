@@ -421,7 +421,7 @@ const Dashboard = () => {
 									/>
 									Focus
 								</label>
-								<label className="text-[#3f3f3f] lg:text-[16px] 2xl:text-[15px]">
+								{/* <label className="text-[#3f3f3f] lg:text-[16px] 2xl:text-[15px]">
 									<input
 										type="radio"
 										value="Passion"
@@ -430,7 +430,7 @@ const Dashboard = () => {
 										className="mr-1"
 									/>
 									Passion
-								</label>
+								</label> */}
 								<label className="text-[#3f3f3f] lg:text-[16px] 2xl:text-[15px]">
 									<input
 										type="radio"
